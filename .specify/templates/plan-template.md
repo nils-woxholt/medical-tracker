@@ -31,13 +31,21 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Required Affirmations (FAIL any → update plan or create remediation tasks):
+
+1. Accessibility budgets defined for affected pages (LCP, CLS, bundle size ≤ 200KB critical JS).
+2. OpenAPI contract (or delta) drafted for every new/changed API endpoint before implementation.
+3. Test strategy enumerated: unit, component, contract, e2e (P1 stories) with coverage targets.
+4. Observability additions listed (logs, metrics, traces) for each new endpoint / critical UI flow.
+5. Security impacts analyzed (auth scopes, roles, input validation) with no TBDs for P1 scope.
+6. Complexity Tracking table either empty or each line has measurable justification + expiry if temp.
+7. Performance & error budgets unaffected or new budgets proposed.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
-```
+```text
 specs/[###-feature]/
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)
@@ -55,7 +63,7 @@ specs/[###-feature]/
   not include Option labels.
 -->
 
-```
+```text
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
 ├── models/
@@ -91,12 +99,13 @@ ios/ or android/
 └── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: [Document the selected structure and reference the real directories captured above] (Confirm separation of frontend Next.js app and FastAPI backend where applicable.)
 
 ## Complexity Tracking
 
-*Fill ONLY if Constitution Check has violations that must be justified*
+### When Violations Exist
+
+Fill ONLY if Constitution Check has violations that must be justified.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|

@@ -59,12 +59,15 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T004 Setup database schema and migrations framework (Alembic init + first migration)
+- [ ] T005 [P] Implement authentication/authorization framework (JWT/OIDC wiring + role model)
+- [ ] T006 [P] Setup API routing and middleware structure (FastAPI app factory, CORS, tracing)
+- [ ] T007 Create base models/entities that all stories depend on (pydantic/ORM schemas)
+- [ ] T008 Configure error handling, structured logging, metrics endpoint
+- [ ] T009 Setup environment configuration management (dotenv + settings module)
+- [ ] T010 Establish OpenAPI contract scaffolding & codegen for TS client
+- [ ] T011 Configure frontend project (Next.js, shadcn/ui, Tailwind, ESLint, TypeScript strict)
+- [ ] T012 Add CI pipeline skeleton (lint, typecheck, test, contract diff, bundle size guard)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -78,19 +81,26 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
-**NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+#### Test Authoring Order
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+Write these tests FIRST and ensure they FAIL before implementation.
+
+- [ ] T020 [P] [US1] Contract test for [endpoint] in backend/tests/contract/test_[name].py
+- [ ] T021 [P] [US1] Component test for UI widget in frontend/src/components/__tests__/[name].test.tsx
+- [ ] T022 [P] [US1] E2E test (Playwright) for primary flow in e2e/us1.spec.ts
+- [ ] T023 [P] [US1] Integration test for user journey in backend/tests/integration/test_[name].py
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T024 [P] [US1] Create [Entity1] model in backend/src/models/[entity1].py
+- [ ] T025 [P] [US1] Create [Entity2] model in backend/src/models/[entity2].py
+- [ ] T026 [US1] Implement [Service] in backend/src/services/[service].py (depends on T024, T025)
+- [ ] T027 [US1] Implement [endpoint] in backend/src/api/[endpoint].py
+- [ ] T028 [US1] Implement frontend page/route in frontend/src/app/[route]/page.tsx
+- [ ] T029 [US1] Wire OpenAPI generated client for endpoint in frontend
+- [ ] T030 [US1] Add validation and error handling
+- [ ] T031 [US1] Add logging & metrics for user story operations
+- [ ] T032 [US1] Add accessibility audit adjustments (axe + manual checks)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 

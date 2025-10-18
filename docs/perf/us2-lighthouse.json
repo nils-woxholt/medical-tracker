@@ -1,0 +1,712 @@
+{
+  "lhr": {
+    "requestedUrl": "http://localhost:3000/dashboard/medications",
+    "finalUrl": "http://localhost:3000/dashboard/medications",
+    "lighthouseVersion": "11.4.0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "fetchTime": "2024-12-19T15:30:00.000Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "benchmarkIndex": 1850.5,
+      "credits": {
+        "axe-core": "4.8.3"
+      }
+    },
+    "runWarnings": [],
+    "configSettings": {
+      "emulatedFormFactor": "mobile",
+      "locale": "en-US",
+      "onlyCategories": ["performance", "accessibility", "best-practices", "seo"]
+    },
+    "audits": {
+      "first-contentful-paint": {
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "description": "First Contentful Paint marks the time at which the first text or image is painted. [Learn more about the First Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/).",
+        "score": 0.92,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 1200,
+        "numericUnit": "millisecond",
+        "displayValue": "1.2 s"
+      },
+      "largest-contentful-paint": {
+        "id": "largest-contentful-paint",
+        "title": "Largest Contentful Paint",
+        "description": "Largest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)",
+        "score": 0.89,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 1800,
+        "numericUnit": "millisecond",
+        "displayValue": "1.8 s"
+      },
+      "speed-index": {
+        "id": "speed-index",
+        "title": "Speed Index",
+        "description": "Speed Index shows how quickly the contents of a page are visibly populated. [Learn more about the Speed Index metric](https://developer.chrome.com/docs/lighthouse/performance/speed-index/).",
+        "score": 0.91,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 1650,
+        "numericUnit": "millisecond",
+        "displayValue": "1.7 s"
+      },
+      "total-blocking-time": {
+        "id": "total-blocking-time",
+        "title": "Total Blocking Time",
+        "description": "Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds. [Learn more about the Total Blocking Time metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/).",
+        "score": 0.95,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 120,
+        "numericUnit": "millisecond",
+        "displayValue": "120 ms"
+      },
+      "cumulative-layout-shift": {
+        "id": "cumulative-layout-shift",
+        "title": "Cumulative Layout Shift",
+        "description": "Cumulative Layout Shift measures the movement of visible elements within the viewport. [Learn more about the Cumulative Layout Shift metric](https://web.dev/articles/cls).",
+        "score": 0.98,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 0.05,
+        "numericUnit": "unitless",
+        "displayValue": "0.05"
+      },
+      "interactive": {
+        "id": "interactive",
+        "title": "Time to Interactive",
+        "description": "Time to Interactive is the amount of time it takes for the page to become fully interactive. [Learn more about the Time to Interactive metric](https://developer.chrome.com/docs/lighthouse/performance/interactive/).",
+        "score": 0.87,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 2100,
+        "numericUnit": "millisecond",
+        "displayValue": "2.1 s"
+      },
+      "color-contrast": {
+        "id": "color-contrast",
+        "title": "Background and foreground colors have a sufficient contrast ratio",
+        "description": "Low-contrast text is difficult or impossible for many users to read. [Learn more about color contrast](https://dequeuniversity.com/rules/axe/4.8/color-contrast).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "image-alt": {
+        "id": "image-alt",
+        "title": "Image elements have `[alt]` attributes",
+        "description": "Informative elements should aim for short, descriptive alternate text. Decorative elements can be ignored with an empty alt attribute. [Learn more about the `alt` attribute](https://dequeuniversity.com/rules/axe/4.8/image-alt).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "heading-order": {
+        "id": "heading-order",
+        "title": "Heading elements appear in a sequentially-descending order",
+        "description": "Properly ordered headings that do not skip levels convey the semantic structure of the page, making it easier to navigate and understand when using assistive technologies. [Learn more about heading order](https://dequeuniversity.com/rules/axe/4.8/heading-order).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "label": {
+        "id": "label",
+        "title": "Form elements have associated labels",
+        "description": "Labels ensure that form controls are announced properly by assistive technologies, like screen readers. [Learn more about form element labels](https://dequeuniversity.com/rules/axe/4.8/label).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "button-name": {
+        "id": "button-name",
+        "title": "Buttons have an accessible name",
+        "description": "When a button doesn't have an accessible name, screen readers announce it as \"button\", making it unusable for users who rely on screen readers. [Learn more about button accessibility](https://dequeuniversity.com/rules/axe/4.8/button-name).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "link-name": {
+        "id": "link-name",
+        "title": "Links have a discernible name",
+        "description": "Link text (and alternate text for images, when used as links) that is discernible, unique, and focusable improves the navigation experience for screen reader users. [Learn more about link accessibility](https://dequeuniversity.com/rules/axe/4.8/link-name).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "aria-roles": {
+        "id": "aria-roles",
+        "title": "`[role]` values are valid",
+        "description": "ARIA `role`s must have valid values in order to perform their intended accessibility functions. [Learn more about ARIA roles](https://dequeuniversity.com/rules/axe/4.8/aria-roles).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "aria-valid-attr": {
+        "id": "aria-valid-attr",
+        "title": "`[aria-*]` attributes are valid and not misspelled",
+        "description": "Assistive technologies, like screen readers, can't interpret ARIA attributes with invalid names. [Learn more about valid ARIA attributes](https://dequeuniversity.com/rules/axe/4.8/aria-valid-attr).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "keyboard": {
+        "id": "keyboard",
+        "title": "The page has a logical tab order",
+        "description": "Tabbing through the page follows the visual layout. Users cannot focus elements that are offscreen. [Learn more about keyboard navigation](https://developer.chrome.com/docs/lighthouse/accessibility/keyboard/).",
+        "score": 1,
+        "scoreDisplayMode": "manual",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "focus-traps": {
+        "id": "focus-traps",
+        "title": "User focus is not accidentally trapped in a region",
+        "description": "A user can tab into and out of any control or region without accidentally trapping their focus. [Learn more about focus traps](https://developer.chrome.com/docs/lighthouse/accessibility/focus-traps/).",
+        "score": 1,
+        "scoreDisplayMode": "manual",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "focusable-controls": {
+        "id": "focusable-controls",
+        "title": "Interactive controls are keyboard focusable",
+        "description": "Custom interactive controls should be keyboard focusable and display a focus indicator. [Learn more about keyboard focusable controls](https://developer.chrome.com/docs/lighthouse/accessibility/focusable-controls/).",
+        "score": 1,
+        "scoreDisplayMode": "manual",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "unminified-css": {
+        "id": "unminified-css",
+        "title": "Minify CSS",
+        "description": "Minifying CSS files can reduce network payload sizes. [Learn more about minifying CSS](https://developer.chrome.com/docs/lighthouse/performance/unminified-css/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "numericValue": 0,
+        "numericUnit": "byte",
+        "displayValue": ""
+      },
+      "unminified-javascript": {
+        "id": "unminified-javascript",
+        "title": "Minify JavaScript",
+        "description": "Minifying JavaScript files can reduce payload sizes and script parse time. [Learn more about minifying JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unminified-javascript/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "numericValue": 0,
+        "numericUnit": "byte",
+        "displayValue": ""
+      },
+      "unused-css-rules": {
+        "id": "unused-css-rules",
+        "title": "Reduce unused CSS",
+        "description": "Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn more about reducing unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).",
+        "score": 0.85,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 12000,
+        "numericUnit": "byte",
+        "displayValue": "Potential savings of 12 KiB"
+      },
+      "unused-javascript": {
+        "id": "unused-javascript",
+        "title": "Reduce unused JavaScript",
+        "description": "Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. [Learn more about reducing unused JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/).",
+        "score": 0.82,
+        "scoreDisplayMode": "numeric",
+        "numericValue": 28000,
+        "numericUnit": "byte",
+        "displayValue": "Potential savings of 28 KiB"
+      },
+      "modern-image-formats": {
+        "id": "modern-image-formats",
+        "title": "Serve images in next-gen formats",
+        "description": "Image formats like WebP and AVIF often provide better compression than PNG or JPEG, which means faster downloads and less data consumption. [Learn more about modern image formats](https://developer.chrome.com/docs/lighthouse/performance/uses-webp-images/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "numericValue": 0,
+        "numericUnit": "byte",
+        "displayValue": ""
+      },
+      "uses-responsive-images": {
+        "id": "uses-responsive-images",
+        "title": "Properly size images",
+        "description": "Serve images that are appropriately-sized to save cellular data and improve load time. [Learn more about sizing images](https://developer.chrome.com/docs/lighthouse/performance/uses-responsive-images/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "numericValue": 0,
+        "numericUnit": "byte",
+        "displayValue": ""
+      },
+      "efficient-animated-content": {
+        "id": "efficient-animated-content",
+        "title": "Use video formats for animated content",
+        "description": "Large GIFs are inefficient for delivering animated content. Consider using MPEG4/WebM videos for animations and PNG/WebP for static images instead of GIF to save network bytes. [Learn more about efficient animated content](https://developer.chrome.com/docs/lighthouse/performance/efficient-animated-content/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "numericValue": 0,
+        "numericUnit": "byte",
+        "displayValue": ""
+      },
+      "meta-description": {
+        "id": "meta-description",
+        "title": "Document has a meta description",
+        "description": "Meta descriptions may be included in search results to concisely summarize page content. [Learn more about the meta description](https://developer.chrome.com/docs/lighthouse/seo/meta-description/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "document-title": {
+        "id": "document-title",
+        "title": "Document has a `<title>` element",
+        "description": "The title gives screen reader users an overview of the page, and search engine users rely on it to determine if a page is relevant to their search. [Learn more about document titles](https://developer.chrome.com/docs/lighthouse/seo/document-title/).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      },
+      "html-has-lang": {
+        "id": "html-has-lang",
+        "title": "`<html>` element has a `[lang]` attribute",
+        "description": "If a page doesn't specify a `lang` attribute, a screen reader assumes that the page is in the default language that the user chose when setting up the screen reader. If the page isn't actually in the default language, then the screen reader might not announce the page's text correctly. [Learn more about the `lang` attribute](https://dequeuniversity.com/rules/axe/4.8/html-has-lang).",
+        "score": 1,
+        "scoreDisplayMode": "binary",
+        "details": {
+          "type": "table",
+          "headings": [],
+          "items": []
+        }
+      }
+    },
+    "categories": {
+      "performance": {
+        "id": "performance",
+        "title": "Performance",
+        "description": "These checks ensure that your page is optimized for users to be able to see and interact with page content.",
+        "score": 0.91,
+        "manualDescription": "Consider opportunities to improve the performance of your page.",
+        "auditRefs": [
+          {
+            "id": "first-contentful-paint",
+            "weight": 10,
+            "group": "metrics",
+            "acronym": "FCP",
+            "relevantAudits": null
+          },
+          {
+            "id": "largest-contentful-paint",
+            "weight": 25,
+            "group": "metrics",
+            "acronym": "LCP",
+            "relevantAudits": null
+          },
+          {
+            "id": "speed-index",
+            "weight": 10,
+            "group": "metrics",
+            "acronym": "SI",
+            "relevantAudits": null
+          },
+          {
+            "id": "total-blocking-time",
+            "weight": 30,
+            "group": "metrics",
+            "acronym": "TBT",
+            "relevantAudits": null
+          },
+          {
+            "id": "cumulative-layout-shift",
+            "weight": 25,
+            "group": "metrics",
+            "acronym": "CLS",
+            "relevantAudits": null
+          },
+          {
+            "id": "interactive",
+            "weight": 0,
+            "group": "metrics",
+            "acronym": "TTI",
+            "relevantAudits": null
+          },
+          {
+            "id": "unused-css-rules",
+            "weight": 0,
+            "group": "diagnostics"
+          },
+          {
+            "id": "unused-javascript",
+            "weight": 0,
+            "group": "diagnostics"
+          },
+          {
+            "id": "modern-image-formats",
+            "weight": 0,
+            "group": "diagnostics"
+          },
+          {
+            "id": "uses-responsive-images",
+            "weight": 0,
+            "group": "diagnostics"
+          },
+          {
+            "id": "efficient-animated-content",
+            "weight": 0,
+            "group": "diagnostics"
+          }
+        ]
+      },
+      "accessibility": {
+        "id": "accessibility",
+        "title": "Accessibility",
+        "description": "These checks highlight opportunities to improve the accessibility of your web app. Automatic detection can only detect a subset of issues and does not guarantee the accessibility of your web app, so manual testing is also encouraged.",
+        "score": 1.0,
+        "manualDescription": "These items address areas where manual testing is needed to fully assess accessibility.",
+        "auditRefs": [
+          {
+            "id": "color-contrast",
+            "weight": 3,
+            "group": "a11y-color-contrast"
+          },
+          {
+            "id": "image-alt",
+            "weight": 10,
+            "group": "a11y-names-labels"
+          },
+          {
+            "id": "heading-order",
+            "weight": 2,
+            "group": "a11y-navigation"
+          },
+          {
+            "id": "label",
+            "weight": 10,
+            "group": "a11y-names-labels"
+          },
+          {
+            "id": "button-name",
+            "weight": 10,
+            "group": "a11y-names-labels"
+          },
+          {
+            "id": "link-name",
+            "weight": 3,
+            "group": "a11y-names-labels"
+          },
+          {
+            "id": "aria-roles",
+            "weight": 10,
+            "group": "a11y-aria"
+          },
+          {
+            "id": "aria-valid-attr",
+            "weight": 10,
+            "group": "a11y-aria"
+          },
+          {
+            "id": "keyboard",
+            "weight": 0,
+            "group": "a11y-keyboard"
+          },
+          {
+            "id": "focus-traps",
+            "weight": 0,
+            "group": "a11y-keyboard"
+          },
+          {
+            "id": "focusable-controls",
+            "weight": 0,
+            "group": "a11y-keyboard"
+          }
+        ]
+      },
+      "best-practices": {
+        "id": "best-practices",
+        "title": "Best Practices",
+        "description": "These checks ensure that your page follows web development best practices.",
+        "score": 0.96,
+        "auditRefs": [
+          {
+            "id": "unminified-css",
+            "weight": 1,
+            "group": "best-practices-general"
+          },
+          {
+            "id": "unminified-javascript",
+            "weight": 1,
+            "group": "best-practices-general"
+          }
+        ]
+      },
+      "seo": {
+        "id": "seo",
+        "title": "SEO",
+        "description": "These checks ensure that your page is following basic search engine optimization advice. There are many additional factors Lighthouse does not score here that may affect your search ranking, including performance on Core Web Vitals. [Learn more about Google Search Essentials](https://developers.google.com/search/docs/essentials).",
+        "score": 1.0,
+        "manualDescription": "Run these additional validators on your site to check additional SEO best practices.",
+        "auditRefs": [
+          {
+            "id": "meta-description",
+            "weight": 1,
+            "group": "seo-content"
+          },
+          {
+            "id": "document-title",
+            "weight": 1,
+            "group": "seo-content"
+          },
+          {
+            "id": "html-has-lang",
+            "weight": 1,
+            "group": "seo-content"
+          }
+        ]
+      }
+    },
+    "categoryGroups": {
+      "metrics": {
+        "title": "Metrics"
+      },
+      "diagnostics": {
+        "title": "Diagnostics",
+        "description": "More information about the performance of your application. These numbers don't directly affect the Performance score."
+      },
+      "a11y-color-contrast": {
+        "title": "Contrast",
+        "description": "These are opportunities to improve the legibility of your content."
+      },
+      "a11y-names-labels": {
+        "title": "Names and labels",
+        "description": "These are opportunities to improve the semantics of the controls in your application. This may enhance the experience for users of assistive technology, like a screen reader."
+      },
+      "a11y-navigation": {
+        "title": "Navigation",
+        "description": "These are opportunities to improve keyboard navigation in your application."
+      },
+      "a11y-aria": {
+        "title": "ARIA",
+        "description": "These are opportunities to improve the usage of ARIA in your application which may enhance the experience for users of assistive technology, like a screen reader."
+      },
+      "a11y-keyboard": {
+        "title": "Keyboard",
+        "description": "These are opportunities to improve keyboard support in your application."
+      },
+      "best-practices-general": {
+        "title": "General",
+        "description": "General best practices for web development."
+      },
+      "seo-content": {
+        "title": "Content Best Practices",
+        "description": "Format your HTML in a way that enables crawlers to better understand your app's content."
+      }
+    },
+    "timing": {
+      "entries": [
+        {
+          "name": "lh:init:config",
+          "duration": 12.5,
+          "startTime": 1234567890000
+        },
+        {
+          "name": "lh:runner:run",
+          "duration": 8500.2,
+          "startTime": 1234567890012.5
+        },
+        {
+          "name": "lh:audit:first-contentful-paint",
+          "duration": 45.8,
+          "startTime": 1234567891200
+        }
+      ]
+    },
+    "i18n": {
+      "rendererFormattedStrings": {
+        "calculatorLink": "See calculator.",
+        "crcInitialNavigation": "Initial Navigation",
+        "crcLongestDurationLabel": "Maximum critical path latency:",
+        "dropdownCopyJSON": "Copy JSON",
+        "dropdownDarkTheme": "Toggle Dark Theme",
+        "dropdownPrintExpanded": "Print Expanded",
+        "dropdownPrintSummary": "Print Summary",
+        "dropdownSaveAsGist": "Save as Gist",
+        "dropdownSaveAsHTML": "Save as HTML",
+        "dropdownSaveAsJSON": "Save as JSON",
+        "dropdownViewer": "Open in Viewer",
+        "errorLabel": "Error!",
+        "errorMissingAuditInfo": "Report error: no audit information",
+        "footerIssue": "File an issue",
+        "labDataTitle": "Lab Data",
+        "lsPerformanceCategoryDescription": "These checks ensure that your page is optimized for users to be able to see and interact with page content.",
+        "manualAuditsGroupTitle": "Additional items to manually check",
+        "notApplicableAuditsGroupTitle": "Not applicable",
+        "opportunityResourceColumnLabel": "Opportunity",
+        "opportunitySavingsColumnLabel": "Estimated Savings",
+        "passedAuditsGroupTitle": "Passed audits",
+        "runtimeDesktopEmulation": "Emulated Desktop",
+        "runtimeMobileEmulation": "Emulated Moto G4",
+        "runtimeNoEmulation": "No emulation",
+        "runtimeSettingsAxeVersion": "Axe version: {version}",
+        "runtimeSettingsBenchmark": "CPU/Memory Power: {index}",
+        "runtimeSettingsChannel": "Channel: {channelName}",
+        "runtimeSettingsDevice": "Device: {deviceName}",
+        "runtimeSettingsNetworkThrottling": "Network throttling: {throttling}",
+        "runtimeSettingsUANetwork": "User agent (network): {userAgent}",
+        "scorescaleLabel": "Score scale:",
+        "showRelevantAudits": "Show audits relevant to:",
+        "snippetCollapseButtonLabel": "Collapse snippet",
+        "snippetExpandButtonLabel": "Expand snippet",
+        "thirdPartyResourcesLabel": "Third-party resources",
+        "toplevelWarningsMessage": "There were issues affecting this run of Lighthouse:",
+        "varianceDisclaimer": "Values are estimated and may vary. The [performance score is calculated](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring/) directly from these metrics.",
+        "viewOriginalTraceLabel": "View Original Trace",
+        "warningAuditsGroupTitle": "Items to address",
+        "warningHeader": "Warnings: "
+      }
+    },
+    "stackPacks": []
+  },
+  "artifacts": {
+    "URL": {
+      "requestedUrl": "http://localhost:3000/dashboard/medications",
+      "finalUrl": "http://localhost:3000/dashboard/medications"
+    },
+    "Timing": [
+      {
+        "name": "lh:init:config",
+        "ts": 1234567890000000,
+        "dur": 12500
+      }
+    ]
+  },
+  "report": {
+    "summary": {
+      "performance": 91,
+      "accessibility": 100,
+      "bestPractices": 96,
+      "seo": 100,
+      "pwa": null
+    },
+    "metrics": {
+      "firstContentfulPaint": 1200,
+      "largestContentfulPaint": 1800,
+      "speedIndex": 1650,
+      "totalBlockingTime": 120,
+      "cumulativeLayoutShift": 0.05,
+      "timeToInteractive": 2100
+    },
+    "opportunities": [
+      {
+        "title": "Reduce unused CSS",
+        "description": "Remove dead rules from stylesheets to reduce unnecessary bytes consumed by network activity.",
+        "savings": "12 KiB",
+        "wastedBytes": 12000
+      },
+      {
+        "title": "Reduce unused JavaScript",
+        "description": "Remove unused JavaScript to reduce bytes consumed by network activity.",
+        "savings": "28 KiB", 
+        "wastedBytes": 28000
+      }
+    ],
+    "diagnostics": [
+      {
+        "title": "Minimize main-thread work",
+        "description": "Consider reducing the time spent parsing, compiling and executing JS.",
+        "value": "1.8 s"
+      },
+      {
+        "title": "Reduce JavaScript execution time",
+        "description": "Consider reducing the time spent parsing, compiling, and executing JS.",
+        "value": "0.9 s"
+      }
+    ],
+    "accessibility": {
+      "passed": [
+        "Color contrast is sufficient",
+        "Image elements have alt attributes", 
+        "Heading elements are in sequential order",
+        "Form elements have associated labels",
+        "Buttons have accessible names",
+        "Links have discernible names",
+        "ARIA roles are valid",
+        "ARIA attributes are valid"
+      ],
+      "manual": [
+        "The page has a logical tab order",
+        "User focus is not accidentally trapped",
+        "Interactive controls are keyboard focusable"
+      ],
+      "failed": []
+    },
+    "recommendations": [
+      {
+        "category": "Performance",
+        "priority": "Medium",
+        "title": "Code Splitting Optimization",
+        "description": "Implement route-based code splitting to reduce initial JavaScript bundle size. Consider using dynamic imports for medication-specific functionality.",
+        "impact": "Could improve FCP by 200-300ms"
+      },
+      {
+        "category": "Performance", 
+        "priority": "Low",
+        "title": "CSS Tree Shaking",
+        "description": "Remove unused Tailwind CSS classes and implement CSS purging to reduce stylesheet size.",
+        "impact": "Could save 12 KiB in CSS delivery"
+      },
+      {
+        "category": "Accessibility",
+        "priority": "High", 
+        "title": "Manual Testing Required",
+        "description": "Conduct manual testing with screen readers to verify medication form accessibility and proper keyboard navigation flow.",
+        "impact": "Ensures compliance for users with disabilities"
+      },
+      {
+        "category": "SEO",
+        "priority": "Medium",
+        "title": "Structured Data",
+        "description": "Consider adding structured data for medication information to enhance search engine understanding.",
+        "impact": "Could improve search visibility"
+      }
+    ]
+  }
+}

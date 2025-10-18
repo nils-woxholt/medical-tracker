@@ -109,7 +109,9 @@
 
 ### Measurable Outcomes
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-001**: [Primary user flow task completion time ≤ X seconds]
+- **SC-002**: [API p95 latency for new endpoints ≤ 300ms (or justified)]
+- **SC-003**: [Zero unhandled client errors in console during defined e2e journey]
+- **SC-004**: [Lighthouse Accessibility score ≥ 90 for affected page(s)]
+- **SC-005**: [Bundle size delta ≤ +20KB gzipped critical path for this feature]
+- **SC-006**: [Error rate (5xx) introduced by new endpoints < 0.5% during soak test]

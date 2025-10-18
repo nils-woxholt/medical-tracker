@@ -1,0 +1,1842 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SaaS Medical Tracker",
+    "description": "Track medications, log symptoms, and manage your health data securely",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/metrics": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Prometheus Metrics",
+        "description": "Prometheus-compatible metrics endpoint for monitoring and alerting",
+        "operationId": "metrics_endpoint_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Health check endpoint for service monitoring.\n\nReturns:\n    HealthCheckResponse: Service health status",
+        "operationId": "health_check_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCheckResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "summary": "Readiness Check",
+        "description": "Kubernetes readiness probe endpoint.\n\nReturns:\n    Dict: Readiness status",
+        "operationId": "readiness_check_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Readiness Check Api V1 Health Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/live": {
+      "get": {
+        "summary": "Liveness Check",
+        "description": "Kubernetes liveness probe endpoint.\n\nReturns:\n    Dict: Liveness status",
+        "operationId": "liveness_check_api_v1_health_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Liveness Check Api V1 Health Live Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/metrics": {
+      "get": {
+        "summary": "Metrics",
+        "description": "Basic metrics endpoint.\n\nReturns basic application metrics for monitoring.\n\nReturns:\n    Dict: Application metrics",
+        "operationId": "metrics_api_v1_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Metrics Api V1 Metrics Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/info": {
+      "get": {
+        "summary": "Api Info",
+        "description": "Get API information and configuration.\n\nReturns basic information about the API for discovery purposes.\n\nReturns:\n    Dict: API information",
+        "operationId": "api_info_api_v1_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Info Api V1 Info Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "description": "Login endpoint - placeholder.",
+        "operationId": "login_api_v1_auth_token_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register",
+        "description": "Registration endpoint - placeholder.",
+        "operationId": "register_api_v1_auth_register_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh Token",
+        "description": "Token refresh endpoint - placeholder.",
+        "operationId": "refresh_token_api_v1_auth_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get Current User",
+        "description": "Get current user profile - placeholder.",
+        "operationId": "get_current_user_api_v1_users_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update Current User",
+        "description": "Update current user profile - placeholder.",
+        "operationId": "update_current_user_api_v1_users_me_put",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medications/": {
+      "get": {
+        "tags": [
+          "Medications"
+        ],
+        "summary": "List Medications",
+        "description": "List user medications - placeholder.",
+        "operationId": "list_medications_api_v1_medications__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Medications"
+        ],
+        "summary": "Create Medication",
+        "description": "Create new medication - placeholder.",
+        "operationId": "create_medication_api_v1_medications__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/symptoms/": {
+      "get": {
+        "tags": [
+          "Symptoms"
+        ],
+        "summary": "List Symptom Logs",
+        "description": "List user symptom logs - placeholder.",
+        "operationId": "list_symptom_logs_api_v1_symptoms__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Symptoms"
+        ],
+        "summary": "Create Symptom Log",
+        "description": "Create new symptom log - placeholder.",
+        "operationId": "create_symptom_log_api_v1_symptoms__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logs/medications": {
+      "post": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Create medication log",
+        "description": "Create a new medication log entry for the authenticated user",
+        "operationId": "create_medication_log_api_v1_logs_medications_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicationLogCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "List medication logs",
+        "description": "Get a list of medication logs for the authenticated user",
+        "operationId": "list_medication_logs_api_v1_logs_medications_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of records",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of records to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date for filtering",
+              "title": "Start Date"
+            },
+            "description": "Start date for filtering"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date for filtering",
+              "title": "End Date"
+            },
+            "description": "End date for filtering"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicationLogResponse"
+                  },
+                  "title": "Response List Medication Logs Api V1 Logs Medications Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logs/medications/{log_id}": {
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Get medication log",
+        "description": "Get a specific medication log by ID",
+        "operationId": "get_medication_log_api_v1_logs_medications__log_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Update medication log",
+        "description": "Update a specific medication log by ID",
+        "operationId": "update_medication_log_api_v1_logs_medications__log_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicationLogUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Delete medication log",
+        "description": "Delete a specific medication log by ID",
+        "operationId": "delete_medication_log_api_v1_logs_medications__log_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logs/symptoms": {
+      "post": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Create symptom log",
+        "description": "Create a new symptom log entry for the authenticated user",
+        "operationId": "create_symptom_log_api_v1_logs_symptoms_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SymptomLogCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymptomLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "List symptom logs",
+        "description": "Get a list of symptom logs for the authenticated user",
+        "operationId": "list_symptom_logs_api_v1_logs_symptoms_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of records",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of records to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date for filtering",
+              "title": "Start Date"
+            },
+            "description": "Start date for filtering"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date for filtering",
+              "title": "End Date"
+            },
+            "description": "End date for filtering"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SymptomLogResponse"
+                  },
+                  "title": "Response List Symptom Logs Api V1 Logs Symptoms Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logs/symptoms/{log_id}": {
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Get symptom log",
+        "description": "Get a specific symptom log by ID",
+        "operationId": "get_symptom_log_api_v1_logs_symptoms__log_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymptomLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Update symptom log",
+        "description": "Update a specific symptom log by ID",
+        "operationId": "update_symptom_log_api_v1_logs_symptoms__log_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SymptomLogUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymptomLogResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Delete symptom log",
+        "description": "Delete a specific symptom log by ID",
+        "operationId": "delete_symptom_log_api_v1_logs_symptoms__log_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logs/summary": {
+      "get": {
+        "tags": [
+          "Logs"
+        ],
+        "summary": "Get logs summary",
+        "description": "Get a summary of recent logs for the landing page",
+        "operationId": "get_logs_summary_api_v1_logs_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogSummaryResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/feel-vs-yesterday": {
+      "get": {
+        "tags": [
+          "Feel Analysis"
+        ],
+        "summary": "Feel vs yesterday analysis",
+        "description": "Analyze how the user feels today compared to yesterday based on medication and symptom logs",
+        "operationId": "feel_vs_yesterday_api_v1_feel_vs_yesterday_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "target_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Date to compare against (defaults to today). Format: YYYY-MM-DDTHH:MM:SS",
+              "title": "Target Date"
+            },
+            "description": "Date to compare against (defaults to today). Format: YYYY-MM-DDTHH:MM:SS"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeelVsYesterdayResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feel-vs-yesterday/history": {
+      "get": {
+        "tags": [
+          "Feel Analysis"
+        ],
+        "summary": "Feel vs yesterday history",
+        "description": "Get feel vs yesterday analysis for multiple days",
+        "operationId": "feel_vs_yesterday_history_api_v1_feel_vs_yesterday_history_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 30,
+              "minimum": 1,
+              "description": "Number of days to analyze (1-30)",
+              "default": 7,
+              "title": "Days"
+            },
+            "description": "Number of days to analyze (1-30)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeelVsYesterdayResponse"
+                  },
+                  "title": "Response Feel Vs Yesterday History Api V1 Feel Vs Yesterday History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feel-vs-yesterday/health": {
+      "get": {
+        "tags": [
+          "Feel Analysis"
+        ],
+        "summary": "Feel service health check",
+        "description": "Check if the feel vs yesterday service is working correctly",
+        "operationId": "feel_service_health_check_api_v1_feel_vs_yesterday_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Feel Service Health Check Api V1 Feel Vs Yesterday Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FeelVsYesterdayResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Overall feeling status: 'better', 'same', 'worse', 'unknown'"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "description": "Confidence score for the status (0.0 to 1.0)"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Human-readable summary of the comparison"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details",
+            "description": "Detailed breakdown of the analysis"
+          },
+          "date_compared": {
+            "type": "string",
+            "title": "Date Compared",
+            "description": "Date being compared (YYYY-MM-DD format)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "confidence",
+          "summary",
+          "date_compared"
+        ],
+        "title": "FeelVsYesterdayResponse",
+        "description": "Schema for feel vs yesterday comparison.",
+        "example": {
+          "confidence": 0.75,
+          "date_compared": "2025-10-15",
+          "details": {
+            "medication_effectiveness_change": 0.3,
+            "symptom_count_change": -1,
+            "symptom_severity_change": -0.5
+          },
+          "status": "better",
+          "summary": "Feeling better today - fewer symptoms and medications were more effective"
+        }
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthCheckResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Service status",
+            "example": "healthy"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "Health check timestamp",
+            "example": "2023-12-01T10:00:00Z"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Application version",
+            "example": "1.0.0"
+          },
+          "database": {
+            "type": "boolean",
+            "title": "Database",
+            "description": "Database connectivity status",
+            "example": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "timestamp",
+          "version",
+          "database"
+        ],
+        "title": "HealthCheckResponse",
+        "description": "Response schema for health check endpoints."
+      },
+      "LogSummaryResponse": {
+        "properties": {
+          "recent_medications": {
+            "items": {
+              "$ref": "#/components/schemas/MedicationLogResponse"
+            },
+            "type": "array",
+            "title": "Recent Medications",
+            "description": "Recent medication logs (last 5)"
+          },
+          "recent_symptoms": {
+            "items": {
+              "$ref": "#/components/schemas/SymptomLogResponse"
+            },
+            "type": "array",
+            "title": "Recent Symptoms",
+            "description": "Recent symptom logs (last 5)"
+          },
+          "total_medications_today": {
+            "type": "integer",
+            "title": "Total Medications Today",
+            "description": "Total medication logs for today",
+            "default": 0
+          },
+          "total_symptoms_today": {
+            "type": "integer",
+            "title": "Total Symptoms Today",
+            "description": "Total symptom logs for today",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "LogSummaryResponse",
+        "description": "Schema for log summary (recent logs for landing page)."
+      },
+      "MedicationLogCreate": {
+        "properties": {
+          "medication_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Medication Name",
+            "description": "Name of the medication taken"
+          },
+          "dosage": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Dosage",
+            "description": "Dosage amount and unit (e.g., '500mg', '2 tablets')"
+          },
+          "taken_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Taken At",
+            "description": "When the medication was actually taken"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "description": "Additional notes about the medication intake"
+          },
+          "side_effects": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Side Effects",
+            "description": "Any side effects experienced"
+          },
+          "side_effect_severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SeverityLevel"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Severity of side effects if any"
+          },
+          "effectiveness_rating": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effectiveness Rating",
+            "description": "How effective the medication felt (1-5 scale)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "medication_name",
+          "dosage",
+          "taken_at"
+        ],
+        "title": "MedicationLogCreate",
+        "description": "Schema for creating a new medication log entry."
+      },
+      "MedicationLogResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "medication_name": {
+            "type": "string",
+            "title": "Medication Name"
+          },
+          "dosage": {
+            "type": "string",
+            "title": "Dosage"
+          },
+          "taken_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Taken At"
+          },
+          "logged_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Logged At"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "side_effects": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Side Effects"
+          },
+          "side_effect_severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SeverityLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effectiveness_rating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effectiveness Rating"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "medication_name",
+          "dosage",
+          "taken_at",
+          "logged_at"
+        ],
+        "title": "MedicationLogResponse",
+        "description": "Schema for medication log response."
+      },
+      "MedicationLogUpdate": {
+        "properties": {
+          "medication_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medication Name"
+          },
+          "dosage": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dosage"
+          },
+          "taken_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taken At"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "side_effects": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Side Effects"
+          },
+          "side_effect_severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SeverityLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effectiveness_rating": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effectiveness Rating"
+          }
+        },
+        "type": "object",
+        "title": "MedicationLogUpdate",
+        "description": "Schema for updating an existing medication log entry."
+      },
+      "SeverityLevel": {
+        "type": "string",
+        "enum": [
+          "none",
+          "mild",
+          "moderate",
+          "severe",
+          "critical"
+        ],
+        "title": "SeverityLevel",
+        "description": "Severity levels for symptoms and side effects."
+      },
+      "SymptomLogCreate": {
+        "properties": {
+          "symptom_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Symptom Name",
+            "description": "Name or description of the symptom"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/SeverityLevel",
+            "description": "Severity level of the symptom"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At",
+            "description": "When the symptom started (if known)"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At",
+            "description": "When the symptom ended (if applicable)"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes",
+            "description": "Duration of the symptom in minutes"
+          },
+          "triggers": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Triggers",
+            "description": "Potential triggers for the symptom"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "Body location where symptom occurred"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "description": "Additional notes about the symptom"
+          },
+          "impact_rating": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Rating",
+            "description": "Impact on daily activities (1-5 scale)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symptom_name",
+          "severity",
+          "started_at"
+        ],
+        "title": "SymptomLogCreate",
+        "description": "Schema for creating a new symptom log entry."
+      },
+      "SymptomLogResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "symptom_name": {
+            "type": "string",
+            "title": "Symptom Name"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/SeverityLevel"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "logged_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Logged At"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes"
+          },
+          "triggers": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Triggers"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "impact_rating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Rating"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "symptom_name",
+          "severity",
+          "started_at",
+          "logged_at"
+        ],
+        "title": "SymptomLogResponse",
+        "description": "Schema for symptom log response."
+      },
+      "SymptomLogUpdate": {
+        "properties": {
+          "symptom_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Name"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SeverityLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes"
+          },
+          "triggers": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Triggers"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "impact_rating": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Rating"
+          }
+        },
+        "type": "object",
+        "title": "SymptomLogUpdate",
+        "description": "Schema for updating an existing symptom log entry."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

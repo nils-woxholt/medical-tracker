@@ -1,0 +1,81 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-type-checked",
+    "plugin:testing-library/react",
+    "plugin:playwright/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "./"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "testing-library",
+    "playwright",
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/prefer-const": "error",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/no-array-index-key": "warn",
+    "react/no-children-prop": "error",
+    "react/no-danger-with-children": "error",
+    "react/no-deprecated": "error",
+    "react/no-direct-mutation-state": "error",
+    "react/no-find-dom-node": "error",
+    "react/no-is-mounted": "error",
+    "react/no-render-return-value": "error",
+    "react/no-string-refs": "error",
+    "react/no-unescaped-entities": "error",
+    "react/no-unknown-property": "error",
+    "react/no-unsafe": "warn",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*", "**/*.{test,spec}.*"],
+      "extends": ["plugin:testing-library/react"],
+      "rules": {
+        "testing-library/no-debugging-utils": "warn",
+        "testing-library/no-manual-cleanup": "error",
+        "testing-library/no-render-in-setup": "error"
+      }
+    },
+    {
+      "files": ["**/*.e2e.ts", "tests/e2e/**/*.ts", "playwright/**/*.ts"],
+      "extends": ["plugin:playwright/recommended"],
+      "rules": {
+        "playwright/no-page-pause": "warn",
+        "playwright/no-element-handle": "error",
+        "playwright/no-eval": "error",
+        "playwright/no-focused-test": "error",
+        "playwright/no-force-option": "warn",
+        "playwright/no-skipped-test": "warn"
+      }
+    }
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  }
+}

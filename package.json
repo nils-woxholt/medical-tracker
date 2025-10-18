@@ -1,0 +1,67 @@
+{
+  "name": "saas-medical-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SaaS Medical Tracker - Full Stack Application",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" --names \"API,WEB\" --prefix-colors \"blue,green\"",
+    "dev:backend": "cd backend && source venv/bin/activate && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && pip install -e .",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && source venv/bin/activate && pytest",
+    "test:frontend": "cd frontend && npm run test",
+    "test:e2e": "cd frontend && npm run e2e",
+    "test:coverage": "npm run test:backend:coverage && npm run test:frontend:coverage",
+    "test:backend:coverage": "cd backend && source venv/bin/activate && pytest --cov=app --cov-report=html",
+    "test:frontend:coverage": "cd frontend && npm run test:coverage",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && source venv/bin/activate && ruff check .",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:fix": "npm run lint:backend:fix && npm run lint:frontend:fix",
+    "lint:backend:fix": "cd backend && source venv/bin/activate && ruff check . --fix && ruff format .",
+    "lint:frontend:fix": "cd frontend && npm run lint -- --fix",
+    "type-check": "npm run type-check:backend && npm run type-check:frontend",
+    "type-check:backend": "cd backend && source venv/bin/activate && mypy .",
+    "type-check:frontend": "cd frontend && npm run type-check",
+    "generate-types": "node scripts/generate-types.js",
+    "db:migrate": "cd backend && source venv/bin/activate && alembic upgrade head",
+    "db:migrate:create": "cd backend && source venv/bin/activate && alembic revision --autogenerate",
+    "db:migrate:down": "cd backend && source venv/bin/activate && alembic downgrade -1",
+    "clean": "npm run clean:backend && npm run clean:frontend",
+    "clean:backend": "cd backend && rm -rf __pycache__ .pytest_cache .coverage htmlcov .mypy_cache .ruff_cache",
+    "clean:frontend": "cd frontend && rm -rf .next node_modules/.cache",
+    "setup": "npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "cd backend && python -m venv venv && source venv/bin/activate && pip install -e '.[dev]'",
+    "setup:frontend": "cd frontend && npm install",
+    "docker:build": "docker build -t saas-medical-tracker .",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/saas-medical-tracker"
+  },
+  "keywords": [
+    "medical-tracker",
+    "fastapi",
+    "nextjs",
+    "typescript",
+    "sqlmodel",
+    "tailwind"
+  ],
+  "author": "Medical Tracker Team",
+  "license": "MIT"
+}

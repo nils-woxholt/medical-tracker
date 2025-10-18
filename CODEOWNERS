@@ -1,0 +1,39 @@
+# Global owners - for all files unless overridden
+* @medicaltracker-team/admin
+
+# Backend specific ownership
+backend/ @medicaltracker-team/backend-team
+backend/app/api/ @medicaltracker-team/api-team
+backend/app/models/ @medicaltracker-team/data-team
+backend/app/services/ @medicaltracker-team/backend-team
+backend/tests/ @medicaltracker-team/qa-team
+backend/alembic/ @medicaltracker-team/data-team
+
+# Frontend specific ownership
+frontend/ @medicaltracker-team/frontend-team
+frontend/src/app/ @medicaltracker-team/frontend-team
+frontend/src/components/ @medicaltracker-team/ui-team
+frontend/tests/ @medicaltracker-team/qa-team
+
+# Infrastructure and DevOps
+.github/ @medicaltracker-team/devops-team
+scripts/ @medicaltracker-team/devops-team
+Dockerfile* @medicaltracker-team/devops-team
+docker-compose*.yml @medicaltracker-team/devops-team
+.pre-commit-config.yaml @medicaltracker-team/devops-team
+
+# Configuration files
+*.json @medicaltracker-team/admin
+*.yaml @medicaltracker-team/admin
+*.yml @medicaltracker-team/admin
+*.toml @medicaltracker-team/admin
+.env* @medicaltracker-team/devops-team
+
+# Documentation
+README.md @medicaltracker-team/admin
+docs/ @medicaltracker-team/docs-team
+specs/ @medicaltracker-team/product-team
+
+# Security and compliance
+LICENSE @medicaltracker-team/legal-team
+.secrets.baseline @medicaltracker-team/security-team
