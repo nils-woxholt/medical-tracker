@@ -11,8 +11,8 @@ from typing import AsyncGenerator, Optional
 import structlog
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import Session, sessionmaker
-from sqlmodel import SQLModel
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel, Session
 
 from app.core.config import get_settings
 
@@ -87,6 +87,7 @@ class DatabaseManager:
             autocommit=False,
             autoflush=False,
             bind=self.engine,
+            class_=Session,
         )
 
         # Async engine and session (for future use)

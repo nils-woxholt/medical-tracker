@@ -10,6 +10,7 @@ from typing import AsyncGenerator
 
 import structlog
 from fastapi import FastAPI
+from structlog.types import FilteringBoundLogger
 
 from app.api import get_router
 from app.core.config import get_settings
@@ -18,11 +19,21 @@ from app.core.middleware import setup_exception_handlers, setup_middleware
 from app.models.base import init_database
 from app.telemetry.metrics import setup_metrics
 
-# Initialize structured logging
-setup_logging()
-logger = structlog.get_logger(__name__)
 
 settings = get_settings()
+
+
+def configure_logging() -> FilteringBoundLogger:
+    """Initialize structlog using loaded settings so .env flags apply."""
+    setup_logging(
+        log_level=settings.LOG_LEVEL,
+        json_output=settings.LOG_JSON_OUTPUT,
+        development_mode=settings.DEBUG,
+    )
+    return structlog.get_logger(__name__)
+
+
+logger = configure_logging()
 
 
 @asynccontextmanager

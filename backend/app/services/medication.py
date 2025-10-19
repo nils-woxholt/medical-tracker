@@ -124,19 +124,18 @@ class MedicationService:
         
         # Apply search filter (case-insensitive on name and description)
         if params.search:
-            search_term = f"%{params.search.lower()}%"
+            search_pattern = f"%{params.search.lower()}%"
             query = query.where(
                 or_(
-                    func.lower(MedicationMaster.name).contains(search_term),
-                    func.lower(MedicationMaster.description).contains(search_term)
+                    func.lower(MedicationMaster.name).like(search_pattern),
+                    func.lower(MedicationMaster.description).like(search_pattern)
                 )
             )
         
         # Get total count for pagination
-        count_query = select(func.count()).select_from(
-            query.subquery()
-        )
-        total = self.db.exec(count_query).first()
+        count_query = select(func.count()).select_from(query.subquery())
+        total_row = self.db.exec(count_query).one()
+        total = total_row if total_row is not None else 0
         
         # Apply pagination and ordering
         query = query.order_by(MedicationMaster.name)  # Alphabetical order
@@ -147,7 +146,7 @@ class MedicationService:
         medications = self.db.exec(query).all()
         
         # Calculate pagination metadata
-        total_pages = (total + params.per_page - 1) // params.per_page
+        total_pages = (total + params.per_page - 1) // params.per_page if total else 0
         
         return MedicationListResponse(
             items=[MedicationResponse.model_validate(med) for med in medications],

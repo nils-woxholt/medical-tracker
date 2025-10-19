@@ -143,7 +143,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "Referrer-Policy": "strict-origin-when-cross-origin",
 
             # Content Security Policy (basic)
-            "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
+            "Content-Security-Policy": (
+                "default-src 'self'; "
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; "
+                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+                "img-src 'self' data: https://fastapi.tiangolo.com; "
+                "font-src 'self' https://cdn.jsdelivr.net"
+            )
         })
 
         return response
@@ -360,9 +366,19 @@ def setup_middleware(app: FastAPI) -> None:
 
     # CORS Middleware
     cors_origins = getattr(settings, 'BACKEND_CORS_ORIGINS', ["http://localhost:3000", "http://localhost:8000"])
+    if isinstance(cors_origins, list):
+        # Browsers omit the trailing slash in the Origin header, so align the
+        # stored values to avoid false CORS rejections.
+        normalized_cors_origins = [
+            str(origin).rstrip("/") if str(origin) != "*" else "*"
+            for origin in cors_origins
+        ]
+    else:
+        normalized_cors_origins = ["*"]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in cors_origins] if isinstance(cors_origins, list) else ["*"],
+        allow_origins=normalized_cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

@@ -5,13 +5,14 @@ Implements REST API endpoints for medication master data management
 following OpenAPI specification and best practices.
 """
 
-from typing import List, Optional
+import time
+from contextlib import contextmanager
+from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlmodel import Session
 import structlog
 
 from app.core.dependencies import get_db, get_medication_service, get_current_user
-from app.models.user import User
 from app.services.medication import MedicationService
 from app.schemas.medication import (
     MedicationCreate,
@@ -30,7 +31,6 @@ from app.telemetry.metrics import (
     record_error,
     record_business_metric,
     track_user_action,
-    track_database_query,
 )
 
 logger = structlog.get_logger(__name__)
@@ -44,6 +44,32 @@ router = APIRouter(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
+
+
+def _get_user_id(current_user: Any) -> str:
+    """Safely extract a user identifier from the current user context."""
+    if isinstance(current_user, dict):
+        return str(current_user.get("user_id", "anonymous"))
+
+    user_id = getattr(current_user, "id", None) or getattr(current_user, "user_id", None)
+    if user_id is None:
+        return "anonymous"
+    return str(user_id)
+
+
+@contextmanager
+def _track_database_query(operation: str):
+    """Context manager to capture database query metrics for endpoint calls."""
+    start_time = time.perf_counter()
+    status = "success"
+    try:
+        yield
+    except Exception:
+        status = "error"
+        raise
+    finally:
+        duration = time.perf_counter() - start_time
+        record_database_query(operation, duration, status)
 
 
 @router.post(
@@ -72,19 +98,19 @@ async def create_medication(
             is_active=medication.is_active,
             has_description=bool(medication.description)
         )
-        
-        with track_database_query("medication_create"):
+
+        with _track_database_query("medication_create"):
             result = medication_service.create_medication(medication)
-        
+
         logger.info(
             "Medication created successfully",
             medication_id=result.id,
             medication_name=result.name
         )
-        record_user_action("medication_created")
-        
+        record_user_action("medication_created", "system")
+
         return result
-        
+
     except ValueError as e:
         logger.warning(
             "Medication creation failed - validation error",
@@ -126,12 +152,13 @@ async def list_medications(
     page: int = Query(1, ge=1, description="Page number for pagination"),
     per_page: int = Query(10, ge=1, le=100, description="Number of items per page (1-100)"),
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> MedicationListResponse:
     """Get paginated list of medications with search and filtering."""
-    
+    user_id = _get_user_id(current_user)
+
     logger.info("Listing medications", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "search": search,
         "active_only": active_only,
         "page": page,
@@ -148,11 +175,11 @@ async def list_medications(
         )
         
         # Track database query performance
-        with track_database_query("medication_list", "medications"):
+        with _track_database_query("medication_list"):
             result = medication_service.get_medications(params)
         
         logger.info("Medications listed successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "total_count": result.total if hasattr(result, 'total') else len(result.items) if hasattr(result, 'items') else 0,
             "page": page,
             "per_page": per_page,
@@ -163,7 +190,7 @@ async def list_medications(
         
         # Record success metrics
         record_business_metric("medications_listed", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "has_search": str(search is not None),
             "active_only": str(active_only)
         })
@@ -172,7 +199,7 @@ async def list_medications(
         
     except Exception as e:
         logger.error("Failed to list medications", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "search": search,
             "active_only": active_only,
             "page": page,
@@ -183,10 +210,7 @@ async def list_medications(
         })
         
         # Record error metrics
-        record_error("medication_list_error", str(e), {
-            "user_id": str(current_user.id),
-            "error_type": type(e).__name__
-        })
+        record_error("medication_list_error")
         
         if "not found" in str(e).lower():
             raise HTTPException(
@@ -217,49 +241,48 @@ async def list_medications(
 @track_user_action("medication_active_list")
 async def get_active_medications(
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> List[MedicationPublic]:
     """Get all active medications for dropdown/selection purposes."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Getting active medications", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "action": "medication_active_list"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_active_list", "medications"):
+        with _track_database_query("medication_active_list"):
             medications = medication_service.get_active_medications()
-        
+
         result = [MedicationPublic.model_validate(med) for med in medications]
-        
+
         logger.info("Active medications retrieved successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "count": len(result),
             "action": "medication_active_list"
         })
-        
+
         # Record success metrics
         record_business_metric("active_medications_retrieved", len(result), {
-            "user_id": str(current_user.id)
+            "user_id": user_id
         })
-        
+
         return result
-        
+
     except Exception as e:
         logger.error("Failed to get active medications", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_active_list"
         })
-        
+
         # Record error metrics
-        record_error("medication_active_list_error", str(e), {
-            "user_id": str(current_user.id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_active_list_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to retrieve active medications"
@@ -280,57 +303,56 @@ async def search_medications(
     q: str = Query(..., min_length=1, description="Search query"),
     active_only: bool = Query(True, description="Include only active medications"),
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> List[MedicationPublic]:
     """Search medications by name or description."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Searching medications", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "query": q,
         "active_only": active_only,
         "action": "medication_search"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_search", "medications"):
+        with _track_database_query("medication_search"):
             medications = medication_service.search_medications(q, active_only)
-        
+
         result = [MedicationPublic.model_validate(med) for med in medications]
-        
+
         logger.info("Medication search completed successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "query": q,
             "active_only": active_only,
             "results_count": len(result),
             "action": "medication_search"
         })
-        
+
         # Record success metrics
         record_business_metric("medication_search_performed", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "results_count": str(len(result)),
             "active_only": str(active_only)
         })
-        
+
         return result
-        
+
     except Exception as e:
         logger.error("Failed to search medications", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "query": q,
             "active_only": active_only,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_search"
         })
-        
+
         # Record error metrics
-        record_error("medication_search_error", str(e), {
-            "user_id": str(current_user.id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_search_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to search medications"
@@ -349,47 +371,46 @@ async def search_medications(
 @track_user_action("medication_stats")
 async def get_medication_stats(
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> dict:
     """Get medication statistics."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Getting medication statistics", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "action": "medication_stats"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_stats", "medications"):
+        with _track_database_query("medication_stats"):
             stats = medication_service.get_medication_stats()
-        
+
         logger.info("Medication statistics retrieved successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "stats": stats,
             "action": "medication_stats"
         })
-        
+
         # Record success metrics
         record_business_metric("medication_stats_retrieved", 1, {
-            "user_id": str(current_user.id)
+            "user_id": user_id
         })
-        
+
         return stats
-        
+
     except Exception as e:
         logger.error("Failed to get medication statistics", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_stats"
         })
-        
+
         # Record error metrics
-        record_error("medication_stats_error", str(e), {
-            "user_id": str(current_user.id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_stats_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to retrieve medication statistics"
@@ -410,73 +431,71 @@ async def get_medication_stats(
 async def get_medication(
     medication_id: int,
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> MedicationResponse:
     """Get medication by ID."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Getting medication by ID", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "medication_id": medication_id,
         "action": "medication_get"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_get", "medications"):
+        with _track_database_query("medication_get"):
             medication = medication_service.get_medication_by_id(medication_id)
-        
+
         if not medication:
             logger.warning("Medication not found", extra={
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": medication_id,
                 "action": "medication_get"
             })
-            
+
             # Record not found metrics
             record_business_metric("medication_not_found", 1, {
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": str(medication_id)
             })
-            
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Medication with id {medication_id} not found"
             )
-        
+
         logger.info("Medication retrieved successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "medication_name": medication.name if hasattr(medication, 'name') else None,
             "action": "medication_get"
         })
-        
+
         # Record success metrics
         record_business_metric("medication_retrieved", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": str(medication_id)
         })
-        
+
         return medication
-        
+
     except HTTPException:
         # Re-raise HTTP exceptions (like 404)
         raise
     except Exception as e:
         logger.error("Failed to get medication", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_get"
         })
-        
+
         # Record error metrics
-        record_error("medication_get_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_get_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to retrieve medication"
@@ -500,92 +519,87 @@ async def update_medication(
     medication_id: int,
     medication: MedicationUpdate,
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> MedicationResponse:
     """Update an existing medication."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Updating medication", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "medication_id": medication_id,
         "update_data": medication.model_dump(exclude_unset=True),
         "action": "medication_update"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_update", "medications"):
+        with _track_database_query("medication_update"):
             updated_medication = medication_service.update_medication(medication_id, medication)
-        
+
         if not updated_medication:
             logger.warning("Medication not found for update", extra={
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": medication_id,
                 "action": "medication_update"
             })
-            
+
             # Record not found metrics
             record_business_metric("medication_update_not_found", 1, {
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": str(medication_id)
             })
-            
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Medication with id {medication_id} not found"
             )
-        
+
         logger.info("Medication updated successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "medication_name": updated_medication.name if hasattr(updated_medication, 'name') else None,
             "action": "medication_update"
         })
-        
+
         # Record success metrics
         record_business_metric("medication_updated", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": str(medication_id)
         })
-        
+
         return updated_medication
-        
+
     except HTTPException:
         # Re-raise HTTP exceptions (like 404)
         raise
     except ValueError as e:
         logger.warning("Medication update validation error", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "action": "medication_update"
         })
-        
+
         # Record validation error metrics
-        record_error("medication_update_validation_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id)
-        })
-        
+        record_error("medication_update_validation_error", "warning")
+
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
     except Exception as e:
         logger.error("Failed to update medication", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_update"
         })
-        
+
         # Record error metrics
-        record_error("medication_update_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_update_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to update medication"
@@ -607,90 +621,85 @@ async def update_medication(
 async def deactivate_medication(
     medication_id: int,
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> MedicationDeactivateResponse:
     """Deactivate a medication (soft delete)."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Deactivating medication", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "medication_id": medication_id,
         "action": "medication_deactivate"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_deactivate", "medications"):
+        with _track_database_query("medication_deactivate"):
             result = medication_service.deactivate_medication(medication_id)
-        
+
         if not result:
             logger.warning("Medication not found for deactivation", extra={
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": medication_id,
                 "action": "medication_deactivate"
             })
-            
+
             # Record not found metrics
             record_business_metric("medication_deactivate_not_found", 1, {
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": str(medication_id)
             })
-            
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Medication with id {medication_id} not found"
             )
-        
+
         logger.info("Medication deactivated successfully", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "action": "medication_deactivate"
         })
-        
+
         # Record success metrics
         record_business_metric("medication_deactivated", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": str(medication_id)
         })
-        
+
         return result
-        
+
     except HTTPException:
         # Re-raise HTTP exceptions (like 404)
         raise
     except ValueError as e:
         logger.warning("Medication deactivation validation error", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "action": "medication_deactivate"
         })
-        
+
         # Record validation error metrics
-        record_error("medication_deactivate_validation_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id)
-        })
-        
+        record_error("medication_deactivate_validation_error", "warning")
+
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
     except Exception as e:
         logger.error("Failed to deactivate medication", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_deactivate"
         })
-        
+
         # Record error metrics
-        record_error("medication_deactivate_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_deactivate_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to deactivate medication"
@@ -713,7 +722,7 @@ async def reactivate_medication(
 ) -> MedicationResponse:
     """Reactivate a previously deactivated medication."""
     # Use update service to set is_active = True
-    update_data = MedicationUpdate(is_active=True)
+    update_data = MedicationUpdate(name=None, description=None, is_active=True)
     updated_medication = medication_service.update_medication(medication_id, update_data)
     
     if not updated_medication:
@@ -740,88 +749,83 @@ async def reactivate_medication(
 async def delete_medication(
     medication_id: int,
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> None:
     """Permanently delete a medication (hard delete)."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.warning("Attempting to permanently delete medication", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "medication_id": medication_id,
         "action": "medication_delete"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_delete", "medications"):
+        with _track_database_query("medication_delete"):
             deleted = medication_service.delete_medication(medication_id)
-        
+
         if not deleted:
             logger.warning("Medication not found for deletion", extra={
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": medication_id,
                 "action": "medication_delete"
             })
-            
+
             # Record not found metrics
             record_business_metric("medication_delete_not_found", 1, {
-                "user_id": str(current_user.id),
+                "user_id": user_id,
                 "medication_id": str(medication_id)
             })
-            
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Medication with id {medication_id} not found"
             )
-        
+
         logger.warning("Medication permanently deleted", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "action": "medication_delete"
         })
-        
+
         # Record success metrics (use warning level for hard deletes)
         record_business_metric("medication_deleted", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": str(medication_id)
         })
-        
+
     except HTTPException:
         # Re-raise HTTP exceptions (like 404)
         raise
     except ValueError as e:
         logger.error("Medication deletion validation error", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "action": "medication_delete"
         })
-        
+
         # Record validation error metrics (e.g., referenced by logs)
-        record_error("medication_delete_validation_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id)
-        })
-        
+        record_error("medication_delete_validation_error", "warning")
+
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
     except Exception as e:
         logger.error("Failed to delete medication", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "medication_id": medication_id,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_delete"
         })
-        
+
         # Record error metrics
-        record_error("medication_delete_error", str(e), {
-            "user_id": str(current_user.id),
-            "medication_id": str(medication_id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_delete_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to delete medication"
@@ -842,61 +846,60 @@ async def validate_medication_name(
     name: str = Query(..., description="Medication name to validate"),
     active_only: bool = Query(True, description="Check only active medications"),
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: User = Depends(get_current_user)
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> dict:
     """Validate medication name existence."""
-    
+
+    user_id = _get_user_id(current_user)
+
     logger.info("Validating medication name", extra={
-        "user_id": str(current_user.id),
+        "user_id": user_id,
         "name": name,
         "active_only": active_only,
         "action": "medication_validate"
     })
-    
+
     try:
         # Track database query performance
-        with track_database_query("medication_validate", "medications"):
+        with _track_database_query("medication_validate"):
             exists = medication_service.validate_medication_exists(name, active_only)
-        
+
         result = {
             "name": name,
             "exists": exists,
             "active_only": active_only
         }
-        
+
         logger.info("Medication name validation completed", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "name": name,
             "exists": exists,
             "active_only": active_only,
             "action": "medication_validate"
         })
-        
+
         # Record validation metrics
         record_business_metric("medication_name_validated", 1, {
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "exists": str(exists),
             "active_only": str(active_only)
         })
-        
+
         return result
-        
+
     except Exception as e:
         logger.error("Failed to validate medication name", extra={
-            "user_id": str(current_user.id),
+            "user_id": user_id,
             "name": name,
             "active_only": active_only,
             "error": str(e),
             "error_type": type(e).__name__,
             "action": "medication_validate"
         })
-        
+
         # Record error metrics
-        record_error("medication_validate_error", str(e), {
-            "user_id": str(current_user.id),
-            "error_type": type(e).__name__
-        })
-        
+        record_error("medication_validate_error")
+
         raise HTTPException(
             status_code=500,
             detail="Failed to validate medication name"
