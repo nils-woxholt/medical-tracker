@@ -22,20 +22,20 @@ Purpose: Establish environment & baseline artifacts required before foundational
 
 Purpose: Blocking prerequisites: database migration, core validation utilities, and contract test scaffolding.
 
-- [ ] T011 Implement Alembic migration for `symptom_type` table & modify/create `symptom_log` table with constraints in `backend/alembic/versions/<timestamp>_symptom_type_initial.py`
-- [ ] T012 [P] Implement `SymptomType` SQLModel class in `backend/app/models/symptom_type.py`
-- [ ] T013 Implement `severity_label` & `impact_label` derivation in `backend/app/services/severity_mapping.py`
-- [ ] T014 Implement `validate_duration` (caps, confirmation logic) in `backend/app/services/duration_validator.py`
-- [ ] T015 [P] Implement `SymptomLog` SQLModel class in `backend/app/models/symptom_log.py`
-- [ ] T016 Add active enforcement check utility `backend/app/services/active_fk_guard.py`
-- [ ] T017 Add base repository/service scaffolds `backend/app/services/symptom_type_service.py`
-- [ ] T018 [P] Add symptom log service scaffold `backend/app/services/symptom_log_service.py`
-- [ ] T019 Add medication log service scaffold `backend/app/services/medication_log_service.py`
-- [ ] T020 Add contract validation test `backend/tests/contract/test_feature_004_contract.py`
-- [ ] T021 Add unit tests for severity mapping `backend/tests/unit/test_severity_mapping.py`
-- [ ] T022 [P] Add unit tests for duration validator `backend/tests/unit/test_duration_validator.py`
-- [ ] T023 Add unit tests for active FK guard `backend/tests/unit/test_active_fk_guard.py`
-- [ ] T024 Integration test for migration constraints `backend/tests/integration/test_migration_feature_004.py`
+[X] T011 Implement Alembic migration for `symptom_type` table & modify/create `symptom_log` table with constraints in `backend/alembic/versions/20251029_000000_symptom_type_initial.py`
+[X] T012 [P] Implement `SymptomType` SQLModel class in `backend/app/models/symptom_type.py`
+[X] T013 Implement `severity_label` & `impact_label` derivation in `backend/app/services/severity_mapping.py`
+[X] T014 Implement `validate_duration` (caps, confirmation logic) in `backend/app/services/duration_validator.py`
+[X] T015 [P] Implement `SymptomLog` SQLModel class in `backend/app/models/symptom_log.py`
+[X] T016 Add active enforcement check utility `backend/app/services/active_guard.py`
+[X] T017 Add base repository/service scaffolds `backend/app/services/symptom_type_service.py`
+[X] T018 [P] Add symptom log service scaffold `backend/app/services/symptom_log_service.py`
+[X] T019 Add medication log service scaffold `backend/app/services/medication_log_service.py`
+[X] T020 Add contract validation test `backend/tests/contract/test_feature004_openapi.py`
+[X] T021 Add unit tests for severity mapping `backend/tests/unit/test_severity_mapping.py`
+[X] T022 [P] Add unit tests for duration validator `backend/tests/unit/test_duration_validator.py`
+[X] T023 Add unit tests for active FK guard `backend/tests/unit/test_active_guard.py`
+[X] T024 Integration test for migration constraints `backend/tests/integration/test_migration_constraints.py`
 
 ## Phase 3: User Story 1 (P1) Symptom Type Management
 

@@ -18,20 +18,19 @@ class SymptomTypeBase(SQLModel):
 
 
 class SymptomType(SymptomTypeBase, table=True):  # type: ignore[call-arg]
-    __tablename__ = "symptom_type"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(index=True, description="Owner user id")
+    user_id: str = Field(index=True, description="Owner user id (string UUID)")
     default_severity_numeric: int = Field(ge=1, le=10, description="Default severity numeric scale 1-10")
     default_impact_numeric: int = Field(ge=1, le=10, description="Default impact numeric scale 1-10")
     active: bool = Field(default=True, index=True)
     created_at: datetime = Field(
         default_factory=datetime.utcnow,
-        sa_column=Column(DateTime(timezone=False), nullable=False),
+        sa_column=Column(DateTime(timezone=True), nullable=False),
     )
     updated_at: datetime = Field(
         default_factory=datetime.utcnow,
-        sa_column=Column(DateTime(timezone=False), nullable=False),
+        sa_column=Column(DateTime(timezone=True), nullable=False),
     )
 
     __table_args__ = (
