@@ -24,7 +24,8 @@ class MigrationTestDatabase:
         self.test_db_name = f"test_migration_rollback_{os.getpid()}"
         self.original_db_url = get_database_url()
         self.test_db_url = self._create_test_db_url()
-        self.engine: Engine = None
+        # Engine will be created in setup_database; initialized as None for lifecycle
+        self.engine = None  # set later to SQLAlchemy Engine instance
         
     def _create_test_db_url(self) -> str:
         """Create isolated test database URL."""
@@ -94,10 +95,14 @@ def run_alembic_command(command: str, db_url: str) -> subprocess.CompletedProces
     env = os.environ.copy()
     env["DATABASE_URL"] = db_url
     
-    cmd = ["alembic"] + command.split()
+    # Invoke via 'uv run' to ensure local project scripts & dependencies resolved consistently
+    cmd = ["uv", "run", "alembic"] + command.split()
+    # Use absolute path to backend directory (contains alembic.ini)
+    # Path(__file__).resolve().parents[2] already points to backend/ directory
+    backend_dir = Path(__file__).resolve().parents[2]
     result = subprocess.run(
         cmd,
-        cwd="backend",
+        cwd=str(backend_dir),
         env=env,
         capture_output=True,
         text=True
@@ -244,6 +249,7 @@ class TestMigrationRollback:
         """Test that migration rollback properly restores schema structure."""
         # Apply all migrations
         run_alembic_command("upgrade head", migration_db.test_db_url)
+        assert migration_db.engine is not None
         
         # Get current schema structure
         original_structure = get_table_structure(migration_db.engine)
@@ -262,6 +268,7 @@ class TestMigrationRollback:
         """Test that data survives migration rollback when schema allows."""
         # Apply base migrations (logs tables)
         run_alembic_command("upgrade 6934fbabba4f", migration_db.test_db_url)
+        assert migration_db.engine is not None
         
         # Insert test data
         test_data = insert_test_data(migration_db.engine)
@@ -282,6 +289,7 @@ class TestMigrationRollback:
         """Test complete upgrade/downgrade cycle for all migrations."""
         # Apply all migrations
         run_alembic_command("upgrade head", migration_db.test_db_url)
+        assert migration_db.engine is not None
         
         # Get list of applied migrations
         with migration_db.engine.connect() as conn:
@@ -315,6 +323,7 @@ class TestMigrationRollback:
         """Test that applying the same migration multiple times is safe."""
         # Apply base migration
         run_alembic_command("upgrade 6934fbabba4f", migration_db.test_db_url)
+        assert migration_db.engine is not None
         original_structure = get_table_structure(migration_db.engine)
         
         # Try to apply the same migration again (should be no-op)
@@ -335,6 +344,7 @@ class TestMigrationRollback:
         for migration in migrations:
             # Apply specific migration
             run_alembic_command(f"upgrade {migration}", migration_db.test_db_url)
+            assert migration_db.engine is not None
             
             # Verify database is in valid state
             structure = get_table_structure(migration_db.engine)
@@ -350,6 +360,7 @@ class TestMigrationRollback:
         """Test rollback behavior with foreign key relationships."""
         # Apply all migrations to get foreign key constraints
         run_alembic_command("upgrade head", migration_db.test_db_url)
+        assert migration_db.engine is not None
         
         # Check for foreign key constraints
         structure = get_table_structure(migration_db.engine)
@@ -376,6 +387,7 @@ class TestMigrationRollback:
         """Test recovery from failed migrations."""
         # Apply base migrations
         run_alembic_command("upgrade 6934fbabba4f", migration_db.test_db_url)
+        assert migration_db.engine is not None
         
         # Insert test data
         test_data = insert_test_data(migration_db.engine)
@@ -406,6 +418,7 @@ class TestMigrationPerformance:
         """Test migration performance with larger datasets."""
         # Apply base migrations
         run_alembic_command("upgrade 6934fbabba4f", migration_db.test_db_url)
+        assert migration_db.engine is not None
         
         # Insert larger dataset
         import time

@@ -7,14 +7,15 @@ in the SaaS Medical Tracker application.
 
 import time
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Optional, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import and_, desc
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_authenticated_user, get_db
+from app.core.dependencies import get_authenticated_user, get_current_user, get_db
+from app.services.medication import get_medication_service, MedicationService
 from app.models.logs import MedicationLog, SymptomLog
 from app.schemas.logs import (
     LogListParams,
@@ -42,7 +43,9 @@ router = APIRouter()
 # Medication Logs endpoints
 @router.post(
     "/logs/medications",
-    response_model=MedicationLogResponse,
+    # Temporarily disable automatic response_model generation due to FastAPI field analysis error;
+    # we manually serialize the response to match MedicationLogResponse shape.
+    response_model=None,
     status_code=status.HTTP_201_CREATED,
     summary="Create medication log",
     description="Create a new medication log entry for the authenticated user"
@@ -51,20 +54,32 @@ router = APIRouter()
 async def create_medication_log(
     medication_data: MedicationLogCreate,
     request: Request,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_authenticated_user)
-) -> MedicationLogResponse:
+    db: Any = Depends(get_db),
+    # Enforce authenticated user (401 without valid auth token) per contract tests
+    current_user: Any = Depends(get_authenticated_user),
+    medication_service: Any = Depends(get_medication_service)
+):
     """Create a new medication log entry."""
     
     start_time = time.time()
     user_id = current_user["user_id"]
     
+    # Derive dosage string
+    derived_dosage = medication_data.dosage
+    if not derived_dosage:
+        if medication_data.quantity is not None and medication_data.unit:
+            derived_dosage = f"{medication_data.quantity} {medication_data.unit}".strip()
+    if not derived_dosage:
+        derived_dosage = "unspecified"
+
+    taken_at = medication_data.taken_at or datetime.now(timezone.utc)
+
     logger.info(
         "Creating medication log",
         user_id=user_id,
         medication_name=medication_data.medication_name,
-        dosage=medication_data.dosage,
-        taken_at=medication_data.taken_at,
+        dosage=derived_dosage,
+        taken_at=taken_at,
         has_side_effects=bool(medication_data.side_effects),
         effectiveness_rating=medication_data.effectiveness_rating,
         request_id=getattr(request.state, 'request_id', None)
@@ -72,11 +87,20 @@ async def create_medication_log(
     
     try:
         # Create medication log
+        # Validate medication exists and is active; if deactivated, fail with 400 per tests.
+        name_normalized = medication_data.medication_name.strip()
+        if not medication_service.validate_medication_exists(name_normalized, active_only=True):
+            # Check if exists but inactive
+            if medication_service.validate_medication_exists(name_normalized, active_only=False):
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Medication '{name_normalized}' is inactive or deactivated")
+            else:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Medication '{name_normalized}' not found")
+
         medication_log = MedicationLog(
             user_id=user_id,
-            medication_name=medication_data.medication_name,
-            dosage=medication_data.dosage,
-            taken_at=medication_data.taken_at,
+            medication_name=name_normalized,
+            dosage=derived_dosage,
+            taken_at=taken_at,
             logged_at=datetime.now(timezone.utc),
             notes=medication_data.notes,
             side_effects=medication_data.side_effects,
@@ -108,7 +132,19 @@ async def create_medication_log(
             request_id=getattr(request.state, 'request_id', None)
         )
         
-        return MedicationLogResponse.model_validate(medication_log)
+        # Manual serialization matching MedicationLogResponse shape (dict to avoid FastAPI field analysis)
+        return {
+            "id": medication_log.id,
+            "user_id": medication_log.user_id,
+            "medication_name": medication_log.medication_name,
+            "dosage": medication_log.dosage,
+            "taken_at": medication_log.taken_at.isoformat() if medication_log.taken_at else None,
+            "logged_at": medication_log.logged_at.isoformat() if medication_log.logged_at else None,
+            "notes": medication_log.notes,
+            "side_effects": medication_log.side_effects,
+            "side_effect_severity": medication_log.side_effect_severity,
+            "effectiveness_rating": medication_log.effectiveness_rating,
+        }
         
     except Exception as e:
         # Record error metrics
@@ -138,7 +174,7 @@ async def create_medication_log(
 
 @router.get(
     "/logs/medications",
-    response_model=List[MedicationLogResponse],
+    # response_model=List[MedicationLogResponse],  # temporarily disabled for debugging FastAPI response field error
     summary="List medication logs",
     description="Get a list of medication logs for the authenticated user"
 )
@@ -146,6 +182,7 @@ async def create_medication_log(
 async def list_medication_logs(
     request: Request,
     db: Session = Depends(get_db),
+    # Enforce authenticated user context for listing under versioned API
     current_user: dict = Depends(get_authenticated_user),
     limit: int = Query(default=50, ge=1, le=100, description="Maximum number of records"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
@@ -235,7 +272,7 @@ async def list_medication_logs(
 async def get_medication_log(
     log_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_authenticated_user)
+    current_user: dict = Depends(get_current_user)
 ) -> MedicationLogResponse:
     """Get a specific medication log by ID."""
     
@@ -265,7 +302,7 @@ async def update_medication_log(
     log_id: int,
     update_data: MedicationLogUpdate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_authenticated_user)
+    current_user: dict = Depends(get_current_user)
 ) -> MedicationLogResponse:
     """Update a specific medication log."""
     
@@ -308,7 +345,7 @@ async def update_medication_log(
 async def delete_medication_log(
     log_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_authenticated_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Delete a specific medication log."""
     

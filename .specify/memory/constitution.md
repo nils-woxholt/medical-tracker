@@ -1,15 +1,12 @@
 <!--
 Sync Impact Report
-Version change: (none prior) → 1.0.0
-Modified principles: (initial adoption)
-Added sections: Core Principles; Platform & Stack Constraints; Development Workflow & Quality Gates; Governance
-Removed sections: none
+Version change: 1.0.0 → 1.1.0 (MINOR)
+Modified principles: Accessibility & Performance; Contracts; Testing; Observability; Governance
+Added sections: Operating Modes; Fast Track Exceptions; Lean Mode Checklist; Strict Mode Gates
+Removed sections: none (restructured)
 Templates requiring updates:
-	.specify/templates/plan-template.md ✅ updated
-	.specify/templates/spec-template.md ✅ updated
-	.specify/templates/tasks-template.md ✅ updated
-	.specify/templates/agent-file-template.md ⚠ pending (auto-generated content still placeholder driven; no conflicting references)
-	.specify/templates/commands/* (directory not found – N/A)
+  .specify/templates/plan-template.md (validate Lean/Strict tags)
+  .specify/templates/spec-template.md (add mode declaration) ⚠ pending
 Deferred TODOs: none
 -->
 
@@ -17,91 +14,191 @@ Deferred TODOs: none
 
 ## Core Principles
 
-### I. Accessibility & Performance First
+### Operating Modes
 
-All user-facing pages MUST meet minimum Core Web Vitals (LCP ≤ 2.5s, CLS ≤ 0.1, FID/INP good) and achieve Lighthouse scores ≥ 90 for Performance, Accessibility, and Best Practices before a feature exits its MVP story phase. Semantic HTML, ARIA only when necessary, keyboard navigation, and color contrast compliance (WCAG 2.1 AA) are mandatory. Performance budgets: each page bundle (Next.js route) ≤ 200KB gzipped critical JS (excluding lazy-loaded chunks); images MUST be optimized via Next.js Image component; blocking network requests minimized (≤ 3 critical path requests). Rationale: Ensures inclusive, fast baseline reduces retrofitting cost, improves SEO & conversion.
+We operate in two modes:
 
-### II. Contract-First API & Shared Types
+- Lean Mode (default for new features / early iteration): prioritize shipping validated user value quickly with minimal but meaningful safeguards.
+- Strict Mode (stabilization, pre-release, compliance-sensitive work): apply full quality, performance, accessibility, and contract rigor.
 
-Every new backend capability starts with an OpenAPI contract (FastAPI auto docs acceptable once defined) and JSON schema definitions that generate/validate shared TypeScript client types. No backend implementation code merges without a reviewed contract. Breaking change detection is automated via contract diff in CI; unapproved breaking diffs block merge. Rationale: Stabilizes frontend-backend collaboration, prevents over-implementation, enables strong typing & mocks.
+A feature switches to Strict Mode when tagged `stabilize:<feature>` or entering a release milestone.
 
-### III. Test-Driven Development & Layered Quality Gates
+### I. Accessibility & Performance (Lean → Strict)
 
-For each user story: write failing tests before implementation (component tests for UI via React Testing Library, API contract tests, and at least one e2e flow via Playwright for P1 stories). Minimum coverage thresholds: 80% statements for changed backend modules, 70% for frontend components in scope (quality over chasing 100%). Red → Green → Refactor cycle enforced; flakey tests are P0 to stabilize. Rationale: Enforces confidence, documents intent, and reduces integration defects.
+Lean Mode:
 
-### IV. Observability & Error Transparency
+- Use semantic HTML (landmarks, headings) and avoid obvious contrast issues.
+- No hard budgets; avoid known anti-patterns (large blocking images, huge unoptimized libraries).
+- Run Lighthouse ad hoc; fix egregious regressions.
 
-All API endpoints MUST include structured logging (request id, user/session id, latency, status) and expose metrics (latencies, error rates) via Prometheus-compatible endpoint. Frontend captures unhandled errors & performance metrics (web vitals) and emits to logging endpoint with PII scrubbing. Distributed tracing (trace id propagated via headers) required for cross-service calls. Rationale: Rapid diagnosis reduces MTTR and supports data-driven optimization.
+Strict Mode:
 
-### V. Security, Privacy & Simplicity
+- LCP ≤ 2.5s, CLS ≤ 0.1, good INP/FID.
+- Lighthouse ≥ 90 (Performance, Accessibility, Best Practices).
+- Route critical JS ≤ 200KB gzipped (excluding lazy chunks).
+- ≤ 3 critical path blocking requests.
 
-Security controls (authn via JWT/OIDC, role/permission checks, input validation using pydantic schemas) MUST exist before exposing endpoints publicly. Secrets are never committed; environment configuration via `.env` + secret store in deployment. Dependencies scanned weekly; critical vulnerabilities block release. Simplicity rule: Introduce abstraction (service layer, caching, queueing) only once a measurable need (latency, throughput, code duplication) is documented in the plan's Complexity Tracking table. Rationale: Protects user data & velocity; avoids architecture drift.
+Rationale: Lean reduces friction early; Strict enforces sustainable excellence.
 
-## Platform & Stack Constraints
+### II. Contracts & Types (Progressive Rigor)
 
-Frontend: Next.js (App Router), TypeScript strict mode, shadcn/ui components, Tailwind CSS.
-Backend: FastAPI (Python ≥3.11), uvicorn ASGI server, pydantic v2 for validation, SQLModel or
-SQLAlchemy for persistence, Postgres as primary database. Package/build: pnpm (frontend), uv/poetry
-or pip-tools (choose one per service; default: uv with requirements.lock). API auth via OIDC/JWT with
-FastAPI dependencies. CORS locked to known origins. Infrastructure scripts MUST be idempotent.
+Lean Mode:
 
-Performance Budgets:
+- New endpoint must have a documented request/response shape (Pydantic schema or TypeScript interface) in code or a short comment block.
+- Mark endpoints as "provisional" until reused by another feature or exposed publicly.
 
-- API p95 latency ≤ 300ms for standard requests, ≤ 1000ms for heavy analytics endpoints.
-- Error rate (5xx) < 0.5% rolling 7d.
-- Cold start (first request after deploy) ≤ 2s.
+Strict Mode:
 
-Data & Schema:
+- OpenAPI contract updated & diff reviewed before merge.
+- Shared types generated automatically (e.g. `openapi-typescript`) and consumed.
 
-- OpenAPI contract canonical; Type generation via `openapi-typescript` for client.
-- DB migrations via Alembic; each migration linked to feature spec.
+Rationale: Defers heavy ceremony until stability matters.
 
-Deployment & Environments:
+### III. Testing Strategy (Minimum First, Depth Later)
 
-- Branch previews (frontend) auto-deployed; staging mirrors production config (minus scale).
-- Feature flags for incomplete work—no dead code behind commented blocks.
+Lean Mode Minimum:
 
-## Development Workflow & Quality Gates
+- At least one test covering changed logic (unit OR component).
+- Critical flows (login, data creation) require a simple e2e smoke test.
+- No coverage percentage enforcement; focus on value & correctness.
 
-Pull Request Checklist (MUST all be affirmative):
+Strict Mode:
 
-1. Contract updated (if API change) & diff clean (no unapproved breaking changes).
-2. Tests added & passing (unit, component; e2e for P1 stories) with coverage thresholds met.
-3. Accessibility & performance budgets validated (attach Lighthouse JSON for affected pages).
-4. Security scanning (dependencies + static analysis) passed; no new critical/high vulns.
-5. Observability: new endpoints expose logs & metrics; trace propagation verified.
-6. Complexity table updated if introducing new abstraction.
-7. Changelog entry (or aggregation commit) for user-visible behavior.
+- Coverage thresholds: backend changed modules ≥ 80%, frontend in-scope components ≥ 70%.
+- e2e path for primary user journeys.
+- Red → Green → Refactor encouraged (not blocked by lack of refactor stage).
 
-CI Pipeline Stages (fail-fast):
+Flaky tests tracked; resolution prioritized during stabilization.
 
-- Lint & Type Check (ESLint strict, mypy optional if Python types enforced, ruff linting).
-- Contract Diff & Schema Validation.
-- Test (unit/component) → Integration/API → e2e (parallelizable groups).
-- Build & Bundle Size Guard (fail if > budget).
-- Security & License Scan.
-- Deploy Preview (frontend) & ephemeral API env for QA.
+### IV. Observability & Errors (Progressive Enhancement)
 
-Release Governance:
+Lean Mode:
 
-- Semantic versioning for the product: MAJOR (breaking public API / contract), MINOR (new feature, non-breaking), PATCH (bug/security fix, perf improvements without contract change).
-- Database migrations backward compatible for at least one MINOR unless justified.
+- Structured error logging with request id (or generated UUID) & user/session if available.
+- Central error boundary on frontend reporting basic info (scrub PII).
+
+Strict Mode:
+
+- Standard request logs (latency, status) + metrics (latency histograms, error rates).
+- Distributed trace id propagation.
+- Frontend web vitals emission.
+
+### V. Security & Privacy (Non-Negotiable Baseline)
+
+Always (both modes):
+
+- Hashed passwords, validated input (Pydantic).
+- Auth checks on protected endpoints.
+- No secrets in code; use environment variables.
+- Dependency audits weekly (blocking only for critical vulnerabilities in Strict Mode).
+
+Optional Strict Additions:
+
+- License scanning.
+- Expanded permission model.
+
+### VI. Simplicity & Incremental Abstraction
+
+Introduce service layers, caching, queues, or complex patterns only after a brief justification (one paragraph) in the PR description referencing measurable pain (duplication, latency, throughput). Expiry: justification auto-expires after 60 days unless reconfirmed.
+
+### Performance & Reliability Targets (Strict Mode Only)
+
+- API p95 latency ≤ 300ms standard, ≤ 1000ms heavy analytics.
+- 5xx error rate < 0.5% rolling 7d.
+- Cold start ≤ 2s.
+
+Lean Mode: monitor qualitatively; formal thresholds applied at stabilization.
+
+### Data & Schema
+
+- Lean: migrations tied to features; keep them reversible where easy.
+- Strict: every migration references its spec ID and includes downgrade logic unless impossible.
+
+### Deployment & Environments
+
+Lean:
+
+- Branch previews optional for minor UI tweaks.
+- Feature flags encouraged for incomplete features.
+
+Strict:
+
+- Consistent staging environment mirroring production (scale aside).
+- No dead code; remove behind flags once stable.
+
+## Workflow & Quality Gates
+
+### Lean Mode Pull Request Checklist (must all be affirmative or explicitly annotated)
+
+1. Changed logic has at least one test OR marked trivial.
+2. If API change: request/response shape documented.
+3. No obvious security regression.
+4. Changelog line if user-visible.
+5. TODOs not left without an issue link (or intentionally scoped).
+
+Optional (recommended): quick Lighthouse check if UI-heavy.
+
+### Strict Mode Additional Gates
+
+- OpenAPI diff clean (no unapproved breaking changes).
+- Coverage thresholds met.
+- Performance & accessibility budgets validated (attach Lighthouse JSON).
+- Metrics/tracing for new endpoints.
+- Dependency & license scan clean.
+- Bundle size check (fail if over budget).
+
+### CI Stages
+
+Lean Mode (fail-fast):
+
+1. Lint & Type Check.
+2. Minimal Test Suite (unit/component + smoke e2e).
+3. Build.
+
+Strict Mode adds:
+
+1. Contract Diff.
+2. Full Test Matrix (unit → integration → e2e).
+3. Bundle Size & Performance Budget.
+4. Security & License Scan.
+5. Preview Deploys.
+
+### Fast Track Exceptions
+
+For urgent changes:
+
+- Label `fast-track` with expiry ≤ 14 days.
+- Must not touch authentication, data persistence schema, or introduce new external dependencies without review.
+- Auto review in daily sweep; unresolved items converted to stabilization tasks.
 
 ## Governance
 
-Hierarchy: This Constitution overrides conflicting wiki/docs. Amendments follow: (1) Draft change
-PR including rationale & version bump classification; (2) Review by at least one backend + one
-frontend maintainer; (3) If MAJOR, require RFC with migration plan and 2-core maintainer approval.
+Simplified:
 
-Review & Enforcement: Each PR template MUST link to gates satisfied. A weekly compliance sweep
-samples merged PRs—violations trigger retro action items. Breaking change attempts without process
-are reverted. Complexity justifications older than 90 days are re-validated or simplified.
+- Lean PR: single maintainer review OR auto-merge after successful CI + next-day async review.
+- Strict PR: at least one backend + one frontend reviewer.
 
-Versioning of Constitution: Semantic rules—MAJOR (principle removed/redefined incompatibly), MINOR
-(new principle/section or materially expanded rule), PATCH (clarifications only). This adoption is
-1.0.0 (initial baseline). Last Amended date updates on any change other than pure formatting.
+Amendments:
 
-Sunset & Exceptions: Temporary exceptions allowed only with an expiry date ≤ 30 days documented in
-Complexity Tracking table + retro follow-up task id.
+- Minor (add/relax Lean guidance) require single maintainer approval.
+- Major (removing Strict safeguards) require RFC + two maintainers.
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-10-15
+Weekly Review:
+
+- Sample merged Lean PRs for missed essentials (tests / security / shape docs).
+- Retro tasks created for systemic gaps.
+
+Versioning of Constitution:
+
+- MAJOR: incompatible removal of a safeguard.
+- MINOR: mode adjustments, new optional practices.
+- PATCH: clarifications.
+
+This revision is MINOR (introduces Lean/Strict mode and relaxes certain defaults).
+
+Sunset & Exceptions:
+
+- Exceptions tracked via label or a simple table in `docs/cleanup/` (optional).
+- Auto-expire enforcement encourages follow-up.
+
+**Version**: 1.1.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-10-29

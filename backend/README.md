@@ -1,99 +1,128 @@
-# Medical Tracker Backend# Medical Tracker Backend
+# Medical Tracker Backend
 
-FastAPI backend for the SaaS Medical Tracker application.FastAPI backend for the SaaS Medical Tracker application.
+FastAPI backend for the SaaS Medical Tracker application.
 
-## Features## Setup
+## Features
 
-- Daily medication and symptom logging1. Create virtual environment:
+- Daily medication and symptom logging
+- Medication master data management
+- Condition passport and doctor directory
+- Feel vs yesterday computation
+- Authentication (login, registration, session management)
+- Structured logging and metrics
 
-- Medication master data management  
+## Tech Stack
 
-- Condition passport and doctor directory```bash
-
-- Feel vs yesterday computationpython -m venv venv
-
-- JWT authentication stubsource venv/bin/activate  # On Windows: venv\Scripts\activate
-
-- Structured logging and metrics```
-
-## Tech Stack1. Install dependencies
-
-- **Framework**: FastAPI```bash
-
-- **Database**: SQLite (development) / PostgreSQL (production)pip install -e ".[dev]"
-
-- **ORM**: SQLModel```
-
+- **Framework**: FastAPI
+- **Database**: SQLite (development) / PostgreSQL (production)
+- **ORM**: SQLModel
 - **Validation**: Pydantic v2
-
-- **Migrations**: Alembic1. Run the application:
-
+- **Migrations**: Alembic
 - **Testing**: pytest + httpx
+- **Linting**: Ruff + mypy
 
-- **Linting**: Ruff + mypy```bash
+## Development Setup
 
-uvicorn app.main:app --reload
+1. **Python 3.11+ required**
+1. **Install dependencies** (use uv only):
 
-## Development Setup```
+```bash
+uv sync --extra dev
+```
 
-1. **Python 3.11+ required**## Development
+1. **Setup environment**:
 
-2. **Install dependencies**:- Run tests: `pytest`
+```bash
+cp ../.env.example .env
+# Edit .env with your settings
+```
 
-   ```bash
-   - Run linting: `ruff check .`
+1. **Initialize database**:
 
-   pip install -e ".[dev]"- Run type checking: `mypy .`
-   ```
+```bash
+uv run alembic upgrade head
+```
 
-3. **Setup environment**:
+1. **Run server**:
 
-   ```bash
-   cp ../.env.example .env
-   # Edit .env with your settings
-   ```
+```bash
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-4. **Initialize database**:
+## API & Observability
 
-   ```bash
-   alembic upgrade head
-   ```
+- OpenAPI docs: <http://localhost:8000/docs> (non-production only)
+- ReDoc: <http://localhost:8000/redoc>
+- Metrics endpoint: <http://localhost:8000/metrics> (Prometheus format)
+- Auth endpoints summary:
+  - POST /auth/register
+  - POST /auth/login
+  - POST /auth/logout
+  - GET /auth/session
+  - POST /auth/demo (creates a temporary demo session)
 
-5. **Run server**:
+### Metrics Added (Auth)
 
-   ```bash
-   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
+| Metric | Labels | Description |
+|--------|--------|-------------|
+| authentication_attempts_total | result, method | Login attempts (success, failure, locked) |
+| session_status_checks_total | valid | Session status endpoint hits |
+| demo_session_creations_total | success | Demo session creation attempts |
+| security_events_total | event_type, severity | Rate limit & security related events |
 
-## API Documentation
+### Audit Events
 
-- OpenAPI docs: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
-- Metrics: http://localhost:8000/metrics
+Emitted via structured logging (`audit_event`):
+`auth.login.success`, `auth.login.failure`, `auth.lockout.trigger`, `auth.register.success`, `auth.logout`, `auth.demo.start`
+
+### Generate TypeScript client types
+
+```powershell
+pwsh ./scripts/generate-types.ps1
+```
 
 ## Testing
 
 ```bash
-# Run all tests
-pytest
+# All tests
+uv run pytest
 
-# Run with coverage
-pytest --cov=app
+# Coverage
+uv run pytest --cov=app
 
-# Run specific test file
-pytest tests/unit/test_example.py
+# Specific file
+uv run pytest tests/integration/auth/test_login.py
+
+# Contract fuzzing (Schemathesis)
+uv run pytest -k contract
 ```
 
 ## Code Quality
 
 ```bash
 # Lint and format
-ruff check .
-ruff format .
+uv run ruff check .
+uv run ruff format .
 
 # Type checking  
-mypy .
+uv run mypy .
 
 # Pre-commit hooks
-pre-commit run --all-files
+uv run pre-commit run --all-files
+
+## Rate Limiting
+
+Basic in-memory rate limiting added to login & demo endpoints (non-production) to reduce abuse. Emits `security_events_total{event_type="rate_limit"}` on throttling. Replace with Redis-backed limiter for production.
+
+## Session Cookie Hardening
+
+Environment-aware defaults:
+- Production: `Secure=True`, `SameSite=Strict`
+- Non-production: `Secure=False`, `SameSite=Lax`
+
+All cookies are `HttpOnly`.
+
+## Expired Session UX
+
+Frontend detects expired session client-side & prompts user (logout menu). Server enforces via middleware.
 ```

@@ -24,6 +24,503 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/conditions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List conditions
+         * @description Get all conditions for the authenticated user
+         */
+        get: operations["list_conditions_conditions_get"];
+        put?: never;
+        /**
+         * Create condition
+         * @description Create a new medical condition for the authenticated user
+         */
+        post: operations["create_condition_conditions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/conditions/{condition_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get condition
+         * @description Get a specific condition by ID
+         */
+        get: operations["get_condition_conditions__condition_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete condition
+         * @description Delete (deactivate) a specific condition
+         */
+        delete: operations["delete_condition_conditions__condition_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update condition
+         * @description Update a specific condition
+         */
+        patch: operations["update_condition_conditions__condition_id__patch"];
+        trace?: never;
+    };
+    "/doctors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List doctors
+         * @description Get all doctors for the authenticated user
+         */
+        get: operations["list_doctors_doctors_get"];
+        put?: never;
+        /**
+         * Create doctor
+         * @description Create a new doctor record for the authenticated user
+         */
+        post: operations["create_doctor_doctors_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/doctors/{doctor_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get doctor
+         * @description Get a specific doctor by ID
+         */
+        get: operations["get_doctor_doctors__doctor_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete doctor
+         * @description Delete (deactivate) a specific doctor
+         */
+        delete: operations["delete_doctor_doctors__doctor_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update doctor
+         * @description Update a specific doctor
+         */
+        patch: operations["update_doctor_doctors__doctor_id__patch"];
+        trace?: never;
+    };
+    "/doctors/link-condition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Link doctor to condition
+         * @description Create a link between a doctor and a condition
+         */
+        post: operations["link_doctor_to_condition_doctors_link_condition_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/doctors/{doctor_id}/conditions/{condition_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Unlink doctor from condition
+         * @description Remove the link between a doctor and a condition
+         */
+        delete: operations["unlink_doctor_from_condition_doctors__doctor_id__conditions__condition_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/passport": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get medical passport
+         * @description Get aggregated view of conditions with linked doctors (list of items)
+         */
+        get: operations["get_passport_passport_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List medications
+         * @description Get paginated list of medications with optional search and filtering
+         */
+        get: operations["list_medications_medications__get"];
+        put?: never;
+        /**
+         * Create new medication
+         * @description Create a new medication in the master data list. Medication names must be unique.
+         */
+        post: operations["create_medication_medications__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active medications
+         * @description Get all active medications for selection lists (no pagination)
+         */
+        get: operations["get_active_medications_medications_active_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search medications
+         * @description Search medications by name or description
+         */
+        get: operations["search_medications_medications_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get medication statistics
+         * @description Get statistics about medications in the system
+         */
+        get: operations["get_medication_stats_medications_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/{medication_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get medication by ID
+         * @description Retrieve a specific medication by its ID
+         */
+        get: operations["get_medication_medications__medication_id__get"];
+        /**
+         * Update medication
+         * @description Update an existing medication
+         */
+        put: operations["update_medication_medications__medication_id__put"];
+        post?: never;
+        /**
+         * Delete medication
+         * @description Permanently delete a medication (hard delete). Use with caution.
+         */
+        delete: operations["delete_medication_medications__medication_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/{medication_id}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Deactivate medication
+         * @description Deactivate a medication (soft delete). Deactivated medications won't appear in active lists.
+         */
+        patch: operations["deactivate_medication_medications__medication_id__deactivate_patch"];
+        trace?: never;
+    };
+    "/medications/{medication_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reactivate medication
+         * @description Reactivate a previously deactivated medication
+         */
+        patch: operations["reactivate_medication_medications__medication_id__activate_patch"];
+        trace?: never;
+    };
+    "/medications/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate medication name
+         * @description Validate if a medication name exists and is optionally active
+         */
+        post: operations["validate_medication_name_medications_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/medications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Medication Logs Minimal */
+        get: operations["list_medication_logs_minimal_logs_medications_get"];
+        put?: never;
+        /** Create Medication Log Minimal */
+        post: operations["create_medication_log_minimal_logs_medications_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/medications/{log_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Medication Log Minimal */
+        get: operations["get_medication_log_minimal_logs_medications__log_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/symptoms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Symptom Logs Minimal */
+        get: operations["list_symptom_logs_minimal_logs_symptoms_get"];
+        put?: never;
+        /** Create Symptom Log Minimal */
+        post: operations["create_symptom_log_minimal_logs_symptoms_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Logs Summary Minimal */
+        get: operations["logs_summary_minimal_logs_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login */
+        post: operations["login_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout
+         * @description Logout current session.
+         *
+         *     session_id may be injected by middleware into endpoint dependencies (e.g. request.state).
+         *     For now we accept a direct parameter for simplified flow.
+         */
+        post: operations["logout_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register */
+        post: operations["register_auth_register_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Session Status */
+        get: operations["session_status_auth_session_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/demo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start Demo */
+        post: operations["start_demo_auth_demo_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -102,12 +599,11 @@ export interface paths {
         };
         /**
          * Metrics
-         * @description Basic metrics endpoint.
+         * @description Basic metrics endpoint without external psutil dependency.
          *
-         *     Returns basic application metrics for monitoring.
-         *
-         *     Returns:
-         *         Dict: Application metrics
+         *     Tests only assert presence of top-level keys and (optionally) some system
+         *     metrics. We'll attempt psutil import; if unavailable, we gracefully fall
+         *     back to a minimal payload so the endpoint never raises ModuleNotFoundError.
          */
         get: operations["metrics_api_v1_metrics_get"];
         put?: never;
@@ -143,206 +639,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/token": {
+    "/api/v1/logs/medications": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List Medication Logs Minimal */
+        get: operations["list_medication_logs_minimal_api_v1_logs_medications_get"];
         put?: never;
-        /**
-         * User Authentication
-         * @description **Secure User Login and Token Generation**
-         *
-         *     Authenticate users with email/username and password, returning secure access tokens
-         *     for API authorization. Implements industry-standard security practices.
-         *
-         *     **Authentication Features:**
-         *     - 🔐 Secure password validation with bcrypt hashing
-         *     - 🎫 JWT access token generation (15-minute expiry)
-         *     - 🔄 Refresh token issuance (7-day expiry)
-         *     - 🛡️ Rate limiting protection (5 attempts per minute)
-         *     - 🔒 Account lockout after failed attempts
-         *
-         *     **Security Measures:**
-         *     - Password strength requirements enforced
-         *     - Brute force attack protection
-         *     - Audit logging of authentication events
-         *     - IP-based rate limiting and monitoring
-         *
-         *     **Request Format:**
-         *     ```json
-         *     {
-         *       "email": "user@example.com",
-         *       "password": "securePassword123"
-         *     }
-         *     ```
-         *
-         *     **Response Format:**
-         *     ```json
-         *     {
-         *       "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-         *       "token_type": "bearer",
-         *       "expires_in": 900,
-         *       "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
-         *     }
-         *     ```
-         *
-         *     **Error Handling:**
-         *     - Invalid credentials (401)
-         *     - Account locked (423)
-         *     - Rate limit exceeded (429)
-         *     - Account not verified (403)
-         *
-         *     **Use Cases:**
-         *     - Web application login
-         *     - Mobile app authentication
-         *     - API client authorization
-         *     - Session establishment
-         */
-        post: operations["login_api_v1_auth_token_post"];
+        /** Create Medication Log Minimal */
+        post: operations["create_medication_log_minimal_api_v1_logs_medications_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/register": {
+    "/api/v1/logs/medications/{log_id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get Medication Log Minimal */
+        get: operations["get_medication_log_minimal_api_v1_logs_medications__log_id__get"];
         put?: never;
-        /**
-         * User Registration
-         * @description **Create New User Account**
-         *
-         *     Register new users with comprehensive validation and security measures.
-         *     Creates secure accounts ready for medical data tracking and management.
-         *
-         *     **Registration Features:**
-         *     - 📧 Email uniqueness validation
-         *     - 🔐 Password strength requirements (8+ chars, mixed case, numbers, symbols)
-         *     - ✅ Email verification process initiation
-         *     - 👤 Complete user profile creation
-         *     - 🛡️ GDPR/HIPAA compliance ready
-         *
-         *     **Password Requirements:**
-         *     - Minimum 8 characters length
-         *     - At least one uppercase letter
-         *     - At least one lowercase letter
-         *     - At least one number
-         *     - At least one special character
-         *     - No common passwords (dictionary check)
-         *
-         *     **Request Format:**
-         *     ```json
-         *     {
-         *       "email": "newuser@example.com",
-         *       "password": "SecurePass123!",
-         *       "first_name": "John",
-         *       "last_name": "Doe",
-         *       "date_of_birth": "1990-01-15",
-         *       "timezone": "America/New_York"
-         *     }
-         *     ```
-         *
-         *     **Validation Checks:**
-         *     - Email format and DNS validation
-         *     - Password complexity requirements
-         *     - Age verification (13+ years)
-         *     - Duplicate email prevention
-         *     - Input sanitization and validation
-         *
-         *     **Privacy & Security:**
-         *     - Password immediately hashed with bcrypt
-         *     - Personal data encrypted at rest
-         *     - Audit trail creation for compliance
-         *     - Automatic privacy policy acceptance
-         *
-         *     **Post-Registration:**
-         *     - Email verification sent automatically
-         *     - Account created in pending state
-         *     - Welcome email with onboarding guide
-         *     - Basic user preferences initialized
-         */
-        post: operations["register_api_v1_auth_register_post"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/refresh": {
+    "/api/v1/logs/symptoms": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List Symptom Logs Minimal */
+        get: operations["list_symptom_logs_minimal_api_v1_logs_symptoms_get"];
         put?: never;
-        /**
-         * Token Refresh
-         * @description **Renew Access Token Using Refresh Token**
-         *
-         *     Exchange a valid refresh token for a new access token without requiring
-         *     re-authentication. Essential for maintaining user sessions securely.
-         *
-         *     **Token Refresh Features:**
-         *     - 🔄 Seamless token renewal without user interaction
-         *     - 🎫 New access token generation (15-minute expiry)
-         *     - 🔐 Refresh token validation and rotation
-         *     - ⏰ Automatic session extension
-         *     - 🛡️ Security validation and fraud detection
-         *
-         *     **Security Measures:**
-         *     - Refresh token single-use rotation
-         *     - Token binding to user agent and IP
-         *     - Anomaly detection for suspicious activity
-         *     - Automatic revocation of compromised tokens
-         *
-         *     **Request Format:**
-         *     ```json
-         *     {
-         *       "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
-         *     }
-         *     ```
-         *
-         *     **Response Format:**
-         *     ```json
-         *     {
-         *       "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-         *       "token_type": "bearer",
-         *       "expires_in": 900,
-         *       "refresh_token": "bmV3IHJlZnJlc2ggdG9rZW4gZm9yIHNlY3VyaXR5..."
-         *     }
-         *     ```
-         *
-         *     **Error Handling:**
-         *     - Invalid refresh token (401)
-         *     - Expired refresh token (401)
-         *     - Revoked token (403)
-         *     - Suspicious activity (429)
-         *
-         *     **Use Cases:**
-         *     - Automatic token renewal in web apps
-         *     - Mobile app background refresh
-         *     - API client session maintenance
-         *     - Silent authentication flows
-         *
-         *     **Best Practices:**
-         *     - Implement automatic retry logic
-         *     - Store tokens securely (HttpOnly cookies)
-         *     - Handle token rotation properly
-         *     - Implement fallback to login on failure
-         */
-        post: operations["refresh_token_api_v1_auth_refresh_post"];
+        /** Create Symptom Log Minimal */
+        post: operations["create_symptom_log_minimal_api_v1_logs_symptoms_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/logs/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Logs Summary Minimal */
+        get: operations["logs_summary_minimal_api_v1_logs_summary_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -356,120 +716,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Get User Profile
-         * @description **Retrieve Current User Profile Information**
-         *
-         *     Get comprehensive user profile data including personal information,
-         *     preferences, and account settings for the authenticated user.
-         *
-         *     **Profile Information:**
-         *     - 👤 Personal details (name, email, date of birth)
-         *     - ⚙️ Account preferences and settings
-         *     - 🌍 Timezone and localization settings
-         *     - 📊 Usage statistics and activity summary
-         *     - 🔐 Security and privacy settings overview
-         *
-         *     **Response Includes:**
-         *     - Basic profile information
-         *     - Account verification status
-         *     - Last login and activity timestamps
-         *     - Medication and symptom tracking statistics
-         *     - Privacy and notification preferences
-         *
-         *     **Profile Statistics:**
-         *     - Total medications managed
-         *     - Days of active logging
-         *     - Account age and milestones
-         *     - Data completeness scores
-         *
-         *     **Response Format:**
-         *     ```json
-         *     {
-         *       "id": 123,
-         *       "email": "user@example.com",
-         *       "first_name": "John",
-         *       "last_name": "Doe",
-         *       "date_of_birth": "1990-01-15",
-         *       "timezone": "America/New_York",
-         *       "email_verified": true,
-         *       "last_login": "2024-01-15T10:30:00Z",
-         *       "created_at": "2023-06-01T12:00:00Z"
-         *     }
-         *     ```
-         *
-         *     **Privacy Considerations:**
-         *     - Sensitive data appropriately filtered
-         *     - Medical information not included in basic profile
-         *     - Audit log of profile access maintained
-         *     - GDPR/HIPAA compliant data handling
-         *
-         *     **Use Cases:**
-         *     - Profile page display
-         *     - Account settings forms
-         *     - User dashboard personalization
-         *     - Authentication status verification
-         */
-        get: operations["get_current_user_api_v1_users_me_get"];
-        /**
-         * Update User Profile
-         * @description **Modify User Profile Information**
-         *
-         *     Update user profile details with comprehensive validation and security measures.
-         *     Supports partial updates while maintaining data integrity and audit trails.
-         *
-         *     **Updatable Fields:**
-         *     - 👤 Personal information (first name, last name, date of birth)
-         *     - 🌍 Timezone and localization preferences
-         *     - 📧 Email address (requires verification)
-         *     - 🔔 Notification preferences
-         *     - 🎯 Privacy and data sharing settings
-         *
-         *     **Validation Rules:**
-         *     - Email uniqueness across all users
-         *     - Date of birth age verification (13+ years)
-         *     - Timezone validation against supported zones
-         *     - Name length and character restrictions
-         *     - Input sanitization for security
-         *
-         *     **Security Features:**
-         *     - Email change requires verification
-         *     - Password confirmation for sensitive updates
-         *     - Audit logging of all profile changes
-         *     - Rate limiting for update frequency
-         *     - Rollback capability for critical changes
-         *
-         *     **Update Examples:**
-         *     ```json
-         *     {
-         *       "first_name": "Jane",
-         *       "timezone": "America/Los_Angeles",
-         *       "notification_preferences": {
-         *         "email_reminders": true,
-         *         "medication_alerts": false
-         *       }
-         *     }
-         *     ```
-         *
-         *     **Business Logic:**
-         *     - Partial updates supported (PATCH semantics)
-         *     - Automatic last_modified timestamp
-         *     - Cascade updates to related records
-         *     - Cache invalidation for updated data
-         *
-         *     **Compliance Features:**
-         *     - GDPR right to rectification support
-         *     - HIPAA audit trail maintenance
-         *     - Data minimization principle adherence
-         *     - Consent tracking for data changes
-         *
-         *     **Use Cases:**
-         *     - Account settings updates
-         *     - Profile information corrections
-         *     - Preference modifications
-         *     - Privacy setting adjustments
-         */
-        put: operations["update_current_user_api_v1_users_me_put"];
+        /** Get Current User Placeholder */
+        get: operations["get_current_user_placeholder_api_v1_users_me_get"];
+        /** Update Current User Placeholder */
+        put: operations["update_current_user_placeholder_api_v1_users_me_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -485,65 +735,14 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List User Medications
-         * @description **Retrieve User's Medication Database**
-         *
-         *     Get a paginated list of medications from the user's personal medication database.
-         *     Supports powerful search and filtering capabilities for easy medication discovery.
-         *
-         *     **Key Features:**
-         *     - 📋 Paginated results for optimal performance
-         *     - 🔍 Full-text search across medication names and descriptions
-         *     - 🎯 Active/inactive filtering for current medications
-         *     - ⚡ Optimized queries with proper indexing
-         *
-         *     **Search Capabilities:**
-         *     - Medication name matching (case-insensitive)
-         *     - Partial name matching with wildcard support
-         *     - Description and notes content search
-         *
-         *     **Use Cases:**
-         *     - Display medication picker in logging forms
-         *     - Medication management dashboard
-         *     - Search for specific medications by name
-         *     - Review all current vs. discontinued medications
-         *
-         *     **Performance:**
-         *     - Response time: <100ms for typical queries
-         *     - Supports up to 1000 medications per user
-         *     - Efficient pagination with cursor-based navigation
+         * List medications
+         * @description Get paginated list of medications with optional search and filtering
          */
         get: operations["list_medications_api_v1_medications__get"];
         put?: never;
         /**
-         * Create New Medication
-         * @description **Add Medication to Personal Database**
-         *
-         *     Create a new medication entry in the user's personal medication master database.
-         *     Each medication must have a unique name within the user's collection.
-         *
-         *     **Key Features:**
-         *     - 🎯 Unique name enforcement (case-insensitive)
-         *     - 📝 Comprehensive medication details capture
-         *     - ✅ Automatic validation and sanitization
-         *     - 🔄 Immediate availability for logging
-         *
-         *     **Validation Rules:**
-         *     - Medication name: Required, 1-200 characters, unique per user
-         *     - Dosage: Optional, standardized format (e.g., "10mg", "5ml")
-         *     - Frequency: Optional, human-readable (e.g., "twice daily")
-         *     - Notes: Optional, up to 1000 characters
-         *
-         *     **Business Logic:**
-         *     - New medications default to 'active' status
-         *     - Name uniqueness checked case-insensitively
-         *     - Automatic creation timestamp
-         *     - User ownership automatically assigned
-         *
-         *     **Integration Points:**
-         *     - Immediately available in medication logging forms
-         *     - Searchable in medication list endpoints
-         *     - Can be linked to medication logs
+         * Create new medication
+         * @description Create a new medication in the master data list. Medication names must be unique.
          */
         post: operations["create_medication_api_v1_medications__post"];
         delete?: never;
@@ -560,29 +759,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Active Medications
-         * @description **Quick Access to Current Medications**
-         *
-         *     Get all active medications in a flat list optimized for dropdowns and selection forms.
-         *     Returns medications currently marked as active without pagination for UI convenience.
-         *
-         *     **Key Features:**
-         *     - 🚀 No pagination for fast UI loading
-         *     - ✅ Only active medications included
-         *     - 🎯 Optimized for form selections
-         *     - 📋 Lightweight response format
-         *
-         *     **Use Cases:**
-         *     - Medication logging form dropdowns
-         *     - Quick medication selection lists
-         *     - Dashboard active medication counts
-         *     - Mobile app quick access
-         *
-         *     **Performance Notes:**
-         *     - Response cached for 2 minutes
-         *     - Typically returns 5-50 items
-         *     - Sorted alphabetically by name
-         *     - Minimal payload for mobile optimization
+         * Get active medications
+         * @description Get all active medications for selection lists (no pagination)
          */
         get: operations["get_active_medications_api_v1_medications_active_get"];
         put?: never;
@@ -601,34 +779,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Search Medications
-         * @description **Intelligent Medication Search**
-         *
-         *     Search through the user's medication database using flexible text matching.
-         *     Supports partial name matching and fuzzy search for better user experience.
-         *
-         *     **Search Features:**
-         *     - 🔍 Case-insensitive partial matching
-         *     - 📝 Search in medication names and notes
-         *     - ⚡ Real-time search suggestions
-         *     - 🎯 Active/inactive filtering options
-         *
-         *     **Search Behavior:**
-         *     - Minimum 1 character required
-         *     - Matches anywhere in medication name
-         *     - Results sorted by relevance score
-         *     - Supports special characters and numbers
-         *
-         *     **Use Cases:**
-         *     - Medication lookup during logging
-         *     - Quick medication finding in large lists
-         *     - Duplicate medication detection
-         *     - Mobile app typeahead search
-         *
-         *     **Performance Notes:**
-         *     - Results cached for 1 minute per query
-         *     - Maximum 50 results returned
-         *     - Optimized for sub-100ms response
+         * Search medications
+         * @description Search medications by name or description
          */
         get: operations["search_medications_api_v1_medications_search_get"];
         put?: never;
@@ -647,41 +799,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Medication Statistics
-         * @description **Medication Usage Analytics**
-         *
-         *     Get comprehensive statistics about the user's medication collection and usage patterns.
-         *     Provides insights for medication management and healthcare tracking.
-         *
-         *     **Statistics Included:**
-         *     - 📊 Total medication count (active vs. inactive)
-         *     - 📈 Recent activity trends (logs per medication)
-         *     - 🎯 Most frequently logged medications
-         *     - ⏱️ Average time between medication additions
-         *     - 🏥 Medication categories and distribution
-         *
-         *     **Response Format:**
-         *     ```json
-         *     {
-         *       "total_medications": 15,
-         *       "active_medications": 12,
-         *       "inactive_medications": 3,
-         *       "total_logs_this_month": 234,
-         *       "most_logged_medication": "Vitamin D",
-         *       "average_logs_per_day": 7.8
-         *     }
-         *     ```
-         *
-         *     **Use Cases:**
-         *     - Dashboard overview widgets
-         *     - Healthcare provider reports
-         *     - Personal medication insights
-         *     - Compliance tracking summaries
-         *
-         *     **Performance Notes:**
-         *     - Cached for 15 minutes for performance
-         *     - Calculations optimized for large datasets
-         *     - Returns within 200ms for typical users
+         * Get medication statistics
+         * @description Get statistics about medications in the system
          */
         get: operations["get_medication_stats_api_v1_medications_stats_get"];
         put?: never;
@@ -700,73 +819,13 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Medication Details
-         * @description **Retrieve Complete Medication Profile**
-         *
-         *     Fetch comprehensive details for a specific medication including usage statistics
-         *     and recent activity. Essential for medication detail views and editing forms.
-         *
-         *     **Response Details:**
-         *     - 📋 Complete medication profile (name, dosage, frequency, notes)
-         *     - 📊 Usage statistics (total logs, recent activity, adherence metrics)
-         *     - ⏱️ Timestamps (created, last modified, last logged)
-         *     - 🏷️ Status information (active/inactive with reason)
-         *     - 🔗 Related logs summary (recent entries count)
-         *
-         *     **Enhanced Data:**
-         *     - Calculated adherence percentages
-         *     - Time since last dose logged
-         *     - Weekly/monthly usage patterns
-         *     - Medication effectiveness tracking
-         *
-         *     **Use Cases:**
-         *     - Medication detail page display
-         *     - Pre-populate medication edit forms
-         *     - Healthcare provider medication reviews
-         *     - Medication logging form defaults
-         *
-         *     **Performance Notes:**
-         *     - Response cached for 5 minutes
-         *     - Includes optimized usage calculations
-         *     - Sub-100ms response for cached data
+         * Get medication by ID
+         * @description Retrieve a specific medication by its ID
          */
         get: operations["get_medication_api_v1_medications__medication_id__get"];
         /**
-         * Update Medication Details
-         * @description **Modify Existing Medication Information**
-         *
-         *     Update medication details including name, dosage, frequency, and status.
-         *     Supports partial updates while maintaining data integrity and audit trails.
-         *
-         *     **Update Capabilities:**
-         *     - 📝 Name change (with uniqueness validation)
-         *     - 💊 Dosage and frequency modifications
-         *     - 📄 Notes and instructions updates
-         *     - 🏷️ Active/inactive status changes
-         *     - 🔄 Bulk property updates
-         *
-         *     **Business Rules:**
-         *     - Medication name must remain unique per user
-         *     - Status changes are audited and timestamped
-         *     - Cannot update medications with active logs to inactive
-         *     - Historical data preservation for compliance
-         *
-         *     **Validation Features:**
-         *     - Dosage format standardization
-         *     - Frequency text normalization
-         *     - Duplicate name detection
-         *     - Required field enforcement
-         *
-         *     **Use Cases:**
-         *     - Medication information corrections
-         *     - Dosage adjustments from doctor visits
-         *     - Medication discontinuation
-         *     - Notes and instruction updates
-         *
-         *     **Data Integrity:**
-         *     - Automatic last_modified timestamp
-         *     - Audit trail for all changes
-         *     - Rollback capability for critical updates
+         * Update medication
+         * @description Update an existing medication
          */
         put: operations["update_medication_api_v1_medications__medication_id__put"];
         post?: never;
@@ -864,418 +923,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/logs/medications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Medication History
-         * @description **Retrieve Medication Intake History**
-         *
-         *     Get paginated list of medication log entries with comprehensive filtering options.
-         *     Essential for adherence tracking, pattern analysis, and healthcare reporting.
-         *
-         *     **Query Features:**
-         *     - 📅 Date range filtering (from/to timestamps)
-         *     - 💊 Medication-specific filtering by ID
-         *     - 📊 Pagination with configurable limits (1-100)
-         *     - 🔄 Sort by timestamp (newest first by default)
-         *     - 🎯 Active medication filtering
-         *
-         *     **Response Enhancement:**
-         *     - Includes medication details in each log entry
-         *     - Calculated time between doses
-         *     - Adherence indicators per entry
-         *     - Dosage compliance scoring
-         *
-         *     **Filtering Capabilities:**
-         *     - Last 7/30/90 days quick filters
-         *     - Specific medication tracking
-         *     - Missed dose identification
-         *     - Pattern recognition support
-         *
-         *     **Use Cases:**
-         *     - Medication history review
-         *     - Adherence pattern analysis
-         *     - Healthcare provider reports
-         *     - Personal medication tracking
-         *     - Compliance monitoring
-         *
-         *     **Performance Optimization:**
-         *     - Indexed by user_id and timestamp
-         *     - Supports efficient date range queries
-         *     - Cached medication details included
-         *     - Optimized for mobile data usage
-         */
-        get: operations["list_medication_logs_api_v1_logs_medications_get"];
-        put?: never;
-        /**
-         * Log Medication Dose
-         * @description **Record Medication Intake Event**
-         *
-         *     Create a new medication log entry to track when medications were taken.
-         *     Essential for medication adherence monitoring and healthcare tracking.
-         *
-         *     **Key Features:**
-         *     - ⏰ Precise timestamp recording (defaults to current time)
-         *     - 💊 Flexible dosage tracking (partial doses supported)
-         *     - 📝 Optional notes for context (side effects, effectiveness)
-         *     - 🎯 Medication validation against user's active list
-         *     - 🔄 Automatic adherence calculations
-         *
-         *     **Input Validation:**
-         *     - Medication must exist in user's collection
-         *     - Timestamp cannot be in the future
-         *     - Dosage must be positive number
-         *     - Notes limited to 500 characters
-         *
-         *     **Business Logic:**
-         *     - Updates medication "last taken" timestamp
-         *     - Triggers adherence score recalculation
-         *     - Supports retrospective logging (past dates)
-         *     - Automatic time zone handling
-         *
-         *     **Use Cases:**
-         *     - Real-time medication intake recording
-         *     - Retrospective medication history entry
-         *     - Adherence tracking for healthcare providers
-         *     - Medication effectiveness correlation
-         *
-         *     **Integration Points:**
-         *     - Updates medication statistics
-         *     - Feeds into adherence reports
-         *     - Available in medication history views
-         */
-        post: operations["create_medication_log_api_v1_logs_medications_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/logs/medications/{log_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Medication Log Entry
-         * @description **Retrieve Single Medication Log Record**
-         *
-         *     Fetch detailed information for a specific medication log entry including
-         *     context, timing analysis, and adherence implications.
-         *
-         *     **Enhanced Response:**
-         *     - 📋 Complete log entry details (medication, timestamp, dosage, notes)
-         *     - ⏱️ Timing analysis (time since previous dose, adherence score)
-         *     - 💊 Medication context (expected dosage, frequency targets)
-         *     - 📊 Position in adherence pattern (streak information)
-         *     - 🎯 Effectiveness tracking (if notes include symptoms)
-         *
-         *     **Calculated Fields:**
-         *     - Time between this and previous dose
-         *     - Adherence score impact of this entry
-         *     - Expected vs. actual dosage comparison
-         *     - Timing compliance (early/on-time/late)
-         *
-         *     **Use Cases:**
-         *     - Medication log detail view
-         *     - Edit form pre-population
-         *     - Adherence analysis deep-dive
-         *     - Healthcare provider review
-         *     - Audit trail examination
-         *
-         *     **Data Enrichment:**
-         *     - Related medication information included
-         *     - Previous/next log entry references
-         *     - Adherence context and scoring
-         *     - Time zone normalized timestamps
-         */
-        get: operations["get_medication_log_api_v1_logs_medications__log_id__get"];
-        /**
-         * Update Medication Log Entry
-         * @description **Modify Existing Medication Log Record**
-         *
-         *     Update medication log entry details while maintaining data integrity and
-         *     audit trail. Supports corrections and additional context after logging.
-         *
-         *     **Update Capabilities:**
-         *     - ⏰ Timestamp corrections (with validation)
-         *     - 💊 Dosage adjustments (partial/full doses)
-         *     - 📝 Notes addition or modification
-         *     - 🎯 Medication reassignment (if needed)
-         *     - 🔄 Effectiveness rating updates
-         *
-         *     **Validation Rules:**
-         *     - Updated timestamp cannot be in future
-         *     - Medication must exist in user's collection
-         *     - Dosage must be positive number
-         *     - Cannot change core medication reference
-         *     - Audit trail preserved for all changes
-         *
-         *     **Business Logic:**
-         *     - Recalculates adherence scores after update
-         *     - Updates medication "last taken" if timestamp changed
-         *     - Maintains chronological log integrity
-         *     - Triggers pattern analysis refresh
-         *
-         *     **Use Cases:**
-         *     - Correcting timestamp errors
-         *     - Adding forgotten dosage information
-         *     - Including side effect notes after observation
-         *     - Adjusting medication references
-         *     - Healthcare provider corrections
-         *
-         *     **Data Integrity:**
-         *     - Automatic last_modified timestamp
-         *     - Original data preserved in audit log
-         *     - Consistency checks across related records
-         */
-        put: operations["update_medication_log_api_v1_logs_medications__log_id__put"];
-        post?: never;
-        /**
-         * Delete Medication Log Entry
-         * @description **Remove Medication Log Record**
-         *
-         *     Permanently delete a medication log entry from the system. Use with caution
-         *     as this action cannot be undone and affects adherence calculations.
-         *
-         *     **Deletion Impact:**
-         *     - 🗑️ Complete removal of log entry from database
-         *     - 📊 Automatic recalculation of adherence scores
-         *     - ⏱️ Updates to medication "last taken" timestamps
-         *     - 📈 Refresh of usage statistics and patterns
-         *     - 🔄 Adjustment of streak counts and analytics
-         *
-         *     **Safety Features:**
-         *     - Soft delete option for audit compliance
-         *     - Confirmation required for recent entries
-         *     - Cascade impact analysis before deletion
-         *     - Audit trail of deletion event
-         *
-         *     **Validation Checks:**
-         *     - User owns the log entry
-         *     - Entry exists and is not already deleted
-         *     - No dependent records that would be orphaned
-         *     - Deletion permissions verified
-         *
-         *     **Use Cases:**
-         *     - Correcting duplicate entries
-         *     - Removing test/incorrect entries
-         *     - Data cleanup and maintenance
-         *     - Privacy compliance (data deletion requests)
-         *
-         *     **Post-Deletion Effects:**
-         *     - Adherence statistics automatically updated
-         *     - Medication analytics refreshed
-         *     - Usage patterns recalculated
-         *     - Dashboard metrics adjusted
-         */
-        delete: operations["delete_medication_log_api_v1_logs_medications__log_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/logs/symptoms": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Symptom History
-         * @description **Retrieve Symptom Log History**
-         *
-         *     Get paginated list of symptom log entries with comprehensive filtering and analysis.
-         *     Essential for pattern recognition, healthcare reporting, and medication effectiveness tracking.
-         *
-         *     **Query Features:**
-         *     - 📅 Date range filtering for specific periods
-         *     - 🎯 Symptom name filtering for specific conditions
-         *     - 📊 Severity range filtering (min/max severity)
-         *     - 📄 Pagination with configurable limits (1-100)
-         *     - 🔄 Sort by timestamp, severity, or frequency
-         *
-         *     **Enhanced Response:**
-         *     - Symptom frequency analysis within date range
-         *     - Severity trend calculations
-         *     - Medication correlation indicators
-         *     - Pattern recognition insights
-         *
-         *     **Filtering Capabilities:**
-         *     - Recent episodes (last 7/30/90 days)
-         *     - Specific symptom tracking over time
-         *     - Severity threshold analysis
-         *     - Medication timing correlations
-         *
-         *     **Pattern Analysis:**
-         *     - Identifies recurring symptoms
-         *     - Calculates average severity trends
-         *     - Detects potential medication correlations
-         *     - Highlights frequency changes over time
-         *
-         *     **Use Cases:**
-         *     - Comprehensive symptom history review
-         *     - Healthcare provider consultations
-         *     - Medication effectiveness evaluation
-         *     - Personal health pattern identification
-         *     - Trigger analysis and avoidance planning
-         *
-         *     **Performance Optimization:**
-         *     - Indexed by user_id, timestamp, and severity
-         *     - Efficient date range queries
-         *     - Cached correlation calculations
-         *     - Mobile-optimized response format
-         */
-        get: operations["list_symptom_logs_api_v1_logs_symptoms_get"];
-        put?: never;
-        /**
-         * Log Symptom Event
-         * @description **Record Symptom Occurrence**
-         *
-         *     Create a new symptom log entry to track health symptoms and their characteristics.
-         *     Essential for pattern recognition, medication effectiveness tracking, and healthcare monitoring.
-         *
-         *     **Key Features:**
-         *     - 🎯 Precise symptom identification and description
-         *     - 📊 Severity rating (1-10 scale with descriptions)
-         *     - ⏰ Accurate timestamp recording (defaults to current time)
-         *     - 📝 Detailed notes for context and triggers
-         *     - 🔗 Optional medication correlation tracking
-         *
-         *     **Severity Scale:**
-         *     - 1-2: Mild (barely noticeable, doesn't interfere with activities)
-         *     - 3-4: Mild-Moderate (noticeable but manageable)
-         *     - 5-6: Moderate (interferes with some activities)
-         *     - 7-8: Severe (significantly impacts daily life)
-         *     - 9-10: Very Severe (debilitating, requires immediate attention)
-         *
-         *     **Input Validation:**
-         *     - Symptom name: Required, 1-100 characters
-         *     - Severity: Required, integer 1-10
-         *     - Timestamp: Cannot be in future
-         *     - Notes: Optional, up to 1000 characters
-         *
-         *     **Business Logic:**
-         *     - Supports retrospective logging
-         *     - Automatic correlation with recent medications
-         *     - Triggers pattern analysis for frequent symptoms
-         *     - Timezone normalization for accurate tracking
-         *
-         *     **Use Cases:**
-         *     - Real-time symptom tracking during episodes
-         *     - Medication side effect monitoring
-         *     - Pattern identification for healthcare providers
-         *     - Trigger identification and avoidance
-         *
-         *     **Analytics Integration:**
-         *     - Feeds into symptom frequency reports
-         *     - Medication effectiveness correlations
-         *     - Severity trend analysis over time
-         */
-        post: operations["create_symptom_log_api_v1_logs_symptoms_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/logs/symptoms/{log_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get symptom log
-         * @description Get a specific symptom log by ID
-         */
-        get: operations["get_symptom_log_api_v1_logs_symptoms__log_id__get"];
-        /**
-         * Update symptom log
-         * @description Update a specific symptom log by ID
-         */
-        put: operations["update_symptom_log_api_v1_logs_symptoms__log_id__put"];
-        post?: never;
-        /**
-         * Delete symptom log
-         * @description Delete a specific symptom log by ID
-         */
-        delete: operations["delete_symptom_log_api_v1_logs_symptoms__log_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/logs/summary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Activity Summary
-         * @description **Comprehensive Health Activity Overview**
-         *
-         *     Get a comprehensive summary of recent medication and symptom logging activity
-         *     optimized for dashboard widgets and landing page displays.
-         *
-         *     **Summary Includes:**
-         *     - 📊 Recent activity counts (last 7/30 days)
-         *     - 💊 Medication adherence overview
-         *     - 🎯 Symptom tracking highlights
-         *     - 📈 Key trend indicators
-         *     - ⚡ Quick action suggestions
-         *
-         *     **Medication Summary:**
-         *     - Total medications logged today/this week
-         *     - Adherence percentage for active medications
-         *     - Missed dose alerts and notifications
-         *     - Next scheduled medication reminders
-         *
-         *     **Symptom Summary:**
-         *     - Recent symptom episodes count
-         *     - Severity trend analysis (improving/stable/worsening)
-         *     - Most frequent symptoms this period
-         *     - Correlation insights with medications
-         *
-         *     **Performance Metrics:**
-         *     - Overall health tracking consistency
-         *     - Logging frequency trends
-         *     - Data completeness scores
-         *     - Goal achievement indicators
-         *
-         *     **Use Cases:**
-         *     - Dashboard home page widgets
-         *     - Mobile app summary cards
-         *     - Quick health status overview
-         *     - Healthcare provider consultation prep
-         *     - Personal health insights at-a-glance
-         *
-         *     **Optimization:**
-         *     - Cached for 5 minutes for performance
-         *     - Lightweight payload for mobile
-         *     - Pre-calculated trend indicators
-         *     - Optimized for frequent access
-         */
-        get: operations["get_logs_summary_api_v1_logs_summary_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/feel-vs-yesterday": {
         parameters: {
             query?: never;
@@ -1284,55 +931,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Daily Health Comparison
-         * @description **Intelligent Health Status Analysis**
-         *
-         *     Compare today's health status against yesterday using comprehensive analysis
-         *     of medication adherence, symptom patterns, and overall wellness indicators.
-         *
-         *     **Analysis Dimensions:**
-         *     - 💊 Medication adherence comparison (doses taken vs. missed)
-         *     - 🎯 Symptom severity and frequency changes
-         *     - 📊 Overall wellness score differential
-         *     - 🔄 Pattern recognition in health trends
-         *     - ⚡ Actionable insights and recommendations
-         *
-         *     **Comparison Metrics:**
-         *     - Adherence score change (+/- percentage)
-         *     - Symptom burden shift (better/worse/stable)
-         *     - Energy level indicators (based on logging patterns)
-         *     - Sleep quality inference (from timing patterns)
-         *
-         *     **Intelligence Features:**
-         *     - AI-powered health trend analysis
-         *     - Contextual medication effectiveness assessment
-         *     - Seasonal and cyclical pattern recognition
-         *     - Personalized wellness recommendations
-         *
-         *     **Response Format:**
-         *     ```json
-         *     {
-         *       "overall_comparison": "better|same|worse",
-         *       "confidence_score": 0.85,
-         *       "medication_adherence_change": "+5%",
-         *       "symptom_severity_change": "-15%",
-         *       "key_insights": ["Better medication adherence", "Fewer headaches"],
-         *       "recommendations": ["Continue current schedule"]
-         *     }
-         *     ```
-         *
-         *     **Use Cases:**
-         *     - Daily wellness check-in widgets
-         *     - Progress tracking motivation
-         *     - Healthcare provider insights
-         *     - Treatment effectiveness monitoring
-         *     - Personal health awareness building
-         *
-         *     **Accuracy Features:**
-         *     - Machine learning pattern recognition
-         *     - Historical data correlation analysis
-         *     - Multi-factor health assessment
-         *     - Confidence scoring for reliability
+         * Feel vs yesterday analysis
+         * @description Analyze how the user feels today compared to yesterday based on medication and symptom logs
          */
         get: operations["feel_vs_yesterday_api_v1_feel_vs_yesterday_get"];
         put?: never;
@@ -1536,7 +1136,7 @@ export interface paths {
         };
         /**
          * Get medical passport
-         * @description Get aggregated view of conditions with linked doctors
+         * @description Get aggregated view of conditions with linked doctors (list of items)
          */
         get: operations["get_passport_api_v1_passport_get"];
         put?: never;
@@ -1551,6 +1151,294 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * ConditionCreate
+         * @description Schema for creating a new condition.
+         */
+        ConditionCreate: {
+            /**
+             * Name
+             * @description Condition name
+             * @example Hypertension
+             */
+            name: string;
+            /**
+             * Description
+             * @description Optional condition description
+             * @example High blood pressure requiring regular monitoring
+             */
+            description?: string | null;
+            /**
+             * Is Active
+             * @description Whether the condition is active and being tracked
+             * @default true
+             * @example true
+             */
+            is_active: boolean;
+        };
+        /**
+         * ConditionResponse
+         * @description Schema for condition API responses.
+         */
+        ConditionResponse: {
+            /**
+             * Name
+             * @description Condition name
+             * @example Hypertension
+             */
+            name: string;
+            /**
+             * Description
+             * @description Optional condition description
+             * @example High blood pressure requiring regular monitoring
+             */
+            description?: string | null;
+            /**
+             * Is Active
+             * @description Whether the condition is active and being tracked
+             * @default true
+             * @example true
+             */
+            is_active: boolean;
+            /**
+             * Id
+             * @description Unique condition identifier
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            id: string;
+            /**
+             * User Id
+             * @description ID of the user who owns this condition
+             * @example user-uuid-123
+             */
+            user_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Timestamp when condition was created
+             * @example 2024-01-15T10:30:00Z
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             * @description Timestamp when condition was last updated
+             * @example 2024-01-15T10:30:00Z
+             */
+            updated_at: string;
+        };
+        /**
+         * ConditionUpdate
+         * @description Schema for updating an existing condition.
+         */
+        ConditionUpdate: {
+            /**
+             * Name
+             * @description Updated condition name
+             * @example Hypertension
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Updated condition description
+             * @example High blood pressure requiring regular monitoring
+             */
+            description?: string | null;
+            /**
+             * Is Active
+             * @description Whether the condition is active and being tracked
+             * @example true
+             */
+            is_active?: boolean | null;
+        };
+        /** DemoResponse */
+        DemoResponse: {
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            } | null;
+            /** Error */
+            error?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * DoctorConditionLinkCreate
+         * @description Schema for linking a doctor to a condition.
+         */
+        DoctorConditionLinkCreate: {
+            /**
+             * Doctor Id
+             * @description Doctor identifier to link
+             * @example 550e8400-e29b-41d4-a716-446655440001
+             */
+            doctor_id: string;
+            /**
+             * Condition Id
+             * @description Condition identifier to link
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            condition_id: string;
+        };
+        /**
+         * DoctorConditionLinkResponse
+         * @description Schema for doctor-condition link responses.
+         */
+        DoctorConditionLinkResponse: {
+            /**
+             * Doctor Id
+             * @description Doctor identifier
+             * @example 550e8400-e29b-41d4-a716-446655440001
+             */
+            doctor_id: string;
+            /**
+             * Condition Id
+             * @description Condition identifier
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            condition_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Timestamp when link was created
+             * @example 2024-01-15T10:30:00Z
+             */
+            created_at: string;
+        };
+        /**
+         * DoctorCreate
+         * @description Schema for creating a new doctor.
+         */
+        DoctorCreate: {
+            /**
+             * Name
+             * @description Doctor's full name
+             * @example Dr. Sarah Johnson
+             */
+            name: string;
+            /**
+             * Specialty
+             * @description Doctor's medical specialty
+             * @example Cardiology
+             */
+            specialty: string;
+            /**
+             * Contact Info
+             * @description Doctor's contact information (email, phone, etc.)
+             * @example sarah.johnson@heartcenter.com
+             */
+            contact_info?: string | null;
+            /**
+             * Is Active
+             * @description Whether the doctor is active in practice
+             * @default true
+             * @example true
+             */
+            is_active: boolean;
+        };
+        /**
+         * DoctorResponse
+         * @description Schema for doctor API responses.
+         */
+        DoctorResponse: {
+            /**
+             * Name
+             * @description Doctor's full name
+             * @example Dr. Sarah Johnson
+             */
+            name: string;
+            /**
+             * Specialty
+             * @description Doctor's medical specialty
+             * @example Cardiology
+             */
+            specialty: string;
+            /**
+             * Contact Info
+             * @description Doctor's contact information (email, phone, etc.)
+             * @example sarah.johnson@heartcenter.com
+             */
+            contact_info?: string | null;
+            /**
+             * Is Active
+             * @description Whether the doctor is active in practice
+             * @default true
+             * @example true
+             */
+            is_active: boolean;
+            /**
+             * Id
+             * @description Unique doctor identifier
+             * @example 550e8400-e29b-41d4-a716-446655440001
+             */
+            id: string;
+            /**
+             * User Id
+             * @description ID of the user who owns this doctor record
+             * @example user-uuid-123
+             */
+            user_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Timestamp when doctor was created
+             * @example 2024-01-15T10:30:00Z
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             * @description Timestamp when doctor was last updated
+             * @example 2024-01-15T10:30:00Z
+             */
+            updated_at: string;
+        };
+        /**
+         * DoctorUpdate
+         * @description Schema for updating an existing doctor.
+         */
+        DoctorUpdate: {
+            /**
+             * Name
+             * @description Updated doctor name
+             * @example Dr. Sarah Johnson
+             */
+            name?: string | null;
+            /**
+             * Specialty
+             * @description Updated specialty
+             * @example Cardiology
+             */
+            specialty?: string | null;
+            /**
+             * Contact Info
+             * @description Updated contact information
+             * @example sarah.johnson@heartcenter.com
+             */
+            contact_info?: string | null;
+            /**
+             * Is Active
+             * @description Whether the doctor is active in practice
+             * @example true
+             */
+            is_active?: boolean | null;
+        };
+        /**
+         * ErrorResponse
+         * @description Standard error response schema.
+         */
+        ErrorResponse: {
+            /**
+             * Detail
+             * @description Error description
+             */
+            detail: string;
+            /**
+             * Error Code
+             * @description Optional error code
+             */
+            error_code?: string | null;
+        };
         /**
          * FeelVsYesterdayResponse
          * @description Schema for feel vs yesterday comparison.
@@ -1631,235 +1519,15 @@ export interface components {
              */
             database: boolean;
         };
-        /**
-         * LogSummaryResponse
-         * @description Schema for log summary (recent logs for landing page).
-         */
-        LogSummaryResponse: {
+        /** LoginRequest */
+        LoginRequest: {
             /**
-             * Recent Medications
-             * @description Recent medication logs (last 5)
+             * Email
+             * Format: email
              */
-            recent_medications?: components["schemas"]["MedicationLogResponse"][];
-            /**
-             * Recent Symptoms
-             * @description Recent symptom logs (last 5)
-             */
-            recent_symptoms?: components["schemas"]["SymptomLogResponse"][];
-            /**
-             * Total Medications Today
-             * @description Total medication logs for today
-             * @default 0
-             */
-            total_medications_today: number;
-            /**
-             * Total Symptoms Today
-             * @description Total symptom logs for today
-             * @default 0
-             */
-            total_symptoms_today: number;
-        };
-        /**
-         * MedicationLogCreate
-         * @description Schema for creating a new medication log entry.
-         */
-        MedicationLogCreate: {
-            /**
-             * Medication Name
-             * @description Name of the medication taken
-             */
-            medication_name: string;
-            /**
-             * Dosage
-             * @description Dosage amount and unit (e.g., '500mg', '2 tablets')
-             */
-            dosage: string;
-            /**
-             * Taken At
-             * Format: date-time
-             * @description When the medication was actually taken
-             */
-            taken_at: string;
-            /**
-             * Notes
-             * @description Additional notes about the medication intake
-             */
-            notes?: string | null;
-            /**
-             * Side Effects
-             * @description Any side effects experienced
-             */
-            side_effects?: string | null;
-            /** @description Severity of side effects if any */
-            side_effect_severity?: components["schemas"]["SeverityLevel"] | null;
-            /**
-             * Effectiveness Rating
-             * @description How effective the medication felt (1-5 scale)
-             */
-            effectiveness_rating?: number | null;
-        };
-        /**
-         * MedicationLogResponse
-         * @description Schema for medication log response.
-         */
-        MedicationLogResponse: {
-            /** Id */
-            id: number;
-            /** User Id */
-            user_id: string;
-            /** Medication Name */
-            medication_name: string;
-            /** Dosage */
-            dosage: string;
-            /**
-             * Taken At
-             * Format: date-time
-             */
-            taken_at: string;
-            /**
-             * Logged At
-             * Format: date-time
-             */
-            logged_at: string;
-            /** Notes */
-            notes?: string | null;
-            /** Side Effects */
-            side_effects?: string | null;
-            side_effect_severity?: components["schemas"]["SeverityLevel"] | null;
-            /** Effectiveness Rating */
-            effectiveness_rating?: number | null;
-        };
-        /**
-         * MedicationLogUpdate
-         * @description Schema for updating an existing medication log entry.
-         */
-        MedicationLogUpdate: {
-            /** Medication Name */
-            medication_name?: string | null;
-            /** Dosage */
-            dosage?: string | null;
-            /** Taken At */
-            taken_at?: string | null;
-            /** Notes */
-            notes?: string | null;
-            /** Side Effects */
-            side_effects?: string | null;
-            side_effect_severity?: components["schemas"]["SeverityLevel"] | null;
-            /** Effectiveness Rating */
-            effectiveness_rating?: number | null;
-        };
-        /**
-         * SeverityLevel
-         * @description Severity levels for symptoms and side effects.
-         * @enum {string}
-         */
-        SeverityLevel: "none" | "mild" | "moderate" | "severe" | "critical";
-        /**
-         * SymptomLogCreate
-         * @description Schema for creating a new symptom log entry.
-         */
-        SymptomLogCreate: {
-            /**
-             * Symptom Name
-             * @description Name or description of the symptom
-             */
-            symptom_name: string;
-            /** @description Severity level of the symptom */
-            severity: components["schemas"]["SeverityLevel"];
-            /**
-             * Started At
-             * Format: date-time
-             * @description When the symptom started (if known)
-             */
-            started_at: string;
-            /**
-             * Ended At
-             * @description When the symptom ended (if applicable)
-             */
-            ended_at?: string | null;
-            /**
-             * Duration Minutes
-             * @description Duration of the symptom in minutes
-             */
-            duration_minutes?: number | null;
-            /**
-             * Triggers
-             * @description Potential triggers for the symptom
-             */
-            triggers?: string | null;
-            /**
-             * Location
-             * @description Body location where symptom occurred
-             */
-            location?: string | null;
-            /**
-             * Notes
-             * @description Additional notes about the symptom
-             */
-            notes?: string | null;
-            /**
-             * Impact Rating
-             * @description Impact on daily activities (1-5 scale)
-             */
-            impact_rating?: number | null;
-        };
-        /**
-         * SymptomLogResponse
-         * @description Schema for symptom log response.
-         */
-        SymptomLogResponse: {
-            /** Id */
-            id: number;
-            /** User Id */
-            user_id: string;
-            /** Symptom Name */
-            symptom_name: string;
-            severity: components["schemas"]["SeverityLevel"];
-            /**
-             * Started At
-             * Format: date-time
-             */
-            started_at: string;
-            /** Ended At */
-            ended_at?: string | null;
-            /**
-             * Logged At
-             * Format: date-time
-             */
-            logged_at: string;
-            /** Duration Minutes */
-            duration_minutes?: number | null;
-            /** Triggers */
-            triggers?: string | null;
-            /** Location */
-            location?: string | null;
-            /** Notes */
-            notes?: string | null;
-            /** Impact Rating */
-            impact_rating?: number | null;
-        };
-        /**
-         * SymptomLogUpdate
-         * @description Schema for updating an existing symptom log entry.
-         */
-        SymptomLogUpdate: {
-            /** Symptom Name */
-            symptom_name?: string | null;
-            severity?: components["schemas"]["SeverityLevel"] | null;
-            /** Started At */
-            started_at?: string | null;
-            /** Ended At */
-            ended_at?: string | null;
-            /** Duration Minutes */
-            duration_minutes?: number | null;
-            /** Triggers */
-            triggers?: string | null;
-            /** Location */
-            location?: string | null;
-            /** Notes */
-            notes?: string | null;
-            /** Impact Rating */
-            impact_rating?: number | null;
+            email: string;
+            /** Password */
+            password: string;
         };
         /**
          * MedicationCreate
@@ -1882,101 +1550,6 @@ export interface components {
              * Is Active
              * @description Whether the medication is active (defaults to True for new medications)
              * @default true
-             */
-            is_active: boolean;
-        };
-        /**
-         * MedicationUpdate
-         * @description Schema for updating an existing medication.
-         */
-        MedicationUpdate: {
-            /**
-             * Name
-             * @description Updated medication name
-             */
-            name?: string | null;
-            /**
-             * Description
-             * @description Updated medication description
-             */
-            description?: string | null;
-            /**
-             * Is Active
-             * @description Updated active status
-             */
-            is_active?: boolean | null;
-        };
-        /**
-         * MedicationResponse
-         * @description Schema for medication response with all fields.
-         */
-        MedicationResponse: {
-            /**
-             * Id
-             * @description Unique medication identifier
-             * @example 1
-             */
-            id: number;
-            /**
-             * Name
-             * @description Medication name (must be unique)
-             * @example Aspirin
-             */
-            name: string;
-            /**
-             * Description
-             * @description Optional medication description
-             * @example Pain reliever and anti-inflammatory medication
-             */
-            description?: string | null;
-            /**
-             * Is Active
-             * @description Whether the medication is active and available for logging
-             * @example true
-             */
-            is_active: boolean;
-            /**
-             * Created At
-             * Format: date-time
-             * @description When the medication was created
-             * @example 2023-01-01T10:00:00Z
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             * @description When the medication was last updated
-             * @example 2023-01-01T10:00:00Z
-             */
-            updated_at: string;
-        };
-        /**
-         * MedicationPublic
-         * @description Public medication schema (excludes audit fields).
-         */
-        MedicationPublic: {
-            /**
-             * Id
-             * @description Unique medication identifier
-             * @example 1
-             */
-            id: number;
-            /**
-             * Name
-             * @description Medication name
-             * @example Aspirin
-             */
-            name: string;
-            /**
-             * Description
-             * @description Medication description
-             * @example Pain reliever and anti-inflammatory medication
-             */
-            description?: string | null;
-            /**
-             * Is Active
-             * @description Whether medication is active
-             * @example true
              */
             is_active: boolean;
         };
@@ -2016,71 +1589,307 @@ export interface components {
              */
             pages: number;
         };
+        /** MedicationLogCreateMinimal */
+        MedicationLogCreateMinimal: {
+            /** Medication Name */
+            medication_name: string;
+            /**
+             * Dosage
+             * @description Dosage string e.g. '200mg'
+             */
+            dosage?: string | null;
+            /**
+             * Taken At
+             * @description Time medication taken
+             */
+            taken_at?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Effectiveness Rating */
+            effectiveness_rating?: number | null;
+        };
+        /** MedicationLogResponseMinimal */
+        MedicationLogResponseMinimal: {
+            /** Id */
+            id: number;
+            /** User Id */
+            user_id: string;
+            /** Medication Name */
+            medication_name: string;
+            /** Dosage */
+            dosage?: string | null;
+            /** Taken At */
+            taken_at?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Effectiveness Rating */
+            effectiveness_rating?: number | null;
+            /**
+             * Logged At
+             * Format: date-time
+             */
+            logged_at: string;
+        };
         /**
-         * MedicationDeactivateResponse
-         * @description Response schema for medication deactivation.
+         * MedicationPublic
+         * @description Public medication schema (excludes audit fields).
          */
-        MedicationDeactivateResponse: {
+        MedicationPublic: {
             /**
              * Id
-             * @description Medication ID that was deactivated
+             * @description Unique medication identifier
+             * @example 1
              */
             id: number;
             /**
-             * Message
-             * @description Confirmation message
+             * Name
+             * @description Medication name
+             * @example Aspirin
              */
-            message: string;
+            name: string;
             /**
-             * Deactivated At
+             * Description
+             * @description Medication description
+             * @example Pain reliever and anti-inflammatory medication
+             */
+            description: string | null;
+            /**
+             * Is Active
+             * @description Whether medication is active
+             * @example true
+             */
+            is_active: boolean;
+        };
+        /**
+         * MedicationResponse
+         * @description Schema for medication response with all fields.
+         */
+        MedicationResponse: {
+            /**
+             * Name
+             * @description Medication name (must be unique)
+             * @example Aspirin
+             */
+            name: string;
+            /**
+             * Description
+             * @description Optional medication description
+             * @example Pain reliever and anti-inflammatory medication
+             */
+            description?: string | null;
+            /**
+             * Is Active
+             * @description Whether the medication is active and available for logging
+             * @default true
+             * @example true
+             */
+            is_active: boolean;
+            /**
+             * Id
+             * @description Unique medication identifier
+             * @example 1
+             */
+            id: number;
+            /**
+             * Created At
              * Format: date-time
-             * @description When the medication was deactivated
+             * @description When the medication was created
+             * @example 2023-01-01T10:00:00Z
              */
-            deactivated_at: string;
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             * @description When the medication was last updated
+             * @example 2023-01-01T10:00:00Z
+             */
+            updated_at: string;
         };
         /**
-         * ErrorResponse
-         * @description Standard error response schema.
+         * MedicationUpdate
+         * @description Schema for updating an existing medication.
          */
-        ErrorResponse: {
+        MedicationUpdate: {
             /**
-             * Detail
-             * @description Error description
+             * Name
+             * @description Updated medication name
              */
-            detail: string;
+            name?: string | null;
             /**
-             * Error Code
-             * @description Optional error code
+             * Description
+             * @description Updated medication description
              */
-            error_code?: string | null;
+            description?: string | null;
+            /**
+             * Is Active
+             * @description Updated active status
+             */
+            is_active?: boolean | null;
         };
         /**
-         * ValidationErrorResponse
-         * @description Validation error response schema.
-         * @example {
-         *       "detail": [
-         *         {
-         *           "ctx": {
-         *             "limit_value": 2
-         *           },
-         *           "loc": [
-         *             "body",
-         *             "name"
-         *           ],
-         *           "msg": "ensure this value has at least 2 characters",
-         *           "type": "value_error.any_str.min_length"
-         *         }
-         *       ]
-         *     }
+         * PassportConditionItem
+         * @description Schema for a condition item in the passport response.
          */
-        ValidationErrorResponse: {
+        PassportConditionItem: {
             /**
-             * Detail
-             * @description List of validation errors
+             * Id
+             * @description Condition identifier
+             * @example 550e8400-e29b-41d4-a716-446655440000
              */
-            detail: {
+            id: string;
+            /**
+             * Name
+             * @description Condition name
+             * @example Hypertension
+             */
+            name: string;
+            /**
+             * Description
+             * @description Condition description
+             * @example High blood pressure requiring regular monitoring
+             */
+            description?: string | null;
+            /**
+             * Is Active
+             * @description Whether the condition is active
+             * @example true
+             */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             * @description When the condition was created
+             * @example 2024-01-15T10:30:00Z
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             * @description When the condition was last updated
+             * @example 2024-01-15T10:30:00Z
+             */
+            updated_at: string;
+        };
+        /**
+         * PassportDoctorItem
+         * @description Schema for a doctor item in the passport response.
+         */
+        PassportDoctorItem: {
+            /**
+             * Id
+             * @description Doctor identifier
+             * @example 550e8400-e29b-41d4-a716-446655440001
+             */
+            id: string;
+            /**
+             * Name
+             * @description Doctor name
+             * @example Dr. Sarah Johnson
+             */
+            name: string;
+            /**
+             * Specialty
+             * @description Doctor specialty
+             * @example Cardiology
+             */
+            specialty: string;
+            /**
+             * Contact Info
+             * @description Doctor contact information
+             * @example sarah.johnson@heartcenter.com
+             */
+            contact_info?: string | null;
+            /**
+             * Is Active
+             * @description Whether the doctor is active
+             * @example true
+             */
+            is_active: boolean;
+        };
+        /**
+         * PassportItem
+         * @description Schema for a passport item containing condition and linked doctors.
+         */
+        PassportItem: {
+            /** @description The medical condition */
+            condition: components["schemas"]["PassportConditionItem"];
+            /**
+             * Doctors
+             * @description List of doctors linked to this condition
+             * @example []
+             */
+            doctors: components["schemas"]["PassportDoctorItem"][];
+        };
+        /** RegisterRequest */
+        RegisterRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Password */
+            password: string;
+            /** First Name */
+            first_name?: string | null;
+            /** Last Name */
+            last_name?: string | null;
+        };
+        /** SessionStatusResponse */
+        SessionStatusResponse: {
+            /** Data */
+            data?: {
                 [key: string]: unknown;
-            }[];
+            } | null;
+            /** Error */
+            error?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** SymptomLogCreateMinimal */
+        SymptomLogCreateMinimal: {
+            /** Symptom Name */
+            symptom_name: string;
+            /**
+             * Severity
+             * @description Severity level: one of none|mild|moderate|severe|critical (case-insensitive)
+             */
+            severity: string;
+            /** Started At */
+            started_at?: string | null;
+            /** Duration Minutes */
+            duration_minutes?: number | null;
+            /** Location */
+            location?: string | null;
+            /** Impact Rating */
+            impact_rating?: number | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** SymptomLogResponseMinimal */
+        SymptomLogResponseMinimal: {
+            /** Id */
+            id: number;
+            /** User Id */
+            user_id: string;
+            /** Symptom Name */
+            symptom_name: string;
+            /** Severity */
+            severity: string;
+            /** Started At */
+            started_at?: string | null;
+            /** Duration Minutes */
+            duration_minutes?: number | null;
+            /** Location */
+            location?: string | null;
+            /** Impact Rating */
+            impact_rating?: number | null;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Logged At
+             * Format: date-time
+             */
+            logged_at: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -2092,518 +1901,65 @@ export interface components {
             type: string;
         };
         /**
-         * ConditionCreate
-         * @description Schema for creating a new condition.
+         * ValidationErrorResponse
+         * @description Validation error response schema.
          */
-        ConditionCreate: {
+        ValidationErrorResponse: {
             /**
-             * Name
-             * @description Name of the medical condition
-             * @example Diabetes Type 2
+             * Detail
+             * @description List of validation errors
              */
-            name: string;
-            /**
-             * Description
-             * @description Detailed description of the condition
-             * @example Adult-onset diabetes mellitus
-             */
-            description?: string | null;
-            /**
-             * Severity
-             * @description Severity level of the condition
-             * @example moderate
-             */
-            severity?: ("mild" | "moderate" | "severe") | null;
-            /**
-             * Diagnosed Date
-             * @description Date when condition was diagnosed
-             * @example 2023-01-15
-             */
-            diagnosed_date?: string | null;
-            /**
-             * Is Active
-             * @description Whether the condition is currently active
-             * @default true
-             * @example true
-             */
-            is_active: boolean;
+            detail: {
+                [key: string]: unknown;
+            }[];
         };
-        /**
-         * ConditionUpdate
-         * @description Schema for updating an existing condition.
-         */
-        ConditionUpdate: {
-            /**
-             * Name
-             * @description Name of the medical condition
-             * @example Diabetes Type 2
-             */
-            name?: string | null;
-            /**
-             * Description
-             * @description Detailed description of the condition
-             * @example Adult-onset diabetes mellitus
-             */
-            description?: string | null;
-            /**
-             * Severity
-             * @description Severity level of the condition
-             * @example moderate
-             */
-            severity?: ("mild" | "moderate" | "severe") | null;
-            /**
-             * Diagnosed Date
-             * @description Date when condition was diagnosed
-             * @example 2023-01-15
-             */
-            diagnosed_date?: string | null;
-            /**
-             * Is Active
-             * @description Whether the condition is currently active
-             * @example true
-             */
-            is_active?: boolean | null;
-        };
-        /**
-         * ConditionResponse
-         * @description Schema for condition response.
-         */
-        ConditionResponse: {
-            /**
-             * Id
-             * @description Unique identifier for the condition
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
+        /** UserPublic */
+        app__api__auth__login__UserPublic: {
+            /** Id */
             id: string;
             /**
-             * Name
-             * @description Name of the medical condition
-             * @example Diabetes Type 2
-             */
-            name: string;
-            /**
-             * Description
-             * @description Detailed description of the condition
-             * @example Adult-onset diabetes mellitus
-             */
-            description?: string | null;
-            /**
-             * Severity
-             * @description Severity level of the condition
-             * @example moderate
-             */
-            severity?: ("mild" | "moderate" | "severe") | null;
-            /**
-             * Diagnosed Date
-             * @description Date when condition was diagnosed
-             * @example 2023-01-15
-             */
-            diagnosed_date?: string | null;
-            /**
-             * Is Active
-             * @description Whether the condition is currently active
-             * @example true
-             */
-            is_active: boolean;
-            /**
-             * Created At
-             * Format: date-time
-             * @description When the condition was created
-             * @example 2023-01-15T10:00:00Z
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * @description When the condition was last updated
-             * @example 2023-01-16T15:30:00Z
-             */
-            updated_at?: string | null;
-        };
-        /**
-         * DoctorCreate
-         * @description Schema for creating a new doctor record.
-         */
-        DoctorCreate: {
-            /**
-             * Name
-             * @description Full name of the doctor
-             * @example Dr. Jane Smith
-             */
-            name: string;
-            /**
-             * Specialty
-             * @description Medical specialty or area of expertise
-             * @example Endocrinology
-             */
-            specialty?: string | null;
-            /**
-             * Phone
-             * @description Contact phone number
-             * @example +1-555-123-4567
-             */
-            phone?: string | null;
-            /**
              * Email
-             * @description Contact email address
-             * @example dr.smith@clinic.com
+             * Format: email
              */
-            email?: string | null;
-            /**
-             * Address
-             * @description Office address
-             * @example 123 Medical Center Drive, Suite 456
-             */
-            address?: string | null;
-            /**
-             * Notes
-             * @description Additional notes about the doctor
-             * @example Highly recommended for diabetes management
-             */
-            notes?: string | null;
-            /**
-             * Is Active
-             * @description Whether the doctor is currently active
-             * @default true
-             * @example true
-             */
-            is_active: boolean;
+            email: string;
+            /** Display Name */
+            display_name?: string | null;
         };
-        /**
-         * DoctorUpdate
-         * @description Schema for updating an existing doctor record.
-         */
-        DoctorUpdate: {
-            /**
-             * Name
-             * @description Full name of the doctor
-             * @example Dr. Jane Smith
-             */
-            name?: string | null;
-            /**
-             * Specialty
-             * @description Medical specialty or area of expertise
-             * @example Endocrinology
-             */
-            specialty?: string | null;
-            /**
-             * Phone
-             * @description Contact phone number
-             * @example +1-555-123-4567
-             */
-            phone?: string | null;
-            /**
-             * Email
-             * @description Contact email address
-             * @example dr.smith@clinic.com
-             */
-            email?: string | null;
-            /**
-             * Address
-             * @description Office address
-             * @example 123 Medical Center Drive, Suite 456
-             */
-            address?: string | null;
-            /**
-             * Notes
-             * @description Additional notes about the doctor
-             * @example Highly recommended for diabetes management
-             */
-            notes?: string | null;
-            /**
-             * Is Active
-             * @description Whether the doctor is currently active
-             * @example true
-             */
-            is_active?: boolean | null;
+        /** UserResponse */
+        app__api__auth__login__UserResponse: {
+            data?: components["schemas"]["app__api__auth__login__UserPublic"] | null;
+            /** Error */
+            error?: {
+                [key: string]: unknown;
+            } | null;
         };
-        /**
-         * DoctorResponse
-         * @description Schema for doctor response.
-         */
-        DoctorResponse: {
-            /**
-             * Id
-             * @description Unique identifier for the doctor
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
+        /** UserPublic */
+        app__api__auth__register__UserPublic: {
+            /** Id */
             id: string;
             /**
-             * Name
-             * @description Full name of the doctor
-             * @example Dr. Jane Smith
-             */
-            name: string;
-            /**
-             * Specialty
-             * @description Medical specialty or area of expertise
-             * @example Endocrinology
-             */
-            specialty?: string | null;
-            /**
-             * Phone
-             * @description Contact phone number
-             * @example +1-555-123-4567
-             */
-            phone?: string | null;
-            /**
              * Email
-             * @description Contact email address
-             * @example dr.smith@clinic.com
+             * Format: email
              */
-            email?: string | null;
-            /**
-             * Address
-             * @description Office address
-             * @example 123 Medical Center Drive, Suite 456
-             */
-            address?: string | null;
-            /**
-             * Notes
-             * @description Additional notes about the doctor
-             * @example Highly recommended for diabetes management
-             */
-            notes?: string | null;
-            /**
-             * Is Active
-             * @description Whether the doctor is currently active
-             * @example true
-             */
-            is_active: boolean;
-            /**
-             * Created At
-             * Format: date-time
-             * @description When the doctor record was created
-             * @example 2023-01-15T10:00:00Z
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * @description When the doctor record was last updated
-             * @example 2023-01-16T15:30:00Z
-             */
-            updated_at?: string | null;
+            email: string;
+            /** First Name */
+            first_name?: string | null;
+            /** Last Name */
+            last_name?: string | null;
         };
-        /**
-         * DoctorConditionLinkCreate
-         * @description Schema for creating a doctor-condition link.
-         */
-        DoctorConditionLinkCreate: {
-            /**
-             * Doctor Id
-             * @description ID of the doctor to link
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            doctor_id: string;
-            /**
-             * Condition Id
-             * @description ID of the condition to link
-             * @example 123e4567-e89b-12d3-a456-426614174001
-             */
-            condition_id: string;
-            /**
-             * Notes
-             * @description Notes about this doctor-condition relationship
-             * @example Primary care physician for diabetes management
-             */
-            notes?: string | null;
-        };
-        /**
-         * DoctorConditionLinkResponse
-         * @description Schema for doctor-condition link response.
-         */
-        DoctorConditionLinkResponse: {
-            /**
-             * Doctor Id
-             * @description ID of the linked doctor
-             * @example 123e4567-e89b-12d3-a456-426614174000
-             */
-            doctor_id: string;
-            /**
-             * Condition Id
-             * @description ID of the linked condition
-             * @example 123e4567-e89b-12d3-a456-426614174001
-             */
-            condition_id: string;
-            /**
-             * Notes
-             * @description Notes about this doctor-condition relationship
-             * @example Primary care physician for diabetes management
-             */
-            notes?: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             * @description When the link was created
-             * @example 2023-01-15T10:00:00Z
-             */
-            created_at: string;
-            doctor: components["schemas"]["DoctorResponse"];
-            condition: components["schemas"]["ConditionResponse"];
-        };
-        /**
-         * PassportItem
-         * @description Schema for individual passport item (condition with doctors).
-         */
-        PassportItem: {
-            condition: components["schemas"]["ConditionResponse"];
-            /**
-             * Doctors
-             * @description List of doctors associated with this condition
-             */
-            doctors: components["schemas"]["DoctorResponse"][];
-        };
-        /**
-         * PassportResponse
-         * @description Schema for medical passport response.
-         */
-        PassportResponse: {
-            /**
-             * Items
-             * @description List of conditions with their associated doctors
-             */
-            items: components["schemas"]["PassportItem"][];
-            /**
-             * Total Conditions
-             * @description Total number of conditions
-             * @example 3
-             */
-            total_conditions: number;
-            /**
-             * Total Doctors
-             * @description Total number of unique doctors
-             * @example 2
-             */
-            total_doctors: number;
-            /**
-             * Generated At
-             * Format: date-time
-             * @description When this passport was generated
-             * @example 2023-01-15T10:00:00Z
-             */
-            generated_at: string;
+        /** UserResponse */
+        app__api__auth__register__UserResponse: {
+            data?: components["schemas"]["app__api__auth__register__UserPublic"] | null;
+            /** Error */
+            error?: {
+                [key: string]: unknown;
+            } | null;
         };
     };
-    responses: {
-        /** @description Authentication required or token invalid */
-        UnauthorizedError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    /** @example Invalid authentication credentials */
-                    detail?: string;
-                    /** @example AUTH_INVALID_TOKEN */
-                    error_code?: string;
-                };
-            };
-        };
-        /** @description Access denied - insufficient permissions */
-        ForbiddenError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    /** @example Access denied */
-                    detail?: string;
-                    /** @example AUTH_INSUFFICIENT_PERMISSIONS */
-                    error_code?: string;
-                };
-            };
-        };
-        /** @description Resource not found */
-        NotFoundError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    /** @example Resource not found */
-                    detail?: string;
-                    /** @example RESOURCE_NOT_FOUND */
-                    error_code?: string;
-                };
-            };
-        };
-        /** @description Request validation failed */
-        ValidationError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    detail?: {
-                        loc?: string[];
-                        msg?: string;
-                        type?: string;
-                    }[];
-                    /** @example VALIDATION_ERROR */
-                    error_code?: string;
-                };
-            };
-        };
-        /** @description Rate limit exceeded */
-        RateLimitError: {
-            headers: {
-                "X-Rate-Limit-Remaining": components["headers"]["X-Rate-Limit-Remaining"];
-                "X-Rate-Limit-Reset": components["headers"]["X-Rate-Limit-Reset"];
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    /** @example Rate limit exceeded. Please try again later. */
-                    detail?: string;
-                    /** @example RATE_LIMIT_EXCEEDED */
-                    error_code?: string;
-                    /**
-                     * @description Seconds to wait before retrying
-                     * @example 60
-                     */
-                    retry_after?: number;
-                };
-            };
-        };
-        /** @description Internal server error */
-        InternalServerError: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    /** @example An internal error occurred */
-                    detail?: string;
-                    /** @example INTERNAL_SERVER_ERROR */
-                    error_code?: string;
-                    /** @description Request ID for debugging */
-                    request_id?: string;
-                };
-            };
-        };
-    };
-    parameters: {
-        /** @description Page number for pagination (1-based) */
-        PageParameter: number;
-        /** @description Number of items per page (1-100) */
-        PerPageParameter: number;
-        /** @description Search term for filtering results */
-        SearchParameter: string;
-        /** @description Filter to only active/enabled items */
-        ActiveOnlyParameter: boolean;
-    };
+    responses: never;
+    parameters: never;
     requestBodies: never;
-    headers: {
-        /** @description Unique request identifier for tracing and debugging */
-        "X-Request-ID": string;
-        /** @description Distributed tracing identifier */
-        "X-Trace-ID": string;
-        /** @description Business correlation identifier */
-        "X-Correlation-ID": string;
-        /** @description Number of requests remaining in current window */
-        "X-Rate-Limit-Remaining": number;
-        /** @description Time when rate limit window resets (Unix timestamp) */
-        "X-Rate-Limit-Reset": number;
-    };
+    headers: never;
     pathItems: never;
 }
 export type $defs = Record<string, never>;
@@ -2623,6 +1979,1323 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    list_conditions_conditions_get: {
+        parameters: {
+            query?: {
+                /** @description Only return active conditions */
+                active_only?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_condition_conditions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConditionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_condition_conditions__condition_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                condition_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_condition_conditions__condition_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                condition_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_condition_conditions__condition_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                condition_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConditionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_doctors_doctors_get: {
+        parameters: {
+            query?: {
+                /** @description Only return active doctors */
+                active_only?: boolean;
+                /** @description Filter by specialty */
+                specialty?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DoctorResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_doctor_doctors_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DoctorCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DoctorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_doctor_doctors__doctor_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctor_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DoctorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_doctor_doctors__doctor_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctor_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_doctor_doctors__doctor_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctor_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DoctorUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DoctorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    link_doctor_to_condition_doctors_link_condition_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DoctorConditionLinkCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DoctorConditionLinkResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unlink_doctor_from_condition_doctors__doctor_id__conditions__condition_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doctor_id: string;
+                condition_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_passport_passport_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PassportItem"][];
+                };
+            };
+        };
+    };
+    list_medications_medications__get: {
+        parameters: {
+            query?: {
+                /** @description Search term for medication name or description */
+                search?: string | null;
+                /** @description Filter to only active medications */
+                active_only?: boolean;
+                /** @description Page number for pagination */
+                page?: number;
+                /** @description Number of items per page (1-100) */
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of medications retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationListResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_medication_medications__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationCreate"];
+            };
+        };
+        responses: {
+            /** @description Medication created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationResponse"];
+                };
+            };
+            /** @description Medication name already exists */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_active_medications_medications_active_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active medications retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationPublic"][];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    search_medications_medications_search_get: {
+        parameters: {
+            query: {
+                /** @description Search query */
+                q: string;
+                /** @description Include only active medications */
+                active_only?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Search results retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationPublic"][];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_medication_stats_medications_stats_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Statistics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_medication_medications__medication_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                medication_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Medication retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_medication_medications__medication_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                medication_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationUpdate"];
+            };
+        };
+        responses: {
+            /** @description Medication updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationResponse"];
+                };
+            };
+            /** @description Medication name already exists or validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_medication_medications__medication_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                medication_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Medication deleted successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Cannot delete medication (referenced by logs) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deactivate_medication_medications__medication_id__deactivate_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                medication_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Medication deactivated successfully (returns full medication) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationResponse"];
+                };
+            };
+            /** @description Medication already deactivated */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reactivate_medication_medications__medication_id__activate_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                medication_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Medication reactivated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    validate_medication_name_medications_validate_post: {
+        parameters: {
+            query: {
+                /** @description Medication name to validate */
+                name: string;
+                /** @description Check only active medications */
+                active_only?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Validation result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_medication_logs_minimal_logs_medications_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationLogResponseMinimal"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_medication_log_minimal_logs_medications_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationLogCreateMinimal"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationLogResponseMinimal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_medication_log_minimal_logs_medications__log_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                log_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationLogResponseMinimal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_symptom_logs_minimal_logs_symptoms_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SymptomLogResponseMinimal"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_symptom_log_minimal_logs_symptoms_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SymptomLogCreateMinimal"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SymptomLogResponseMinimal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logs_summary_minimal_logs_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    login_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["app__api__auth__login__UserResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logout_auth_logout_post: {
+        parameters: {
+            query?: {
+                session_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    register_auth_register_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["app__api__auth__register__UserResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    session_status_auth_session_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionStatusResponse"];
+                };
+            };
+        };
+    };
+    start_demo_auth_demo_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoResponse"];
+                };
             };
         };
     };
@@ -2734,7 +3407,192 @@ export interface operations {
             };
         };
     };
-    login_api_v1_auth_token_post: {
+    list_medication_logs_minimal_api_v1_logs_medications_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationLogResponseMinimal"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_medication_log_minimal_api_v1_logs_medications_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationLogCreateMinimal"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationLogResponseMinimal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_medication_log_minimal_api_v1_logs_medications__log_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                log_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationLogResponseMinimal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_symptom_logs_minimal_api_v1_logs_symptoms_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SymptomLogResponseMinimal"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_symptom_log_minimal_api_v1_logs_symptoms_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SymptomLogCreateMinimal"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SymptomLogResponseMinimal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logs_summary_minimal_api_v1_logs_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    get_current_user_placeholder_api_v1_users_me_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -2754,67 +3612,7 @@ export interface operations {
             };
         };
     };
-    register_api_v1_auth_register_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    refresh_token_api_v1_auth_refresh_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    get_current_user_api_v1_users_me_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    update_current_user_api_v1_users_me_put: {
+    update_current_user_placeholder_api_v1_users_me_put: {
         parameters: {
             query?: never;
             header?: never;
@@ -2837,14 +3635,14 @@ export interface operations {
     list_medications_api_v1_medications__get: {
         parameters: {
             query?: {
-                /** @description Search term for filtering results */
-                search?: components["parameters"]["SearchParameter"];
-                /** @description Filter to only active/enabled items */
-                active_only?: components["parameters"]["ActiveOnlyParameter"];
-                /** @description Page number for pagination (1-based) */
-                page?: components["parameters"]["PageParameter"];
+                /** @description Search term for medication name or description */
+                search?: string | null;
+                /** @description Filter to only active medications */
+                active_only?: boolean;
+                /** @description Page number for pagination */
+                page?: number;
                 /** @description Number of items per page (1-100) */
-                per_page?: components["parameters"]["PerPageParameter"];
+                per_page?: number;
             };
             header?: never;
             path?: never;
@@ -2859,6 +3657,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MedicationListResponse"];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -2894,6 +3719,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Validation error */
             422: {
                 headers: {
@@ -2901,6 +3735,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -2923,12 +3766,41 @@ export interface operations {
                     "application/json": components["schemas"]["MedicationPublic"][];
                 };
             };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     search_medications_api_v1_medications_search_get: {
         parameters: {
             query: {
+                /** @description Search query */
                 q: string;
+                /** @description Include only active medications */
                 active_only?: boolean;
             };
             header?: never;
@@ -2944,6 +3816,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MedicationPublic"][];
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -2966,6 +3865,33 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -2992,6 +3918,24 @@ export interface operations {
             };
             /** @description Medication not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3052,6 +3996,15 @@ export interface operations {
                     "application/json": components["schemas"]["ValidationErrorResponse"];
                 };
             };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     delete_medication_api_v1_medications__medication_id__delete: {
@@ -3090,6 +4043,24 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     deactivate_medication_api_v1_medications__medication_id__deactivate_patch: {
@@ -3103,13 +4074,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Medication deactivated successfully */
+            /** @description Medication deactivated successfully (returns full medication) */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MedicationDeactivateResponse"];
+                    "application/json": components["schemas"]["MedicationResponse"];
                 };
             };
             /** @description Medication already deactivated */
@@ -3123,6 +4094,24 @@ export interface operations {
             };
             /** @description Medication not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3161,12 +4150,32 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     validate_medication_name_api_v1_medications_validate_post: {
         parameters: {
             query: {
+                /** @description Medication name to validate */
                 name: string;
+                /** @description Check only active medications */
                 active_only?: boolean;
             };
             header?: never;
@@ -3184,6 +4193,33 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Medication not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -3224,358 +4260,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
-                };
-            };
-        };
-    };
-    list_medication_logs_api_v1_logs_medications_get: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of records */
-                limit?: number;
-                /** @description Number of records to skip */
-                offset?: number;
-                /** @description Start date for filtering */
-                start_date?: string | null;
-                /** @description End date for filtering */
-                end_date?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MedicationLogResponse"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_medication_log_api_v1_logs_medications_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MedicationLogCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MedicationLogResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_medication_log_api_v1_logs_medications__log_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                log_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MedicationLogResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_medication_log_api_v1_logs_medications__log_id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                log_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MedicationLogUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MedicationLogResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_medication_log_api_v1_logs_medications__log_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                log_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_symptom_logs_api_v1_logs_symptoms_get: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of records */
-                limit?: number;
-                /** @description Number of records to skip */
-                offset?: number;
-                /** @description Start date for filtering */
-                start_date?: string | null;
-                /** @description End date for filtering */
-                end_date?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SymptomLogResponse"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_symptom_log_api_v1_logs_symptoms_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SymptomLogCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SymptomLogResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_symptom_log_api_v1_logs_symptoms__log_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                log_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SymptomLogResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_symptom_log_api_v1_logs_symptoms__log_id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                log_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SymptomLogUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SymptomLogResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_symptom_log_api_v1_logs_symptoms__log_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                log_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_logs_summary_api_v1_logs_summary_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LogSummaryResponse"];
                 };
             };
         };
@@ -4066,7 +4750,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PassportResponse"];
+                    "application/json": components["schemas"]["PassportItem"][];
                 };
             };
         };

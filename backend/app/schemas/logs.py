@@ -6,7 +6,7 @@ logging operations in the SaaS Medical Tracker application.
 """
 
 from datetime import datetime
-from typing import List, Optional, Annotated
+from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator, StringConstraints
 
@@ -27,44 +27,34 @@ class LogBaseSchema(BaseModel):
 
 # MedicationLog schemas
 class MedicationLogCreate(BaseModel):
-    """Schema for creating a new medication log entry."""
+    """Schema for creating a new medication log entry.
 
-    medication_name: Annotated[str, StringConstraints(min_length=1, max_length=200)] = Field(
-        ..., description="Name of the medication taken"
-    )
-    dosage: Annotated[str, StringConstraints(min_length=1, max_length=100)] = Field(
-        ..., description="Dosage amount and unit (e.g., '500mg', '2 tablets')"
-    )
-    taken_at: datetime = Field(
-        ..., description="When the medication was actually taken"
-    )
-    notes: Optional[Annotated[str, StringConstraints(max_length=1000)]] = Field(
-        default=None, description="Additional notes about the medication intake"
-    )
-    side_effects: Optional[Annotated[str, StringConstraints(max_length=500)]] = Field(
-        default=None, description="Any side effects experienced"
-    )
-    side_effect_severity: Optional[SeverityLevel] = Field(
-        default=None, description="Severity of side effects if any"
-    )
-    effectiveness_rating: Optional[int] = Field(
-        default=None, ge=1, le=5, description="How effective the medication felt (1-5 scale)"
-    )
+    Contract/integration tests currently send: medication_name, quantity, unit, notes.
+    We adapt by allowing quantity + unit OR a preformatted dosage string.
+    Dosage will be constructed as "{quantity} {unit}" if dosage not provided.
+    taken_at is optional for tests (defaults to current UTC time) to reduce required fields.
+    """
+
+    medication_name: str = Field(..., min_length=1, max_length=200, description="Name of the medication taken")
+    quantity: Optional[int] = Field(default=None, ge=0, description="Quantity amount for dosage construction")
+    unit: Optional[str] = Field(default=None, min_length=1, max_length=50, description="Dosage unit (e.g., 'tablet', 'mg')")
+    dosage: Optional[str] = Field(default=None, min_length=1, max_length=100, description="Explicit dosage string; overrides quantity+unit if provided")
+    taken_at: Optional[datetime] = Field(default=None, description="When the medication was actually taken (defaults to now)")
+    notes: Optional[str] = Field(default=None, max_length=1000, description="Additional notes about the medication intake")
+    side_effects: Optional[str] = Field(default=None, max_length=500, description="Any side effects experienced")
+    side_effect_severity: Optional[SeverityLevel] = Field(default=None, description="Severity of side effects if any")
+    effectiveness_rating: Optional[int] = Field(default=None, ge=1, le=5, description="How effective the medication felt (1-5 scale)")
 
     @field_validator('taken_at')
-    def validate_taken_at(cls, v: datetime) -> datetime:
-        """Ensure taken_at is not too far in the future."""
-        # Normalize comparison using aware UTC now to avoid naive/aware TypeError
+    def validate_taken_at(cls, v: Optional[datetime]) -> Optional[datetime]:
+        """Ensure taken_at is not too far in the future; allow None to default later."""
+        if v is None:
+            return v
         from datetime import timezone, timedelta
         now_utc = datetime.now(timezone.utc)
-        # If incoming datetime is naive, assume UTC for comparison
-        if v.tzinfo is None:
-            v_compare = v.replace(tzinfo=timezone.utc)
-        else:
-            v_compare = v
-        if v_compare > now_utc:
-            if v_compare > now_utc + timedelta(hours=1):
-                raise ValueError('taken_at cannot be more than 1 hour in the future')
+        v_compare = v.replace(tzinfo=timezone.utc) if v.tzinfo is None else v
+        if v_compare > now_utc + timedelta(hours=1):
+            raise ValueError('taken_at cannot be more than 1 hour in the future')
         return v
 
     @field_validator('side_effects')
@@ -80,15 +70,11 @@ class MedicationLogCreate(BaseModel):
 class MedicationLogUpdate(BaseModel):
     """Schema for updating an existing medication log entry."""
 
-    medication_name: Optional[Annotated[str, StringConstraints(min_length=1, max_length=200)]] = Field(
-        default=None
-    )
-    dosage: Optional[Annotated[str, StringConstraints(min_length=1, max_length=100)]] = Field(
-        default=None
-    )
+    medication_name: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    dosage: Optional[str] = Field(default=None, min_length=1, max_length=100)
     taken_at: Optional[datetime] = None
-    notes: Optional[Annotated[str, StringConstraints(max_length=1000)]] = Field(default=None)
-    side_effects: Optional[Annotated[str, StringConstraints(max_length=500)]] = Field(default=None)
+    notes: Optional[str] = Field(default=None, max_length=1000)
+    side_effects: Optional[str] = Field(default=None, max_length=500)
     side_effect_severity: Optional[SeverityLevel] = None
     effectiveness_rating: Optional[int] = Field(default=None, ge=1, le=5)
 
@@ -112,9 +98,7 @@ class MedicationLogResponse(LogBaseSchema):
 class SymptomLogCreate(BaseModel):
     """Schema for creating a new symptom log entry."""
 
-    symptom_name: Annotated[str, StringConstraints(min_length=1, max_length=200)] = Field(
-        ..., description="Name or description of the symptom"
-    )
+    symptom_name: str = Field(..., min_length=1, max_length=200, description="Name or description of the symptom")
     severity: SeverityLevel = Field(
         ..., description="Severity level of the symptom"
     )
@@ -127,15 +111,9 @@ class SymptomLogCreate(BaseModel):
     duration_minutes: Optional[int] = Field(
         default=None, ge=0, description="Duration of the symptom in minutes"
     )
-    triggers: Optional[Annotated[str, StringConstraints(max_length=500)]] = Field(
-        default=None, description="Potential triggers for the symptom"
-    )
-    location: Optional[Annotated[str, StringConstraints(max_length=100)]] = Field(
-        default=None, description="Body location where symptom occurred"
-    )
-    notes: Optional[Annotated[str, StringConstraints(max_length=1000)]] = Field(
-        default=None, description="Additional notes about the symptom"
-    )
+    triggers: Optional[str] = Field(default=None, max_length=500, description="Potential triggers for the symptom")
+    location: Optional[str] = Field(default=None, max_length=100, description="Body location where symptom occurred")
+    notes: Optional[str] = Field(default=None, max_length=1000, description="Additional notes about the symptom")
     impact_rating: Optional[int] = Field(
         default=None, ge=1, le=5, description="Impact on daily activities (1-5 scale)"
     )
@@ -167,14 +145,14 @@ class SymptomLogCreate(BaseModel):
 class SymptomLogUpdate(BaseModel):
     """Schema for updating an existing symptom log entry."""
 
-    symptom_name: Optional[Annotated[str, StringConstraints(min_length=1, max_length=200)]] = Field(default=None)
+    symptom_name: Optional[str] = Field(default=None, min_length=1, max_length=200)
     severity: Optional[SeverityLevel] = None
     started_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
     duration_minutes: Optional[int] = Field(default=None, ge=0)
-    triggers: Optional[Annotated[str, StringConstraints(max_length=500)]] = Field(default=None)
-    location: Optional[Annotated[str, StringConstraints(max_length=100)]] = Field(default=None)
-    notes: Optional[Annotated[str, StringConstraints(max_length=1000)]] = Field(default=None)
+    triggers: Optional[str] = Field(default=None, max_length=500)
+    location: Optional[str] = Field(default=None, max_length=100)
+    notes: Optional[str] = Field(default=None, max_length=1000)
     impact_rating: Optional[int] = Field(default=None, ge=1, le=5)
 
 

@@ -4,8 +4,9 @@
 
 'use client'
 
-import { Bell, Search, User, LogOut } from 'lucide-react'
+import { Bell, Search, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import LogoutMenu from '@/components/auth/LogoutMenu'
 import { Input } from '@/components/ui/input'
 
 interface HeaderProps {
@@ -40,20 +41,14 @@ export function Header({ className }: HeaderProps) {
 
           {/* User Menu */}
           <div className="flex items-center space-x-3">
-            <div className="hidden md:block text-right">
-              <p className="text-sm font-medium text-gray-900">Demo User</p>
-              <p className="text-xs text-gray-500">demo@example.com</p>
-            </div>
-            
-            <Button variant="ghost" size="sm" className="p-1 rounded-full">
+            {/* Avatar placeholder (could be replaced with user initials later) */}
+            <Button variant="ghost" size="sm" className="p-1 rounded-full" aria-label="Account menu">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-blue-600" />
               </div>
             </Button>
-
-            <Button variant="ghost" size="sm">
-              <LogOut className="w-4 h-4" />
-            </Button>
+            {/* Dynamic user/email + logout handled inside LogoutMenu */}
+            <LogoutMenu />
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
+import os
 
 from alembic import context
 
@@ -37,7 +38,13 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    env_url = os.getenv("DATABASE_URL")
+    if env_url:
+        # Override config if DATABASE_URL is provided (tests spawn temp DBs)
+        config.set_main_option("sqlalchemy.url", env_url)
+        url = env_url
+    else:
+        url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -56,6 +63,11 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    # Allow DATABASE_URL override for test environments
+    env_url = os.getenv("DATABASE_URL")
+    if env_url:
+        config.set_main_option("sqlalchemy.url", env_url)
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

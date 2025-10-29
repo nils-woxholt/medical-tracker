@@ -1,5 +1,6 @@
 """Application package root.
 
-Exports FastAPI application factory and common utilities for tests.
+Previously imported create_app at module import time causing side effects during
+Alembic migrations (loading full FastAPI app and failing on route dependencies).
+Tests import create_app directly from app.main instead.
 """
-from .main import create_app  # noqa: F401

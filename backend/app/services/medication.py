@@ -217,7 +217,7 @@ class MedicationService:
                 detail=f"Failed to update medication: {str(e)}"
             )
     
-    def deactivate_medication(self, medication_id: int) -> Optional[MedicationDeactivateResponse]:
+    def deactivate_medication(self, medication_id: int) -> Optional[MedicationResponse]:
         """
         Deactivate a medication (soft delete).
         
@@ -230,27 +230,22 @@ class MedicationService:
         medication = self.db.get(MedicationMaster, medication_id)
         if not medication:
             return None
-        
+
         if not medication.is_active:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Medication is already deactivated"
             )
-        
-        # Deactivate medication
+
+        # Soft deactivate
         medication.is_active = False
         medication.updated_at = datetime.utcnow()
-        
+
         try:
             self.db.commit()
-            
-            return MedicationDeactivateResponse(
-                id=medication.id,
-                message=f"Medication '{medication.name}' has been deactivated",
-                deactivated_at=medication.updated_at,
-                is_active=medication.is_active
-            )
-            
+            self.db.refresh(medication)
+            # Return full medication response (tests expect name/created_at/updated_at/is_active)
+            return MedicationResponse.model_validate(medication)
         except Exception as e:
             self.db.rollback()
             raise HTTPException(

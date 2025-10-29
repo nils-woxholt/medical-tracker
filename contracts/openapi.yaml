@@ -1,153 +1,8 @@
 openapi: 3.1.0
 info:
-  title: SaaS Medical Tracker API
-  description: |
-    # SaaS Medical Tracker API
-    
-    A comprehensive medical tracking and health management system that enables users to:
-    
-    ## Core Features
-    
-    ### 📋 Daily Logging
-    - **Medication Logs**: Track medication intake with dosage, timing, and notes
-    - **Symptom Logs**: Record symptoms with severity levels and occurrence details
-    - **Feel vs Yesterday**: Get AI-powered insights on daily health trends
-    
-    ### 💊 Medication Management
-    - **Medication Master**: Maintain a personal medication database
-    - **CRUD Operations**: Create, read, update, and deactivate medications
-    - **Active Filtering**: Focus on currently prescribed medications
-    
-    ### 🏥 Medical Context
-    - **Condition Passport**: Comprehensive view of medical conditions
-    - **Doctor Directory**: Manage healthcare provider information
-    - **Linked Care**: Associate conditions with healthcare providers
-    
-    ## Security & Privacy
-    
-    - **Authentication**: JWT-based user authentication with secure token management
-    - **Data Isolation**: Strict per-user data segregation and access controls
-    - **HIPAA Considerations**: Privacy-focused design for protected health information
-    - **Audit Logging**: Comprehensive activity tracking for compliance
-    
-    ## Performance & Reliability
-    
-    - **Response Times**: Target <300ms for standard endpoints
-    - **Rate Limiting**: 100 requests per minute per user for data protection
-    - **Health Monitoring**: Built-in health checks and metrics collection
-    - **Error Handling**: Structured error responses with correlation IDs
-    
-    ## API Standards
-    
-    - **RESTful Design**: Standard HTTP methods and status codes
-    - **JSON API**: Consistent JSON request/response format
-    - **Pagination**: Cursor-based pagination for large data sets
-    - **Versioning**: API versioning with backward compatibility
-    
-    ---
-    
-    For support and documentation, visit our [Developer Portal](https://docs.medical-tracker.example.com)
-    
+  title: SaaS Medical Tracker
+  description: Track medications, log symptoms, and manage your health data securely
   version: 1.0.0
-  contact:
-    name: Medical Tracker API Support
-    email: api-support@medical-tracker.example.com
-    url: https://docs.medical-tracker.example.com/support
-  license:
-    name: Proprietary
-    url: https://medical-tracker.example.com/license
-  termsOfService: https://medical-tracker.example.com/terms
-
-servers:
-  - url: https://api.medical-tracker.example.com
-    description: Production API server
-  - url: https://staging-api.medical-tracker.example.com
-    description: Staging API server
-  - url: http://localhost:8000
-    description: Local development server
-
-tags:
-  - name: Authentication
-    description: |
-      **User Authentication & Authorization**
-      
-      Secure login, registration, and token management endpoints.
-      Supports JWT-based authentication with refresh token rotation.
-      
-      **Security Features:**
-      - Secure password hashing with bcrypt
-      - JWT token expiration and refresh
-      - Rate limiting on authentication attempts
-      - Account lockout protection
-      
-  - name: Health & Monitoring  
-    description: |
-      **System Health & Monitoring**
-      
-      Service health checks, metrics, and monitoring endpoints for operational visibility.
-      Used by load balancers, monitoring systems, and DevOps tooling.
-      
-      **Monitoring Capabilities:**
-      - Kubernetes readiness/liveness probes
-      - Prometheus-compatible metrics
-      - Database connectivity checks
-      - Application performance metrics
-      
-  - name: Daily Logging
-    description: |
-      **Daily Health Logging**
-      
-      Core logging functionality for tracking daily medication intake and symptoms.
-      Includes intelligent analysis and trend detection.
-      
-      **Features:**
-      - Medication log with dosage tracking
-      - Symptom severity monitoring (1-5 scale)
-      - "Feel vs Yesterday" analysis
-      - Historical trend insights
-      
-  - name: Medication Management
-    description: |
-      **Medication Master Data**
-      
-      Comprehensive medication database management with CRUD operations.
-      Supports active/inactive status and detailed medication profiles.
-      
-      **Capabilities:**
-      - Personal medication database
-      - Dosage and frequency tracking  
-      - Active medication filtering
-      - Bulk operations for medication management
-      
-  - name: Medical Context
-    description: |
-      **Medical Conditions & Healthcare Providers**
-      
-      Advanced medical context management including conditions, doctors, and care relationships.
-      Provides comprehensive medical passport view.
-      
-      **Core Features:**
-      - Medical condition tracking with severity levels
-      - Healthcare provider directory
-      - Doctor-condition associations
-      - Comprehensive medical passport aggregation
-      
-  - name: Users
-    description: |
-      **User Profile Management**
-      
-      User account and profile management functionality.
-      Handles personal information, preferences, and account settings.
-      
-  - name: Telemetry
-    description: |
-      **Performance & Analytics Telemetry**
-      
-      Advanced telemetry collection for performance monitoring and user experience optimization.
-      Includes Core Web Vitals and application metrics.
-
-security:
-  - BearerAuth: []
 paths:
   /metrics:
     get:
@@ -159,6 +14,1254 @@ paths:
       responses:
         '200':
           description: Successful Response
+  /conditions:
+    post:
+      tags:
+      - Medical Context (root)
+      - conditions
+      summary: Create condition
+      description: Create a new medical condition for the authenticated user
+      operationId: create_condition_conditions_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConditionCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConditionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Medical Context (root)
+      - conditions
+      summary: List conditions
+      description: Get all conditions for the authenticated user
+      operationId: list_conditions_conditions_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: active_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Only return active conditions
+          default: false
+          title: Active Only
+        description: Only return active conditions
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConditionResponse'
+                title: Response List Conditions Conditions Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conditions/{condition_id}:
+    get:
+      tags:
+      - Medical Context (root)
+      - conditions
+      summary: Get condition
+      description: Get a specific condition by ID
+      operationId: get_condition_conditions__condition_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: condition_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Condition Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConditionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Medical Context (root)
+      - conditions
+      summary: Update condition
+      description: Update a specific condition
+      operationId: update_condition_conditions__condition_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: condition_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Condition Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConditionUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConditionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Medical Context (root)
+      - conditions
+      summary: Delete condition
+      description: Delete (deactivate) a specific condition
+      operationId: delete_condition_conditions__condition_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: condition_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Condition Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /doctors:
+    post:
+      tags:
+      - Medical Context (root)
+      - doctors
+      summary: Create doctor
+      description: Create a new doctor record for the authenticated user
+      operationId: create_doctor_doctors_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Medical Context (root)
+      - doctors
+      summary: List doctors
+      description: Get all doctors for the authenticated user
+      operationId: list_doctors_doctors_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: active_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Only return active doctors
+          default: false
+          title: Active Only
+        description: Only return active doctors
+      - name: specialty
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by specialty
+          title: Specialty
+        description: Filter by specialty
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorResponse'
+                title: Response List Doctors Doctors Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /doctors/{doctor_id}:
+    get:
+      tags:
+      - Medical Context (root)
+      - doctors
+      summary: Get doctor
+      description: Get a specific doctor by ID
+      operationId: get_doctor_doctors__doctor_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: doctor_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Doctor Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Medical Context (root)
+      - doctors
+      summary: Update doctor
+      description: Update a specific doctor
+      operationId: update_doctor_doctors__doctor_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: doctor_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Doctor Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Medical Context (root)
+      - doctors
+      summary: Delete doctor
+      description: Delete (deactivate) a specific doctor
+      operationId: delete_doctor_doctors__doctor_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: doctor_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Doctor Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /doctors/link-condition:
+    post:
+      tags:
+      - Medical Context (root)
+      - doctors
+      - conditions
+      summary: Link doctor to condition
+      description: Create a link between a doctor and a condition
+      operationId: link_doctor_to_condition_doctors_link_condition_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorConditionLinkCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorConditionLinkResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /doctors/{doctor_id}/conditions/{condition_id}:
+    delete:
+      tags:
+      - Medical Context (root)
+      - doctors
+      - conditions
+      summary: Unlink doctor from condition
+      description: Remove the link between a doctor and a condition
+      operationId: unlink_doctor_from_condition_doctors__doctor_id__conditions__condition_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: doctor_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Doctor Id
+      - name: condition_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Condition Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /passport:
+    get:
+      tags:
+      - Medical Context (root)
+      - passport
+      summary: Get medical passport
+      description: Get aggregated view of conditions with linked doctors (list of
+        items)
+      operationId: get_passport_passport_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PassportItem'
+                type: array
+                title: Response Get Passport Passport Get
+      security:
+      - HTTPBearer: []
+  /medications/:
+    post:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Create new medication
+      description: Create a new medication in the master data list. Medication names
+        must be unique.
+      operationId: create_medication_medications__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicationCreate'
+      responses:
+        '201':
+          description: Medication created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Medication name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - Medications (root)
+      - medications
+      summary: List medications
+      description: Get paginated list of medications with optional search and filtering
+      operationId: list_medications_medications__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search term for medication name or description
+          title: Search
+        description: Search term for medication name or description
+      - name: active_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Filter to only active medications
+          default: true
+          title: Active Only
+        description: Filter to only active medications
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number for pagination
+          default: 1
+          title: Page
+        description: Page number for pagination
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Number of items per page (1-100)
+          default: 10
+          title: Per Page
+        description: Number of items per page (1-100)
+      responses:
+        '200':
+          description: List of medications retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationListResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /medications/active:
+    get:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Get active medications
+      description: Get all active medications for selection lists (no pagination)
+      operationId: get_active_medications_medications_active_get
+      responses:
+        '200':
+          description: Active medications retrieved successfully
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/MedicationPublic'
+                type: array
+                title: Response Get Active Medications Medications Active Get
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /medications/search:
+    get:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Search medications
+      description: Search medications by name or description
+      operationId: search_medications_medications_search_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          description: Search query
+          title: Q
+        description: Search query
+      - name: active_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Include only active medications
+          default: true
+          title: Active Only
+        description: Include only active medications
+      responses:
+        '200':
+          description: Search results retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationPublic'
+                title: Response Search Medications Medications Search Get
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /medications/stats:
+    get:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Get medication statistics
+      description: Get statistics about medications in the system
+      operationId: get_medication_stats_medications_stats_get
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Get Medication Stats Medications Stats Get
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /medications/{medication_id}:
+    get:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Get medication by ID
+      description: Retrieve a specific medication by its ID
+      operationId: get_medication_medications__medication_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Medication Id
+      responses:
+        '200':
+          description: Medication retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Update medication
+      description: Update an existing medication
+      operationId: update_medication_medications__medication_id__put
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Medication Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicationUpdate'
+      responses:
+        '200':
+          description: Medication updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Medication name already exists or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Delete medication
+      description: Permanently delete a medication (hard delete). Use with caution.
+      operationId: delete_medication_medications__medication_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Medication Id
+      responses:
+        '204':
+          description: Medication deleted successfully
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Cannot delete medication (referenced by logs)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /medications/{medication_id}/deactivate:
+    patch:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Deactivate medication
+      description: Deactivate a medication (soft delete). Deactivated medications
+        won't appear in active lists.
+      operationId: deactivate_medication_medications__medication_id__deactivate_patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Medication Id
+      responses:
+        '200':
+          description: Medication deactivated successfully (returns full medication)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Medication already deactivated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /medications/{medication_id}/activate:
+    patch:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Reactivate medication
+      description: Reactivate a previously deactivated medication
+      operationId: reactivate_medication_medications__medication_id__activate_patch
+      parameters:
+      - name: medication_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Medication Id
+      responses:
+        '200':
+          description: Medication reactivated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /medications/validate:
+    post:
+      tags:
+      - Medications (root)
+      - medications
+      summary: Validate medication name
+      description: Validate if a medication name exists and is optionally active
+      operationId: validate_medication_name_medications_validate_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Medication name to validate
+          title: Name
+        description: Medication name to validate
+      - name: active_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Check only active medications
+          default: true
+          title: Active Only
+        description: Check only active medications
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Validate Medication Name Medications Validate Post
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /logs/medications:
+    post:
+      tags:
+      - Logs (root, legacy)
+      summary: Create Medication Log Minimal
+      operationId: create_medication_log_minimal_logs_medications_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicationLogCreateMinimal'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationLogResponseMinimal'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Logs (root, legacy)
+      summary: List Medication Logs Minimal
+      operationId: list_medication_logs_minimal_logs_medications_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationLogResponseMinimal'
+                title: Response List Medication Logs Minimal Logs Medications Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /logs/medications/{log_id}:
+    get:
+      tags:
+      - Logs (root, legacy)
+      summary: Get Medication Log Minimal
+      operationId: get_medication_log_minimal_logs_medications__log_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: log_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Log Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationLogResponseMinimal'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /logs/symptoms:
+    post:
+      tags:
+      - Logs (root, legacy)
+      summary: Create Symptom Log Minimal
+      operationId: create_symptom_log_minimal_logs_symptoms_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SymptomLogCreateMinimal'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SymptomLogResponseMinimal'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Logs (root, legacy)
+      summary: List Symptom Logs Minimal
+      operationId: list_symptom_logs_minimal_logs_symptoms_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SymptomLogResponseMinimal'
+                title: Response List Symptom Logs Minimal Logs Symptoms Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /logs/summary:
+    get:
+      tags:
+      - Logs (root, legacy)
+      summary: Logs Summary Minimal
+      operationId: logs_summary_minimal_logs_summary_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Logs Summary Minimal Logs Summary Get
+      security:
+      - HTTPBearer: []
+  /auth/login:
+    post:
+      tags:
+      - Auth (root)
+      - auth
+      summary: Login
+      operationId: login_auth_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__api__auth__login__UserResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/logout:
+    post:
+      tags:
+      - Auth (root)
+      - auth
+      summary: Logout
+      description: 'Logout current session.
+
+
+        session_id may be injected by middleware into endpoint dependencies (e.g.
+        request.state).
+
+        For now we accept a direct parameter for simplified flow.'
+      operationId: logout_auth_logout_post
+      parameters:
+      - name: session_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/register:
+    post:
+      tags:
+      - Auth (root)
+      - auth
+      summary: Register
+      operationId: register_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app__api__auth__register__UserResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/session:
+    get:
+      tags:
+      - Auth (root)
+      - auth
+      summary: Session Status
+      operationId: session_status_auth_session_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStatusResponse'
+  /auth/demo:
+    post:
+      tags:
+      - Auth (root)
+      - auth
+      summary: Start Demo
+      operationId: start_demo_auth_demo_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoResponse'
   /api/v1/health:
     get:
       summary: Health Check
@@ -205,8 +1308,14 @@ paths:
   /api/v1/metrics:
     get:
       summary: Metrics
-      description: "Basic metrics endpoint.\n\nReturns basic application metrics for\
-        \ monitoring.\n\nReturns:\n    Dict: Application metrics"
+      description: 'Basic metrics endpoint without external psutil dependency.
+
+
+        Tests only assert presence of top-level keys and (optionally) some system
+
+        metrics. We''ll attempt psutil import; if unavailable, we gracefully fall
+
+        back to a minimal payload so the endpoint never raises ModuleNotFoundError.'
       operationId: metrics_api_v1_metrics_get
       responses:
         '200':
@@ -232,252 +1341,200 @@ paths:
                 additionalProperties: true
                 type: object
                 title: Response Api Info Api V1 Info Get
-  /api/v1/auth/token:
+  /api/v1/logs/medications:
     post:
-      tags:
-      - Authentication
-      summary: User Authentication
-      description: |
-        **Secure User Login and Token Generation**
-        
-        Authenticate users with email/username and password, returning secure access tokens
-        for API authorization. Implements industry-standard security practices.
-        
-        **Authentication Features:**
-        - 🔐 Secure password validation with bcrypt hashing
-        - 🎫 JWT access token generation (15-minute expiry)
-        - 🔄 Refresh token issuance (7-day expiry)
-        - 🛡️ Rate limiting protection (5 attempts per minute)
-        - 🔒 Account lockout after failed attempts
-        
-        **Security Measures:**
-        - Password strength requirements enforced
-        - Brute force attack protection
-        - Audit logging of authentication events
-        - IP-based rate limiting and monitoring
-        
-        **Request Format:**
-        ```json
-        {
-          "email": "user@example.com",
-          "password": "securePassword123"
-        }
-        ```
-        
-        **Response Format:**
-        ```json
-        {
-          "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-          "token_type": "bearer",
-          "expires_in": 900,
-          "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
-        }
-        ```
-        
-        **Error Handling:**
-        - Invalid credentials (401)
-        - Account locked (423)
-        - Rate limit exceeded (429)
-        - Account not verified (403)
-        
-        **Use Cases:**
-        - Web application login
-        - Mobile app authentication
-        - API client authorization
-        - Session establishment
-      operationId: login_api_v1_auth_token_post
+      summary: Create Medication Log Minimal
+      operationId: create_medication_log_minimal_api_v1_logs_medications_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicationLogCreateMinimal'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationLogResponseMinimal'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      summary: List Medication Logs Minimal
+      operationId: list_medication_logs_minimal_api_v1_logs_medications_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema: {}
-  /api/v1/auth/register:
-    post:
-      tags:
-      - Authentication
-      summary: User Registration
-      description: |
-        **Create New User Account**
-        
-        Register new users with comprehensive validation and security measures.
-        Creates secure accounts ready for medical data tracking and management.
-        
-        **Registration Features:**
-        - 📧 Email uniqueness validation
-        - 🔐 Password strength requirements (8+ chars, mixed case, numbers, symbols)
-        - ✅ Email verification process initiation
-        - 👤 Complete user profile creation
-        - 🛡️ GDPR/HIPAA compliance ready
-        
-        **Password Requirements:**
-        - Minimum 8 characters length
-        - At least one uppercase letter
-        - At least one lowercase letter  
-        - At least one number
-        - At least one special character
-        - No common passwords (dictionary check)
-        
-        **Request Format:**
-        ```json
-        {
-          "email": "newuser@example.com",
-          "password": "SecurePass123!",
-          "first_name": "John",
-          "last_name": "Doe",
-          "date_of_birth": "1990-01-15",
-          "timezone": "America/New_York"
-        }
-        ```
-        
-        **Validation Checks:**
-        - Email format and DNS validation
-        - Password complexity requirements
-        - Age verification (13+ years)
-        - Duplicate email prevention
-        - Input sanitization and validation
-        
-        **Privacy & Security:**
-        - Password immediately hashed with bcrypt
-        - Personal data encrypted at rest
-        - Audit trail creation for compliance
-        - Automatic privacy policy acceptance
-        
-        **Post-Registration:**
-        - Email verification sent automatically
-        - Account created in pending state
-        - Welcome email with onboarding guide
-        - Basic user preferences initialized
-      operationId: register_api_v1_auth_register_post
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationLogResponseMinimal'
+                title: Response List Medication Logs Minimal Api V1 Logs Medications
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/logs/medications/{log_id}:
+    get:
+      summary: Get Medication Log Minimal
+      operationId: get_medication_log_minimal_api_v1_logs_medications__log_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: log_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Log Id
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema: {}
-  /api/v1/auth/refresh:
+              schema:
+                $ref: '#/components/schemas/MedicationLogResponseMinimal'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/logs/symptoms:
     post:
-      tags:
-      - Authentication
-      summary: Token Refresh
-      description: |
-        **Renew Access Token Using Refresh Token**
-        
-        Exchange a valid refresh token for a new access token without requiring
-        re-authentication. Essential for maintaining user sessions securely.
-        
-        **Token Refresh Features:**
-        - 🔄 Seamless token renewal without user interaction
-        - 🎫 New access token generation (15-minute expiry)
-        - 🔐 Refresh token validation and rotation
-        - ⏰ Automatic session extension
-        - 🛡️ Security validation and fraud detection
-        
-        **Security Measures:**
-        - Refresh token single-use rotation
-        - Token binding to user agent and IP
-        - Anomaly detection for suspicious activity
-        - Automatic revocation of compromised tokens
-        
-        **Request Format:**
-        ```json
-        {
-          "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
-        }
-        ```
-        
-        **Response Format:**
-        ```json
-        {
-          "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-          "token_type": "bearer",
-          "expires_in": 900,
-          "refresh_token": "bmV3IHJlZnJlc2ggdG9rZW4gZm9yIHNlY3VyaXR5..."
-        }
-        ```
-        
-        **Error Handling:**
-        - Invalid refresh token (401)
-        - Expired refresh token (401)
-        - Revoked token (403)
-        - Suspicious activity (429)
-        
-        **Use Cases:**
-        - Automatic token renewal in web apps
-        - Mobile app background refresh
-        - API client session maintenance
-        - Silent authentication flows
-        
-        **Best Practices:**
-        - Implement automatic retry logic
-        - Store tokens securely (HttpOnly cookies)
-        - Handle token rotation properly
-        - Implement fallback to login on failure
-      operationId: refresh_token_api_v1_auth_refresh_post
+      summary: Create Symptom Log Minimal
+      operationId: create_symptom_log_minimal_api_v1_logs_symptoms_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SymptomLogCreateMinimal'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SymptomLogResponseMinimal'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      summary: List Symptom Logs Minimal
+      operationId: list_symptom_logs_minimal_api_v1_logs_symptoms_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 50
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SymptomLogResponseMinimal'
+                title: Response List Symptom Logs Minimal Api V1 Logs Symptoms Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/logs/summary:
+    get:
+      summary: Logs Summary Minimal
+      operationId: logs_summary_minimal_api_v1_logs_summary_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Logs Summary Minimal Api V1 Logs Summary Get
+      security:
+      - HTTPBearer: []
   /api/v1/users/me:
     get:
       tags:
-      - User Management
-      summary: Get User Profile
-      description: |
-        **Retrieve Current User Profile Information**
-        
-        Get comprehensive user profile data including personal information,
-        preferences, and account settings for the authenticated user.
-        
-        **Profile Information:**
-        - 👤 Personal details (name, email, date of birth)
-        - ⚙️ Account preferences and settings
-        - 🌍 Timezone and localization settings
-        - 📊 Usage statistics and activity summary
-        - 🔐 Security and privacy settings overview
-        
-        **Response Includes:**
-        - Basic profile information
-        - Account verification status
-        - Last login and activity timestamps
-        - Medication and symptom tracking statistics
-        - Privacy and notification preferences
-        
-        **Profile Statistics:**
-        - Total medications managed
-        - Days of active logging
-        - Account age and milestones
-        - Data completeness scores
-        
-        **Response Format:**
-        ```json
-        {
-          "id": 123,
-          "email": "user@example.com",
-          "first_name": "John",
-          "last_name": "Doe",
-          "date_of_birth": "1990-01-15",
-          "timezone": "America/New_York",
-          "email_verified": true,
-          "last_login": "2024-01-15T10:30:00Z",
-          "created_at": "2023-06-01T12:00:00Z"
-        }
-        ```
-        
-        **Privacy Considerations:**
-        - Sensitive data appropriately filtered
-        - Medical information not included in basic profile
-        - Audit log of profile access maintained
-        - GDPR/HIPAA compliant data handling
-        
-        **Use Cases:**
-        - Profile page display
-        - Account settings forms
-        - User dashboard personalization
-        - Authentication status verification
-      operationId: get_current_user_api_v1_users_me_get
+      - Users
+      summary: Get Current User Placeholder
+      operationId: get_current_user_placeholder_api_v1_users_me_get
       responses:
         '200':
           description: Successful Response
@@ -486,65 +1543,9 @@ paths:
               schema: {}
     put:
       tags:
-      - User Management
-      summary: Update User Profile
-      description: |
-        **Modify User Profile Information**
-        
-        Update user profile details with comprehensive validation and security measures.
-        Supports partial updates while maintaining data integrity and audit trails.
-        
-        **Updatable Fields:**
-        - 👤 Personal information (first name, last name, date of birth)
-        - 🌍 Timezone and localization preferences
-        - 📧 Email address (requires verification)
-        - 🔔 Notification preferences
-        - 🎯 Privacy and data sharing settings
-        
-        **Validation Rules:**
-        - Email uniqueness across all users
-        - Date of birth age verification (13+ years)
-        - Timezone validation against supported zones
-        - Name length and character restrictions
-        - Input sanitization for security
-        
-        **Security Features:**
-        - Email change requires verification
-        - Password confirmation for sensitive updates
-        - Audit logging of all profile changes
-        - Rate limiting for update frequency
-        - Rollback capability for critical changes
-        
-        **Update Examples:**
-        ```json
-        {
-          "first_name": "Jane",
-          "timezone": "America/Los_Angeles",
-          "notification_preferences": {
-            "email_reminders": true,
-            "medication_alerts": false
-          }
-        }
-        ```
-        
-        **Business Logic:**
-        - Partial updates supported (PATCH semantics)
-        - Automatic last_modified timestamp
-        - Cascade updates to related records
-        - Cache invalidation for updated data
-        
-        **Compliance Features:**
-        - GDPR right to rectification support
-        - HIPAA audit trail maintenance
-        - Data minimization principle adherence
-        - Consent tracking for data changes
-        
-        **Use Cases:**
-        - Account settings updates
-        - Profile information corrections
-        - Preference modifications
-        - Privacy setting adjustments
-      operationId: update_current_user_api_v1_users_me_put
+      - Users
+      summary: Update Current User Placeholder
+      operationId: update_current_user_placeholder_api_v1_users_me_put
       responses:
         '200':
           description: Successful Response
@@ -552,82 +1553,12 @@ paths:
             application/json:
               schema: {}
   /api/v1/medications/:
-    get:
-      tags:
-      - Medication Management
-      summary: List User Medications
-      description: |
-        **Retrieve User's Medication Database**
-        
-        Get a paginated list of medications from the user's personal medication database.
-        Supports powerful search and filtering capabilities for easy medication discovery.
-        
-        **Key Features:**
-        - 📋 Paginated results for optimal performance
-        - 🔍 Full-text search across medication names and descriptions
-        - 🎯 Active/inactive filtering for current medications
-        - ⚡ Optimized queries with proper indexing
-        
-        **Search Capabilities:**
-        - Medication name matching (case-insensitive)
-        - Partial name matching with wildcard support
-        - Description and notes content search
-        
-        **Use Cases:**
-        - Display medication picker in logging forms
-        - Medication management dashboard  
-        - Search for specific medications by name
-        - Review all current vs. discontinued medications
-        
-        **Performance:**
-        - Response time: <100ms for typical queries
-        - Supports up to 1000 medications per user
-        - Efficient pagination with cursor-based navigation
-      operationId: list_medications_api_v1_medications__get
-      parameters:
-      - $ref: '#/components/parameters/SearchParameter'
-      - $ref: '#/components/parameters/ActiveOnlyParameter'  
-      - $ref: '#/components/parameters/PageParameter'
-      - $ref: '#/components/parameters/PerPageParameter'
-      responses:
-        '200':
-          description: List of medications retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MedicationListResponse'
     post:
       tags:
-      - Medication Management
-      summary: Create New Medication
-      description: |
-        **Add Medication to Personal Database**
-        
-        Create a new medication entry in the user's personal medication master database.
-        Each medication must have a unique name within the user's collection.
-        
-        **Key Features:**
-        - 🎯 Unique name enforcement (case-insensitive)
-        - 📝 Comprehensive medication details capture
-        - ✅ Automatic validation and sanitization
-        - 🔄 Immediate availability for logging
-        
-        **Validation Rules:**
-        - Medication name: Required, 1-200 characters, unique per user
-        - Dosage: Optional, standardized format (e.g., "10mg", "5ml")
-        - Frequency: Optional, human-readable (e.g., "twice daily")
-        - Notes: Optional, up to 1000 characters
-        
-        **Business Logic:**
-        - New medications default to 'active' status
-        - Name uniqueness checked case-insensitively
-        - Automatic creation timestamp
-        - User ownership automatically assigned
-        
-        **Integration Points:**
-        - Immediately available in medication logging forms
-        - Searchable in medication list endpoints
-        - Can be linked to medication logs
+      - medications
+      summary: Create new medication
+      description: Create a new medication in the master data list. Medication names
+        must be unique.
       operationId: create_medication_api_v1_medications__post
       requestBody:
         required: true
@@ -642,8 +1573,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MedicationResponse'
-        '400':
-          description: Medication name already exists
+        '404':
+          description: Medication not found
           content:
             application/json:
               schema:
@@ -654,34 +1585,98 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Medication name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - medications
+      summary: List medications
+      description: Get paginated list of medications with optional search and filtering
+      operationId: list_medications_api_v1_medications__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search term for medication name or description
+          title: Search
+        description: Search term for medication name or description
+      - name: active_only
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Filter to only active medications
+          default: true
+          title: Active Only
+        description: Filter to only active medications
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number for pagination
+          default: 1
+          title: Page
+        description: Page number for pagination
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Number of items per page (1-100)
+          default: 10
+          title: Per Page
+        description: Number of items per page (1-100)
+      responses:
+        '200':
+          description: List of medications retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationListResponse'
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/medications/active:
     get:
       tags:
-      - Medication Management
-      summary: Get Active Medications
-      description: |
-        **Quick Access to Current Medications**
-        
-        Get all active medications in a flat list optimized for dropdowns and selection forms.
-        Returns medications currently marked as active without pagination for UI convenience.
-        
-        **Key Features:**
-        - 🚀 No pagination for fast UI loading
-        - ✅ Only active medications included
-        - 🎯 Optimized for form selections
-        - 📋 Lightweight response format
-        
-        **Use Cases:**
-        - Medication logging form dropdowns
-        - Quick medication selection lists
-        - Dashboard active medication counts
-        - Mobile app quick access
-        
-        **Performance Notes:**
-        - Response cached for 2 minutes
-        - Typically returns 5-50 items
-        - Sorted alphabetically by name
-        - Minimal payload for mobile optimization
+      - medications
+      summary: Get active medications
+      description: Get all active medications for selection lists (no pagination)
       operationId: get_active_medications_api_v1_medications_active_get
       responses:
         '200':
@@ -689,43 +1684,39 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 items:
                   $ref: '#/components/schemas/MedicationPublic'
+                type: array
+                title: Response Get Active Medications Api V1 Medications Active Get
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
   /api/v1/medications/search:
     get:
       tags:
-      - Medication Management
-      summary: Search Medications
-      description: |
-        **Intelligent Medication Search**
-        
-        Search through the user's medication database using flexible text matching.
-        Supports partial name matching and fuzzy search for better user experience.
-        
-        **Search Features:**
-        - 🔍 Case-insensitive partial matching
-        - 📝 Search in medication names and notes
-        - ⚡ Real-time search suggestions
-        - 🎯 Active/inactive filtering options
-        
-        **Search Behavior:**
-        - Minimum 1 character required
-        - Matches anywhere in medication name
-        - Results sorted by relevance score
-        - Supports special characters and numbers
-        
-        **Use Cases:**
-        - Medication lookup during logging
-        - Quick medication finding in large lists
-        - Duplicate medication detection
-        - Mobile app typeahead search
-        
-        **Performance Notes:**
-        - Results cached for 1 minute per query
-        - Maximum 50 results returned
-        - Optimized for sub-100ms response
+      - medications
+      summary: Search medications
+      description: Search medications by name or description
       operationId: search_medications_api_v1_medications_search_get
+      security:
+      - HTTPBearer: []
       parameters:
       - name: q
         in: query
@@ -734,13 +1725,17 @@ paths:
           type: string
           minLength: 1
           description: Search query
+          title: Q
+        description: Search query
       - name: active_only
         in: query
         required: false
         schema:
           type: boolean
-          default: true
           description: Include only active medications
+          default: true
+          title: Active Only
+        description: Include only active medications
       responses:
         '200':
           description: Search results retrieved successfully
@@ -750,46 +1745,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MedicationPublic'
+                title: Response Search Medications Api V1 Medications Search Get
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/medications/stats:
     get:
       tags:
-      - Medication Management
-      summary: Get Medication Statistics
-      description: |
-        **Medication Usage Analytics**
-        
-        Get comprehensive statistics about the user's medication collection and usage patterns.
-        Provides insights for medication management and healthcare tracking.
-        
-        **Statistics Included:**
-        - 📊 Total medication count (active vs. inactive)
-        - 📈 Recent activity trends (logs per medication)
-        - 🎯 Most frequently logged medications
-        - ⏱️ Average time between medication additions
-        - 🏥 Medication categories and distribution
-        
-        **Response Format:**
-        ```json
-        {
-          "total_medications": 15,
-          "active_medications": 12,
-          "inactive_medications": 3,
-          "total_logs_this_month": 234,
-          "most_logged_medication": "Vitamin D",
-          "average_logs_per_day": 7.8
-        }
-        ```
-        
-        **Use Cases:**
-        - Dashboard overview widgets
-        - Healthcare provider reports
-        - Personal medication insights
-        - Compliance tracking summaries
-        
-        **Performance Notes:**
-        - Cached for 15 minutes for performance
-        - Calculations optimized for large datasets
-        - Returns within 200ms for typical users
+      - medications
+      summary: Get medication statistics
+      description: Get statistics about medications in the system
       operationId: get_medication_stats_api_v1_medications_stats_get
       responses:
         '200':
@@ -797,49 +1777,45 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 additionalProperties: true
+                type: object
+                title: Response Get Medication Stats Api V1 Medications Stats Get
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
   /api/v1/medications/{medication_id}:
     get:
       tags:
-      - Medication Management  
-      summary: Get Medication Details
-      description: |
-        **Retrieve Complete Medication Profile**
-        
-        Fetch comprehensive details for a specific medication including usage statistics
-        and recent activity. Essential for medication detail views and editing forms.
-        
-        **Response Details:**
-        - 📋 Complete medication profile (name, dosage, frequency, notes)
-        - 📊 Usage statistics (total logs, recent activity, adherence metrics)
-        - ⏱️ Timestamps (created, last modified, last logged)
-        - 🏷️ Status information (active/inactive with reason)
-        - 🔗 Related logs summary (recent entries count)
-        
-        **Enhanced Data:**
-        - Calculated adherence percentages
-        - Time since last dose logged
-        - Weekly/monthly usage patterns
-        - Medication effectiveness tracking
-        
-        **Use Cases:**
-        - Medication detail page display
-        - Pre-populate medication edit forms
-        - Healthcare provider medication reviews
-        - Medication logging form defaults
-        
-        **Performance Notes:**
-        - Response cached for 5 minutes
-        - Includes optimized usage calculations
-        - Sub-100ms response for cached data
+      - medications
+      summary: Get medication by ID
+      description: Retrieve a specific medication by its ID
       operationId: get_medication_api_v1_medications__medication_id__get
+      security:
+      - HTTPBearer: []
       parameters:
       - name: medication_id
         in: path
         required: true
         schema:
           type: integer
+          title: Medication Id
       responses:
         '200':
           description: Medication retrieved successfully
@@ -853,52 +1829,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
-      - Medication Management
-      summary: Update Medication Details
-      description: |
-        **Modify Existing Medication Information**
-        
-        Update medication details including name, dosage, frequency, and status.
-        Supports partial updates while maintaining data integrity and audit trails.
-        
-        **Update Capabilities:**
-        - 📝 Name change (with uniqueness validation)
-        - 💊 Dosage and frequency modifications
-        - 📄 Notes and instructions updates
-        - 🏷️ Active/inactive status changes
-        - 🔄 Bulk property updates
-        
-        **Business Rules:**
-        - Medication name must remain unique per user
-        - Status changes are audited and timestamped
-        - Cannot update medications with active logs to inactive
-        - Historical data preservation for compliance
-        
-        **Validation Features:**
-        - Dosage format standardization
-        - Frequency text normalization
-        - Duplicate name detection
-        - Required field enforcement
-        
-        **Use Cases:**
-        - Medication information corrections
-        - Dosage adjustments from doctor visits
-        - Medication discontinuation
-        - Notes and instruction updates
-        
-        **Data Integrity:**
-        - Automatic last_modified timestamp
-        - Audit trail for all changes
-        - Rollback capability for critical updates
+      - medications
+      summary: Update medication
+      description: Update an existing medication
       operationId: update_medication_api_v1_medications__medication_id__put
+      security:
+      - HTTPBearer: []
       parameters:
       - name: medication_id
         in: path
         required: true
         schema:
           type: integer
+          title: Medication Id
       requestBody:
         required: true
         content:
@@ -912,12 +1869,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MedicationResponse'
-        '400':
-          description: Medication name already exists or validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Medication not found
           content:
@@ -930,29 +1881,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Medication name already exists or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
       - medications
       summary: Delete medication
       description: Permanently delete a medication (hard delete). Use with caution.
       operationId: delete_medication_api_v1_medications__medication_id__delete
+      security:
+      - HTTPBearer: []
       parameters:
       - name: medication_id
         in: path
         required: true
         schema:
           type: integer
+          title: Medication Id
       responses:
         '204':
           description: Medication deleted successfully
-        '400':
-          description: Cannot delete medication (referenced by logs)
+        '404':
+          description: Medication not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Medication not found
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Cannot delete medication (referenced by logs)
           content:
             application/json:
               schema:
@@ -962,29 +1940,45 @@ paths:
       tags:
       - medications
       summary: Deactivate medication
-      description: Deactivate a medication (soft delete). Deactivated medications won't appear in active lists.
+      description: Deactivate a medication (soft delete). Deactivated medications
+        won't appear in active lists.
       operationId: deactivate_medication_api_v1_medications__medication_id__deactivate_patch
+      security:
+      - HTTPBearer: []
       parameters:
       - name: medication_id
         in: path
         required: true
         schema:
           type: integer
+          title: Medication Id
       responses:
         '200':
-          description: Medication deactivated successfully
+          description: Medication deactivated successfully (returns full medication)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MedicationDeactivateResponse'
-        '400':
-          description: Medication already deactivated
+                $ref: '#/components/schemas/MedicationResponse'
+        '404':
+          description: Medication not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Medication not found
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Medication already deactivated
           content:
             application/json:
               schema:
@@ -1002,6 +1996,7 @@ paths:
         required: true
         schema:
           type: integer
+          title: Medication Id
       responses:
         '200':
           description: Medication reactivated successfully
@@ -1015,6 +2010,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/medications/validate:
     post:
       tags:
@@ -1022,6 +2029,8 @@ paths:
       summary: Validate medication name
       description: Validate if a medication name exists and is optionally active
       operationId: validate_medication_name_api_v1_medications_validate_post
+      security:
+      - HTTPBearer: []
       parameters:
       - name: name
         in: query
@@ -1029,13 +2038,17 @@ paths:
         schema:
           type: string
           description: Medication name to validate
+          title: Name
+        description: Medication name to validate
       - name: active_only
         in: query
         required: false
         schema:
           type: boolean
-          default: true
           description: Check only active medications
+          default: true
+          title: Active Only
+        description: Check only active medications
       responses:
         '200':
           description: Validation result
@@ -1044,6 +2057,26 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+                title: Response Validate Medication Name Api V1 Medications Validate
+                  Post
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/symptoms/:
     get:
       tags:
@@ -1069,738 +2102,13 @@ paths:
           content:
             application/json:
               schema: {}
-  /api/v1/logs/medications:
-    post:
-      tags:
-      - Medication Logging
-      summary: Log Medication Dose
-      description: |
-        **Record Medication Intake Event**
-        
-        Create a new medication log entry to track when medications were taken.
-        Essential for medication adherence monitoring and healthcare tracking.
-        
-        **Key Features:**
-        - ⏰ Precise timestamp recording (defaults to current time)
-        - 💊 Flexible dosage tracking (partial doses supported)
-        - 📝 Optional notes for context (side effects, effectiveness)
-        - 🎯 Medication validation against user's active list
-        - 🔄 Automatic adherence calculations
-        
-        **Input Validation:**
-        - Medication must exist in user's collection
-        - Timestamp cannot be in the future
-        - Dosage must be positive number
-        - Notes limited to 500 characters
-        
-        **Business Logic:**
-        - Updates medication "last taken" timestamp
-        - Triggers adherence score recalculation
-        - Supports retrospective logging (past dates)
-        - Automatic time zone handling
-        
-        **Use Cases:**
-        - Real-time medication intake recording
-        - Retrospective medication history entry
-        - Adherence tracking for healthcare providers
-        - Medication effectiveness correlation
-        
-        **Integration Points:**
-        - Updates medication statistics
-        - Feeds into adherence reports
-        - Available in medication history views
-      operationId: create_medication_log_api_v1_logs_medications_post
-      security:
-      - HTTPBearer: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MedicationLogCreate'
-      responses:
-        '201':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MedicationLogResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    get:
-      tags:
-      - Medication Logging
-      summary: List Medication History
-      description: |
-        **Retrieve Medication Intake History**
-        
-        Get paginated list of medication log entries with comprehensive filtering options.
-        Essential for adherence tracking, pattern analysis, and healthcare reporting.
-        
-        **Query Features:**
-        - 📅 Date range filtering (from/to timestamps)
-        - 💊 Medication-specific filtering by ID
-        - 📊 Pagination with configurable limits (1-100)
-        - 🔄 Sort by timestamp (newest first by default)
-        - 🎯 Active medication filtering
-        
-        **Response Enhancement:**
-        - Includes medication details in each log entry
-        - Calculated time between doses
-        - Adherence indicators per entry
-        - Dosage compliance scoring
-        
-        **Filtering Capabilities:**
-        - Last 7/30/90 days quick filters
-        - Specific medication tracking
-        - Missed dose identification
-        - Pattern recognition support
-        
-        **Use Cases:**
-        - Medication history review
-        - Adherence pattern analysis
-        - Healthcare provider reports
-        - Personal medication tracking
-        - Compliance monitoring
-        
-        **Performance Optimization:**
-        - Indexed by user_id and timestamp
-        - Supports efficient date range queries
-        - Cached medication details included
-        - Optimized for mobile data usage
-      operationId: list_medication_logs_api_v1_logs_medications_get
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          maximum: 100
-          minimum: 1
-          description: Maximum number of records
-          default: 50
-          title: Limit
-        description: Maximum number of records
-      - name: offset
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          description: Number of records to skip
-          default: 0
-          title: Offset
-        description: Number of records to skip
-      - name: start_date
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          description: Start date for filtering
-          title: Start Date
-        description: Start date for filtering
-      - name: end_date
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          description: End date for filtering
-          title: End Date
-        description: End date for filtering
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MedicationLogResponse'
-                title: Response List Medication Logs Api V1 Logs Medications Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/logs/medications/{log_id}:
-    get:
-      tags:
-      - Medication Logging
-      summary: Get Medication Log Entry
-      description: |
-        **Retrieve Single Medication Log Record**
-        
-        Fetch detailed information for a specific medication log entry including
-        context, timing analysis, and adherence implications.
-        
-        **Enhanced Response:**
-        - 📋 Complete log entry details (medication, timestamp, dosage, notes)
-        - ⏱️ Timing analysis (time since previous dose, adherence score)
-        - 💊 Medication context (expected dosage, frequency targets)
-        - 📊 Position in adherence pattern (streak information)
-        - 🎯 Effectiveness tracking (if notes include symptoms)
-        
-        **Calculated Fields:**
-        - Time between this and previous dose
-        - Adherence score impact of this entry
-        - Expected vs. actual dosage comparison
-        - Timing compliance (early/on-time/late)
-        
-        **Use Cases:**
-        - Medication log detail view
-        - Edit form pre-population
-        - Adherence analysis deep-dive
-        - Healthcare provider review
-        - Audit trail examination
-        
-        **Data Enrichment:**
-        - Related medication information included
-        - Previous/next log entry references
-        - Adherence context and scoring
-        - Time zone normalized timestamps
-      operationId: get_medication_log_api_v1_logs_medications__log_id__get
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: log_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Log Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MedicationLogResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    put:
-      tags:
-      - Medication Logging
-      summary: Update Medication Log Entry
-      description: |
-        **Modify Existing Medication Log Record**
-        
-        Update medication log entry details while maintaining data integrity and
-        audit trail. Supports corrections and additional context after logging.
-        
-        **Update Capabilities:**
-        - ⏰ Timestamp corrections (with validation)
-        - 💊 Dosage adjustments (partial/full doses)
-        - 📝 Notes addition or modification
-        - 🎯 Medication reassignment (if needed)
-        - 🔄 Effectiveness rating updates
-        
-        **Validation Rules:**
-        - Updated timestamp cannot be in future
-        - Medication must exist in user's collection
-        - Dosage must be positive number
-        - Cannot change core medication reference
-        - Audit trail preserved for all changes
-        
-        **Business Logic:**
-        - Recalculates adherence scores after update
-        - Updates medication "last taken" if timestamp changed
-        - Maintains chronological log integrity
-        - Triggers pattern analysis refresh
-        
-        **Use Cases:**
-        - Correcting timestamp errors
-        - Adding forgotten dosage information
-        - Including side effect notes after observation
-        - Adjusting medication references
-        - Healthcare provider corrections
-        
-        **Data Integrity:**
-        - Automatic last_modified timestamp
-        - Original data preserved in audit log
-        - Consistency checks across related records
-      operationId: update_medication_log_api_v1_logs_medications__log_id__put
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: log_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Log Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MedicationLogUpdate'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MedicationLogResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    delete:
-      tags:
-      - Medication Logging
-      summary: Delete Medication Log Entry
-      description: |
-        **Remove Medication Log Record**
-        
-        Permanently delete a medication log entry from the system. Use with caution
-        as this action cannot be undone and affects adherence calculations.
-        
-        **Deletion Impact:**
-        - 🗑️ Complete removal of log entry from database
-        - 📊 Automatic recalculation of adherence scores
-        - ⏱️ Updates to medication "last taken" timestamps
-        - 📈 Refresh of usage statistics and patterns
-        - 🔄 Adjustment of streak counts and analytics
-        
-        **Safety Features:**
-        - Soft delete option for audit compliance
-        - Confirmation required for recent entries
-        - Cascade impact analysis before deletion
-        - Audit trail of deletion event
-        
-        **Validation Checks:**
-        - User owns the log entry
-        - Entry exists and is not already deleted
-        - No dependent records that would be orphaned
-        - Deletion permissions verified
-        
-        **Use Cases:**
-        - Correcting duplicate entries
-        - Removing test/incorrect entries
-        - Data cleanup and maintenance
-        - Privacy compliance (data deletion requests)
-        
-        **Post-Deletion Effects:**
-        - Adherence statistics automatically updated
-        - Medication analytics refreshed
-        - Usage patterns recalculated
-        - Dashboard metrics adjusted
-      operationId: delete_medication_log_api_v1_logs_medications__log_id__delete
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: log_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Log Id
-      responses:
-        '204':
-          description: Successful Response
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/logs/symptoms:
-    post:
-      tags:
-      - Symptom Tracking
-      summary: Log Symptom Event
-      description: |
-        **Record Symptom Occurrence**
-        
-        Create a new symptom log entry to track health symptoms and their characteristics.
-        Essential for pattern recognition, medication effectiveness tracking, and healthcare monitoring.
-        
-        **Key Features:**
-        - 🎯 Precise symptom identification and description
-        - 📊 Severity rating (1-10 scale with descriptions)
-        - ⏰ Accurate timestamp recording (defaults to current time)
-        - 📝 Detailed notes for context and triggers
-        - 🔗 Optional medication correlation tracking
-        
-        **Severity Scale:**
-        - 1-2: Mild (barely noticeable, doesn't interfere with activities)
-        - 3-4: Mild-Moderate (noticeable but manageable)
-        - 5-6: Moderate (interferes with some activities)
-        - 7-8: Severe (significantly impacts daily life)
-        - 9-10: Very Severe (debilitating, requires immediate attention)
-        
-        **Input Validation:**
-        - Symptom name: Required, 1-100 characters
-        - Severity: Required, integer 1-10
-        - Timestamp: Cannot be in future
-        - Notes: Optional, up to 1000 characters
-        
-        **Business Logic:**
-        - Supports retrospective logging
-        - Automatic correlation with recent medications
-        - Triggers pattern analysis for frequent symptoms
-        - Timezone normalization for accurate tracking
-        
-        **Use Cases:**
-        - Real-time symptom tracking during episodes
-        - Medication side effect monitoring
-        - Pattern identification for healthcare providers
-        - Trigger identification and avoidance
-        
-        **Analytics Integration:**
-        - Feeds into symptom frequency reports
-        - Medication effectiveness correlations
-        - Severity trend analysis over time
-      operationId: create_symptom_log_api_v1_logs_symptoms_post
-      security:
-      - HTTPBearer: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SymptomLogCreate'
-      responses:
-        '201':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SymptomLogResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    get:
-      tags:
-      - Symptom Tracking
-      summary: List Symptom History
-      description: |
-        **Retrieve Symptom Log History**
-        
-        Get paginated list of symptom log entries with comprehensive filtering and analysis.
-        Essential for pattern recognition, healthcare reporting, and medication effectiveness tracking.
-        
-        **Query Features:**
-        - 📅 Date range filtering for specific periods
-        - 🎯 Symptom name filtering for specific conditions
-        - 📊 Severity range filtering (min/max severity)
-        - 📄 Pagination with configurable limits (1-100)
-        - 🔄 Sort by timestamp, severity, or frequency
-        
-        **Enhanced Response:**
-        - Symptom frequency analysis within date range
-        - Severity trend calculations
-        - Medication correlation indicators
-        - Pattern recognition insights
-        
-        **Filtering Capabilities:**
-        - Recent episodes (last 7/30/90 days)
-        - Specific symptom tracking over time
-        - Severity threshold analysis
-        - Medication timing correlations
-        
-        **Pattern Analysis:**
-        - Identifies recurring symptoms
-        - Calculates average severity trends
-        - Detects potential medication correlations
-        - Highlights frequency changes over time
-        
-        **Use Cases:**
-        - Comprehensive symptom history review
-        - Healthcare provider consultations
-        - Medication effectiveness evaluation
-        - Personal health pattern identification
-        - Trigger analysis and avoidance planning
-        
-        **Performance Optimization:**
-        - Indexed by user_id, timestamp, and severity
-        - Efficient date range queries
-        - Cached correlation calculations
-        - Mobile-optimized response format
-      operationId: list_symptom_logs_api_v1_logs_symptoms_get
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          maximum: 100
-          minimum: 1
-          description: Maximum number of records
-          default: 50
-          title: Limit
-        description: Maximum number of records
-      - name: offset
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          description: Number of records to skip
-          default: 0
-          title: Offset
-        description: Number of records to skip
-      - name: start_date
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          description: Start date for filtering
-          title: Start Date
-        description: Start date for filtering
-      - name: end_date
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          description: End date for filtering
-          title: End Date
-        description: End date for filtering
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SymptomLogResponse'
-                title: Response List Symptom Logs Api V1 Logs Symptoms Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/logs/symptoms/{log_id}:
-    get:
-      tags:
-      - Logs
-      summary: Get symptom log
-      description: Get a specific symptom log by ID
-      operationId: get_symptom_log_api_v1_logs_symptoms__log_id__get
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: log_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Log Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SymptomLogResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    put:
-      tags:
-      - Logs
-      summary: Update symptom log
-      description: Update a specific symptom log by ID
-      operationId: update_symptom_log_api_v1_logs_symptoms__log_id__put
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: log_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Log Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SymptomLogUpdate'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SymptomLogResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    delete:
-      tags:
-      - Logs
-      summary: Delete symptom log
-      description: Delete a specific symptom log by ID
-      operationId: delete_symptom_log_api_v1_logs_symptoms__log_id__delete
-      security:
-      - HTTPBearer: []
-      parameters:
-      - name: log_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          title: Log Id
-      responses:
-        '204':
-          description: Successful Response
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/logs/summary:
-    get:
-      tags:
-      - Dashboard Analytics
-      summary: Get Activity Summary
-      description: |
-        **Comprehensive Health Activity Overview**
-        
-        Get a comprehensive summary of recent medication and symptom logging activity
-        optimized for dashboard widgets and landing page displays.
-        
-        **Summary Includes:**
-        - 📊 Recent activity counts (last 7/30 days)
-        - 💊 Medication adherence overview
-        - 🎯 Symptom tracking highlights  
-        - 📈 Key trend indicators
-        - ⚡ Quick action suggestions
-        
-        **Medication Summary:**
-        - Total medications logged today/this week
-        - Adherence percentage for active medications
-        - Missed dose alerts and notifications
-        - Next scheduled medication reminders
-        
-        **Symptom Summary:**
-        - Recent symptom episodes count
-        - Severity trend analysis (improving/stable/worsening)
-        - Most frequent symptoms this period
-        - Correlation insights with medications
-        
-        **Performance Metrics:**
-        - Overall health tracking consistency
-        - Logging frequency trends
-        - Data completeness scores
-        - Goal achievement indicators
-        
-        **Use Cases:**
-        - Dashboard home page widgets
-        - Mobile app summary cards
-        - Quick health status overview
-        - Healthcare provider consultation prep
-        - Personal health insights at-a-glance
-        
-        **Optimization:**
-        - Cached for 5 minutes for performance
-        - Lightweight payload for mobile
-        - Pre-calculated trend indicators
-        - Optimized for frequent access
-      operationId: get_logs_summary_api_v1_logs_summary_get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LogSummaryResponse'
-      security:
-      - HTTPBearer: []
   /api/v1/feel-vs-yesterday:
     get:
       tags:
-      - Health Analytics
-      summary: Daily Health Comparison
-      description: |
-        **Intelligent Health Status Analysis**
-        
-        Compare today's health status against yesterday using comprehensive analysis
-        of medication adherence, symptom patterns, and overall wellness indicators.
-        
-        **Analysis Dimensions:**
-        - 💊 Medication adherence comparison (doses taken vs. missed)
-        - 🎯 Symptom severity and frequency changes
-        - 📊 Overall wellness score differential
-        - 🔄 Pattern recognition in health trends
-        - ⚡ Actionable insights and recommendations
-        
-        **Comparison Metrics:**
-        - Adherence score change (+/- percentage)
-        - Symptom burden shift (better/worse/stable)
-        - Energy level indicators (based on logging patterns)
-        - Sleep quality inference (from timing patterns)
-        
-        **Intelligence Features:**
-        - AI-powered health trend analysis
-        - Contextual medication effectiveness assessment
-        - Seasonal and cyclical pattern recognition
-        - Personalized wellness recommendations
-        
-        **Response Format:**
-        ```json
-        {
-          "overall_comparison": "better|same|worse",
-          "confidence_score": 0.85,
-          "medication_adherence_change": "+5%",
-          "symptom_severity_change": "-15%",
-          "key_insights": ["Better medication adherence", "Fewer headaches"],
-          "recommendations": ["Continue current schedule"]
-        }
-        ```
-        
-        **Use Cases:**
-        - Daily wellness check-in widgets
-        - Progress tracking motivation
-        - Healthcare provider insights
-        - Treatment effectiveness monitoring
-        - Personal health awareness building
-        
-        **Accuracy Features:**
-        - Machine learning pattern recognition
-        - Historical data correlation analysis
-        - Multi-factor health assessment
-        - Confidence scoring for reliability
+      - Feel Analysis
+      summary: Feel vs yesterday analysis
+      description: Analyze how the user feels today compared to yesterday based on
+        medication and symptom logs
       operationId: feel_vs_yesterday_api_v1_feel_vs_yesterday_get
       security:
       - HTTPBearer: []
@@ -1885,31 +2193,62 @@ paths:
                 title: Response Feel Service Health Check Api V1 Feel Vs Yesterday
                   Health Get
   /api/v1/conditions:
+    post:
+      tags:
+      - Medical Context
+      - conditions
+      summary: Create condition
+      description: Create a new medical condition for the authenticated user
+      operationId: create_condition_api_v1_conditions_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConditionCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConditionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
       - Medical Context
+      - conditions
       summary: List conditions
       description: Get all conditions for the authenticated user
       operationId: list_conditions_api_v1_conditions_get
+      security:
+      - HTTPBearer: []
       parameters:
-      - description: Only return active conditions
+      - name: active_only
+        in: query
         required: false
         schema:
           type: boolean
           description: Only return active conditions
           default: false
           title: Active Only
-        name: active_only
-        in: query
+        description: Only return active conditions
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
+                type: array
                 items:
                   $ref: '#/components/schemas/ConditionResponse'
-                type: array
                 title: Response List Conditions Api V1 Conditions Get
         '422':
           description: Validation Error
@@ -1917,49 +2256,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
-    post:
-      tags:
-      - Medical Context
-      summary: Create condition
-      description: Create a new medical condition for the authenticated user
-      operationId: create_condition_api_v1_conditions_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConditionCreate'
-        required: true
-      responses:
-        '201':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConditionResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
   /api/v1/conditions/{condition_id}:
     get:
       tags:
       - Medical Context
+      - conditions
       summary: Get condition
       description: Get a specific condition by ID
       operationId: get_condition_api_v1_conditions__condition_id__get
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: condition_id
+        in: path
+        required: true
         schema:
           type: string
           title: Condition Id
-        name: condition_id
-        in: path
       responses:
         '200':
           description: Successful Response
@@ -1973,27 +2286,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
     patch:
       tags:
       - Medical Context
+      - conditions
       summary: Update condition
       description: Update a specific condition
       operationId: update_condition_api_v1_conditions__condition_id__patch
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: condition_id
+        in: path
+        required: true
         schema:
           type: string
           title: Condition Id
-        name: condition_id
-        in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ConditionUpdate'
-        required: true
       responses:
         '200':
           description: Successful Response
@@ -2007,21 +2321,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
     delete:
       tags:
       - Medical Context
+      - conditions
       summary: Delete condition
       description: Delete (deactivate) a specific condition
       operationId: delete_condition_api_v1_conditions__condition_id__delete
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: condition_id
+        in: path
+        required: true
         schema:
           type: string
           title: Condition Id
-        name: condition_id
-        in: path
       responses:
         '204':
           description: Successful Response
@@ -2031,26 +2346,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/doctors:
+    post:
+      tags:
+      - Medical Context
+      - doctors
+      summary: Create doctor
+      description: Create a new doctor record for the authenticated user
+      operationId: create_doctor_api_v1_doctors_post
       security:
       - HTTPBearer: []
-  /api/v1/doctors:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
     get:
       tags:
       - Medical Context
+      - doctors
       summary: List doctors
       description: Get all doctors for the authenticated user
       operationId: list_doctors_api_v1_doctors_get
+      security:
+      - HTTPBearer: []
       parameters:
-      - description: Only return active doctors
+      - name: active_only
+        in: query
         required: false
         schema:
           type: boolean
           description: Only return active doctors
           default: false
           title: Active Only
-        name: active_only
+        description: Only return active doctors
+      - name: specialty
         in: query
-      - description: Filter by specialty
         required: false
         schema:
           anyOf:
@@ -2058,17 +2403,16 @@ paths:
           - type: 'null'
           description: Filter by specialty
           title: Specialty
-        name: specialty
-        in: query
+        description: Filter by specialty
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
+                type: array
                 items:
                   $ref: '#/components/schemas/DoctorResponse'
-                type: array
                 title: Response List Doctors Api V1 Doctors Get
         '422':
           description: Validation Error
@@ -2076,49 +2420,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
-    post:
-      tags:
-      - Medical Context
-      summary: Create doctor
-      description: Create a new doctor record for the authenticated user
-      operationId: create_doctor_api_v1_doctors_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DoctorCreate'
-        required: true
-      responses:
-        '201':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DoctorResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
   /api/v1/doctors/{doctor_id}:
     get:
       tags:
       - Medical Context
+      - doctors
       summary: Get doctor
       description: Get a specific doctor by ID
       operationId: get_doctor_api_v1_doctors__doctor_id__get
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: doctor_id
+        in: path
+        required: true
         schema:
           type: string
           title: Doctor Id
-        name: doctor_id
-        in: path
       responses:
         '200':
           description: Successful Response
@@ -2132,27 +2450,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
     patch:
       tags:
       - Medical Context
+      - doctors
       summary: Update doctor
       description: Update a specific doctor
       operationId: update_doctor_api_v1_doctors__doctor_id__patch
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: doctor_id
+        in: path
+        required: true
         schema:
           type: string
           title: Doctor Id
-        name: doctor_id
-        in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DoctorUpdate'
-        required: true
       responses:
         '200':
           description: Successful Response
@@ -2166,21 +2485,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
     delete:
       tags:
       - Medical Context
+      - doctors
       summary: Delete doctor
       description: Delete (deactivate) a specific doctor
       operationId: delete_doctor_api_v1_doctors__doctor_id__delete
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: doctor_id
+        in: path
+        required: true
         schema:
           type: string
           title: Doctor Id
-        name: doctor_id
-        in: path
       responses:
         '204':
           description: Successful Response
@@ -2190,12 +2510,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
   /api/v1/doctors/link-condition:
     post:
       tags:
       - Medical Context
+      - doctors
+      - conditions
       summary: Link doctor to condition
       description: Create a link between a doctor and a condition
       operationId: link_doctor_to_condition_api_v1_doctors_link_condition_post
@@ -2224,22 +2544,26 @@ paths:
     delete:
       tags:
       - Medical Context
+      - doctors
+      - conditions
       summary: Unlink doctor from condition
       description: Remove the link between a doctor and a condition
       operationId: unlink_doctor_from_condition_api_v1_doctors__doctor_id__conditions__condition_id__delete
+      security:
+      - HTTPBearer: []
       parameters:
-      - required: true
+      - name: doctor_id
+        in: path
+        required: true
         schema:
           type: string
           title: Doctor Id
-        name: doctor_id
+      - name: condition_id
         in: path
-      - required: true
+        required: true
         schema:
           type: string
           title: Condition Id
-        name: condition_id
-        in: path
       responses:
         '204':
           description: Successful Response
@@ -2249,14 +2573,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - HTTPBearer: []
   /api/v1/passport:
     get:
       tags:
       - Medical Context
+      - passport
       summary: Get medical passport
-      description: Get aggregated view of conditions with linked doctors
+      description: Get aggregated view of conditions with linked doctors (list of
+        items)
       operationId: get_passport_api_v1_passport_get
       responses:
         '200':
@@ -2264,276 +2588,371 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PassportResponse'
+                items:
+                  $ref: '#/components/schemas/PassportItem'
+                type: array
+                title: Response Get Passport Api V1 Passport Get
       security:
       - HTTPBearer: []
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: |
-        JWT Bearer token authentication.
-        
-        **Usage:**
-        1. Authenticate via `/api/v1/auth/token` endpoint
-        2. Include the returned access token in the Authorization header
-        3. Format: `Authorization: Bearer <your-jwt-token>`
-        
-        **Token Properties:**
-        - Expiration: 15 minutes for access tokens
-        - Refresh: 7 days for refresh tokens
-        - Scope: User-specific data access only
-        
-    HTTPBearer:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: Alternative bearer token scheme for compatibility
-      
-  parameters:
-    PageParameter:
-      name: page
-      in: query
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
-      description: Page number for pagination (1-based)
-      
-    PerPageParameter:
-      name: per_page
-      in: query
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 10
-      description: Number of items per page (1-100)
-      
-    SearchParameter:
-      name: search
-      in: query
-      required: false
-      schema:
-        type: string
-        maxLength: 255
-      description: Search term for filtering results
-      
-    ActiveOnlyParameter:
-      name: active_only
-      in: query
-      required: false
-      schema:
-        type: boolean
-        default: true
-      description: Filter to only active/enabled items
-      
-  headers:
-    X-Request-ID:
-      description: Unique request identifier for tracing and debugging
-      schema:
-        type: string
-        format: uuid
-        
-    X-Trace-ID:
-      description: Distributed tracing identifier
-      schema:
-        type: string
-        format: uuid
-        
-    X-Correlation-ID:
-      description: Business correlation identifier
-      schema:
-        type: string
-        format: uuid
-        
-    X-Rate-Limit-Remaining:
-      description: Number of requests remaining in current window
-      schema:
-        type: integer
-        
-    X-Rate-Limit-Reset:
-      description: Time when rate limit window resets (Unix timestamp)
-      schema:
-        type: integer
-
-  responses:
-    UnauthorizedError:
-      description: Authentication required or token invalid
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: "Invalid authentication credentials"
-              error_code:
-                type: string
-                example: "AUTH_INVALID_TOKEN"
-          examples:
-            missing_token:
-              summary: Missing Authentication Token
-              value:
-                detail: "Authentication required"
-                error_code: "AUTH_MISSING_TOKEN"
-            invalid_token:
-              summary: Invalid JWT Token
-              value:
-                detail: "Invalid authentication credentials"  
-                error_code: "AUTH_INVALID_TOKEN"
-            expired_token:
-              summary: Expired JWT Token
-              value:
-                detail: "Token has expired"
-                error_code: "AUTH_TOKEN_EXPIRED"
-                
-    ForbiddenError:
-      description: Access denied - insufficient permissions
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: "Access denied"
-              error_code:
-                type: string
-                example: "AUTH_INSUFFICIENT_PERMISSIONS"
-                
-    NotFoundError:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: "Resource not found"
-              error_code:
-                type: string
-                example: "RESOURCE_NOT_FOUND"
-                
-    ValidationError:
-      description: Request validation failed
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    loc:
-                      type: array
-                      items:
-                        type: string
-                    msg:
-                      type: string
-                    type:
-                      type: string
-              error_code:
-                type: string
-                example: "VALIDATION_ERROR"
-                
-    RateLimitError:
-      description: Rate limit exceeded
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: "Rate limit exceeded. Please try again later."
-              error_code:
-                type: string
-                example: "RATE_LIMIT_EXCEEDED"
-              retry_after:
-                type: integer
-                description: Seconds to wait before retrying
-                example: 60
-      headers:
-        X-Rate-Limit-Remaining:
-          $ref: '#/components/headers/X-Rate-Limit-Remaining'
-        X-Rate-Limit-Reset:
-          $ref: '#/components/headers/X-Rate-Limit-Reset'
-          
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-                example: "An internal error occurred"
-              error_code:
-                type: string
-                example: "INTERNAL_SERVER_ERROR"
-              request_id:
-                type: string
-                description: Request ID for debugging
-                
-  examples:
-    MedicationLogExample:
-      summary: Daily medication intake log
-      description: Example of logging morning medication dose
-      value:
-        medication_id: "550e8400-e29b-41d4-a716-446655440001"
-        dosage_taken: "10mg"
-        taken_at: "2023-12-20T08:30:00Z"
-        notes: "Taken with breakfast as prescribed"
-        
-    SymptomLogExample:
-      summary: Symptom tracking entry
-      description: Example of logging headache symptom
-      value:
-        symptom: "Headache"
-        severity: 3
-        occurred_at: "2023-12-20T14:15:00Z"
-        notes: "Started after lunch, mild throbbing"
-        
-    MedicationExample:
-      summary: Prescription medication
-      description: Example of a prescription medication entry
-      value:
-        name: "Lisinopril"
-        dosage: "10mg"
-        frequency: "once daily"
-        prescribed_by: "Dr. Smith"
-        notes: "For blood pressure management"
-        
-    ConditionExample:
-      summary: Medical condition
-      description: Example of a diagnosed medical condition
-      value:
-        name: "Hypertension"
-        diagnosed_date: "2023-01-15"
-        severity: "moderate"
-        status: "active"
-        notes: "Well-controlled with medication"
-        
-    DoctorExample:
-      summary: Healthcare provider
-      description: Example of a healthcare provider entry
-      value:
-        name: "Dr. Sarah Smith"
-        specialty: "Internal Medicine"
-        contact_info: "sarah.smith@medicenter.com"
-        phone: "+1 (555) 123-4567"
-        notes: "Primary care physician"
-
   schemas:
+    ConditionCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+          description: Condition name
+          examples:
+          - Hypertension
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+          description: Optional condition description
+          examples:
+          - High blood pressure requiring regular monitoring
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the condition is active and being tracked
+          default: true
+          examples:
+          - true
+      type: object
+      required:
+      - name
+      title: ConditionCreate
+      description: Schema for creating a new condition.
+    ConditionResponse:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+          description: Condition name
+          examples:
+          - Hypertension
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+          description: Optional condition description
+          examples:
+          - High blood pressure requiring regular monitoring
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the condition is active and being tracked
+          default: true
+          examples:
+          - true
+        id:
+          type: string
+          title: Id
+          description: Unique condition identifier
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
+        user_id:
+          type: string
+          title: User Id
+          description: ID of the user who owns this condition
+          examples:
+          - user-uuid-123
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp when condition was created
+          examples:
+          - '2024-01-15T10:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Timestamp when condition was last updated
+          examples:
+          - '2024-01-15T10:30:00Z'
+      type: object
+      required:
+      - name
+      - id
+      - user_id
+      - created_at
+      - updated_at
+      title: ConditionResponse
+      description: Schema for condition API responses.
+    ConditionUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
+          title: Name
+          description: Updated condition name
+          examples:
+          - Hypertension
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+          description: Updated condition description
+          examples:
+          - High blood pressure requiring regular monitoring
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+          description: Whether the condition is active and being tracked
+          examples:
+          - true
+      type: object
+      title: ConditionUpdate
+      description: Schema for updating an existing condition.
+    DemoResponse:
+      properties:
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        error:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Error
+      type: object
+      title: DemoResponse
+    DoctorConditionLinkCreate:
+      properties:
+        doctor_id:
+          type: string
+          title: Doctor Id
+          description: Doctor identifier to link
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440001
+        condition_id:
+          type: string
+          title: Condition Id
+          description: Condition identifier to link
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
+      type: object
+      required:
+      - doctor_id
+      - condition_id
+      title: DoctorConditionLinkCreate
+      description: Schema for linking a doctor to a condition.
+    DoctorConditionLinkResponse:
+      properties:
+        doctor_id:
+          type: string
+          title: Doctor Id
+          description: Doctor identifier
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440001
+        condition_id:
+          type: string
+          title: Condition Id
+          description: Condition identifier
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp when link was created
+          examples:
+          - '2024-01-15T10:30:00Z'
+      type: object
+      required:
+      - doctor_id
+      - condition_id
+      - created_at
+      title: DoctorConditionLinkResponse
+      description: Schema for doctor-condition link responses.
+    DoctorCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+          description: Doctor's full name
+          examples:
+          - Dr. Sarah Johnson
+        specialty:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Specialty
+          description: Doctor's medical specialty
+          examples:
+          - Cardiology
+        contact_info:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Contact Info
+          description: Doctor's contact information (email, phone, etc.)
+          examples:
+          - sarah.johnson@heartcenter.com
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the doctor is active in practice
+          default: true
+          examples:
+          - true
+      type: object
+      required:
+      - name
+      - specialty
+      title: DoctorCreate
+      description: Schema for creating a new doctor.
+    DoctorResponse:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+          description: Doctor's full name
+          examples:
+          - Dr. Sarah Johnson
+        specialty:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Specialty
+          description: Doctor's medical specialty
+          examples:
+          - Cardiology
+        contact_info:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Contact Info
+          description: Doctor's contact information (email, phone, etc.)
+          examples:
+          - sarah.johnson@heartcenter.com
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the doctor is active in practice
+          default: true
+          examples:
+          - true
+        id:
+          type: string
+          title: Id
+          description: Unique doctor identifier
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440001
+        user_id:
+          type: string
+          title: User Id
+          description: ID of the user who owns this doctor record
+          examples:
+          - user-uuid-123
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp when doctor was created
+          examples:
+          - '2024-01-15T10:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Timestamp when doctor was last updated
+          examples:
+          - '2024-01-15T10:30:00Z'
+      type: object
+      required:
+      - name
+      - specialty
+      - id
+      - user_id
+      - created_at
+      - updated_at
+      title: DoctorResponse
+      description: Schema for doctor API responses.
+    DoctorUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
+          title: Name
+          description: Updated doctor name
+          examples:
+          - Dr. Sarah Johnson
+        specialty:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
+          title: Specialty
+          description: Updated specialty
+          examples:
+          - Cardiology
+        contact_info:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Contact Info
+          description: Updated contact information
+          examples:
+          - sarah.johnson@heartcenter.com
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+          description: Whether the doctor is active in practice
+          examples:
+          - true
+      type: object
+      title: DoctorUpdate
+      description: Schema for updating an existing doctor.
+    ErrorResponse:
+      properties:
+        detail:
+          type: string
+          title: Detail
+          description: Error description
+        error_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Code
+          description: Optional error code
+      type: object
+      required:
+      - detail
+      title: ErrorResponse
+      description: Standard error response schema.
     FeelVsYesterdayResponse:
       properties:
         status:
@@ -2591,23 +3010,27 @@ components:
           type: string
           title: Status
           description: Service status
-          example: healthy
+          examples:
+          - healthy
         timestamp:
           type: string
           format: date-time
           title: Timestamp
           description: Health check timestamp
-          example: '2023-12-01T10:00:00Z'
+          examples:
+          - '2023-12-01T10:00:00Z'
         version:
           type: string
           title: Version
           description: Application version
-          example: 1.0.0
+          examples:
+          - 1.0.0
         database:
           type: boolean
           title: Database
           description: Database connectivity status
-          example: true
+          examples:
+          - true
       type: object
       required:
       - status
@@ -2616,388 +3039,26 @@ components:
       - database
       title: HealthCheckResponse
       description: Response schema for health check endpoints.
-    LogSummaryResponse:
+    LoginRequest:
       properties:
-        recent_medications:
-          items:
-            $ref: '#/components/schemas/MedicationLogResponse'
-          type: array
-          title: Recent Medications
-          description: Recent medication logs (last 5)
-        recent_symptoms:
-          items:
-            $ref: '#/components/schemas/SymptomLogResponse'
-          type: array
-          title: Recent Symptoms
-          description: Recent symptom logs (last 5)
-        total_medications_today:
-          type: integer
-          title: Total Medications Today
-          description: Total medication logs for today
-          default: 0
-        total_symptoms_today:
-          type: integer
-          title: Total Symptoms Today
-          description: Total symptom logs for today
-          default: 0
-      type: object
-      title: LogSummaryResponse
-      description: Schema for log summary (recent logs for landing page).
-    MedicationLogCreate:
-      properties:
-        medication_name:
+        email:
           type: string
-          maxLength: 200
-          minLength: 1
-          title: Medication Name
-          description: Name of the medication taken
-        dosage:
+          format: email
+          title: Email
+        password:
           type: string
-          maxLength: 100
-          minLength: 1
-          title: Dosage
-          description: Dosage amount and unit (e.g., '500mg', '2 tablets')
-        taken_at:
-          type: string
-          format: date-time
-          title: Taken At
-          description: When the medication was actually taken
-        notes:
-          anyOf:
-          - type: string
-            maxLength: 1000
-          - type: 'null'
-          title: Notes
-          description: Additional notes about the medication intake
-        side_effects:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Side Effects
-          description: Any side effects experienced
-        side_effect_severity:
-          anyOf:
-          - $ref: '#/components/schemas/SeverityLevel'
-          - type: 'null'
-          description: Severity of side effects if any
-        effectiveness_rating:
-          anyOf:
-          - type: integer
-            maximum: 5.0
-            minimum: 1.0
-          - type: 'null'
-          title: Effectiveness Rating
-          description: How effective the medication felt (1-5 scale)
+          title: Password
       type: object
       required:
-      - medication_name
-      - dosage
-      - taken_at
-      title: MedicationLogCreate
-      description: Schema for creating a new medication log entry.
-    MedicationLogResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        user_id:
-          type: string
-          title: User Id
-        medication_name:
-          type: string
-          title: Medication Name
-        dosage:
-          type: string
-          title: Dosage
-        taken_at:
-          type: string
-          format: date-time
-          title: Taken At
-        logged_at:
-          type: string
-          format: date-time
-          title: Logged At
-        notes:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Notes
-        side_effects:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Side Effects
-        side_effect_severity:
-          anyOf:
-          - $ref: '#/components/schemas/SeverityLevel'
-          - type: 'null'
-        effectiveness_rating:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Effectiveness Rating
-      type: object
-      required:
-      - id
-      - user_id
-      - medication_name
-      - dosage
-      - taken_at
-      - logged_at
-      title: MedicationLogResponse
-      description: Schema for medication log response.
-    MedicationLogUpdate:
-      properties:
-        medication_name:
-          anyOf:
-          - type: string
-            maxLength: 200
-            minLength: 1
-          - type: 'null'
-          title: Medication Name
-        dosage:
-          anyOf:
-          - type: string
-            maxLength: 100
-            minLength: 1
-          - type: 'null'
-          title: Dosage
-        taken_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Taken At
-        notes:
-          anyOf:
-          - type: string
-            maxLength: 1000
-          - type: 'null'
-          title: Notes
-        side_effects:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Side Effects
-        side_effect_severity:
-          anyOf:
-          - $ref: '#/components/schemas/SeverityLevel'
-          - type: 'null'
-        effectiveness_rating:
-          anyOf:
-          - type: integer
-            maximum: 5.0
-            minimum: 1.0
-          - type: 'null'
-          title: Effectiveness Rating
-      type: object
-      title: MedicationLogUpdate
-      description: Schema for updating an existing medication log entry.
-    SeverityLevel:
-      type: string
-      enum:
-      - none
-      - mild
-      - moderate
-      - severe
-      - critical
-      title: SeverityLevel
-      description: Severity levels for symptoms and side effects.
-    SymptomLogCreate:
-      properties:
-        symptom_name:
-          type: string
-          maxLength: 200
-          minLength: 1
-          title: Symptom Name
-          description: Name or description of the symptom
-        severity:
-          $ref: '#/components/schemas/SeverityLevel'
-          description: Severity level of the symptom
-        started_at:
-          type: string
-          format: date-time
-          title: Started At
-          description: When the symptom started (if known)
-        ended_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Ended At
-          description: When the symptom ended (if applicable)
-        duration_minutes:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Duration Minutes
-          description: Duration of the symptom in minutes
-        triggers:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Triggers
-          description: Potential triggers for the symptom
-        location:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Location
-          description: Body location where symptom occurred
-        notes:
-          anyOf:
-          - type: string
-            maxLength: 1000
-          - type: 'null'
-          title: Notes
-          description: Additional notes about the symptom
-        impact_rating:
-          anyOf:
-          - type: integer
-            maximum: 5.0
-            minimum: 1.0
-          - type: 'null'
-          title: Impact Rating
-          description: Impact on daily activities (1-5 scale)
-      type: object
-      required:
-      - symptom_name
-      - severity
-      - started_at
-      title: SymptomLogCreate
-      description: Schema for creating a new symptom log entry.
-    SymptomLogResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-        user_id:
-          type: string
-          title: User Id
-        symptom_name:
-          type: string
-          title: Symptom Name
-        severity:
-          $ref: '#/components/schemas/SeverityLevel'
-        started_at:
-          type: string
-          format: date-time
-          title: Started At
-        ended_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Ended At
-        logged_at:
-          type: string
-          format: date-time
-          title: Logged At
-        duration_minutes:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Duration Minutes
-        triggers:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Triggers
-        location:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Location
-        notes:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Notes
-        impact_rating:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Impact Rating
-      type: object
-      required:
-      - id
-      - user_id
-      - symptom_name
-      - severity
-      - started_at
-      - logged_at
-      title: SymptomLogResponse
-      description: Schema for symptom log response.
-    SymptomLogUpdate:
-      properties:
-        symptom_name:
-          anyOf:
-          - type: string
-            maxLength: 200
-            minLength: 1
-          - type: 'null'
-          title: Symptom Name
-        severity:
-          anyOf:
-          - $ref: '#/components/schemas/SeverityLevel'
-          - type: 'null'
-        started_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Started At
-        ended_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Ended At
-        duration_minutes:
-          anyOf:
-          - type: integer
-            minimum: 0.0
-          - type: 'null'
-          title: Duration Minutes
-        triggers:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Triggers
-        location:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Location
-        notes:
-          anyOf:
-          - type: string
-            maxLength: 1000
-          - type: 'null'
-          title: Notes
-        impact_rating:
-          anyOf:
-          - type: integer
-            maximum: 5.0
-            minimum: 1.0
-          - type: 'null'
-          title: Impact Rating
-      type: object
-      title: SymptomLogUpdate
-      description: Schema for updating an existing symptom log entry.
+      - email
+      - password
+      title: LoginRequest
     MedicationCreate:
       properties:
         name:
           type: string
-          minLength: 2
           maxLength: 100
+          minLength: 2
           title: Name
           description: Medication name (must be unique)
           example: Aspirin
@@ -3012,124 +3073,20 @@ components:
         is_active:
           type: boolean
           title: Is Active
-          description: Whether the medication is active (defaults to True for new medications)
+          description: Whether the medication is active (defaults to True for new
+            medications)
           default: true
       type: object
       required:
       - name
       title: MedicationCreate
       description: Schema for creating a new medication.
-    MedicationUpdate:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            minLength: 2
-            maxLength: 100
-          - type: 'null'
-          title: Name
-          description: Updated medication name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Description
-          description: Updated medication description
-        is_active:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Active
-          description: Updated active status
-      type: object
-      title: MedicationUpdate
-      description: Schema for updating an existing medication.
-    MedicationResponse:
-      properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique medication identifier
-          example: 1
-        name:
-          type: string
-          minLength: 2
-          maxLength: 100
-          title: Name
-          description: Medication name (must be unique)
-          example: Aspirin
-        description:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Description
-          description: Optional medication description
-          example: Pain reliever and anti-inflammatory medication
-        is_active:
-          type: boolean
-          title: Is Active
-          description: Whether the medication is active and available for logging
-          example: true
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-          description: When the medication was created
-          example: '2023-01-01T10:00:00Z'
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-          description: When the medication was last updated
-          example: '2023-01-01T10:00:00Z'
-      type: object
-      required:
-      - id
-      - name
-      - is_active
-      - created_at
-      - updated_at
-      title: MedicationResponse
-      description: Schema for medication response with all fields.
-    MedicationPublic:
-      properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique medication identifier
-          example: 1
-        name:
-          type: string
-          title: Name
-          description: Medication name
-          example: Aspirin
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-          description: Medication description
-          example: Pain reliever and anti-inflammatory medication
-        is_active:
-          type: boolean
-          title: Is Active
-          description: Whether medication is active
-          example: true
-      type: object
-      required:
-      - id
-      - name
-      - is_active
-      title: MedicationPublic
-      description: Public medication schema (excludes audit fields).
     MedicationListResponse:
       properties:
         items:
-          type: array
           items:
             $ref: '#/components/schemas/MedicationResponse'
+          type: array
           title: Items
           description: List of medications
           example: []
@@ -3162,68 +3119,440 @@ components:
       - pages
       title: MedicationListResponse
       description: Response schema for paginated medication list.
-    MedicationDeactivateResponse:
+    MedicationLogCreateMinimal:
+      properties:
+        medication_name:
+          type: string
+          minLength: 1
+          title: Medication Name
+        dosage:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dosage
+          description: Dosage string e.g. '200mg'
+        taken_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Taken At
+          description: Time medication taken
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        effectiveness_rating:
+          anyOf:
+          - type: integer
+            maximum: 5.0
+            minimum: 1.0
+          - type: 'null'
+          title: Effectiveness Rating
+      type: object
+      required:
+      - medication_name
+      title: MedicationLogCreateMinimal
+    MedicationLogResponseMinimal:
       properties:
         id:
           type: integer
           title: Id
-          description: Medication ID that was deactivated
-        message:
+        user_id:
           type: string
-          title: Message
-          description: Confirmation message
-        deactivated_at:
+          title: User Id
+        medication_name:
           type: string
-          format: date-time
-          title: Deactivated At
-          description: When the medication was deactivated
-      type: object
-      required:
-      - id
-      - message
-      - deactivated_at
-      title: MedicationDeactivateResponse
-      description: Response schema for medication deactivation.
-    ErrorResponse:
-      properties:
-        detail:
-          type: string
-          title: Detail
-          description: Error description
-        error_code:
+          title: Medication Name
+        dosage:
           anyOf:
           - type: string
           - type: 'null'
-          title: Error Code
-          description: Optional error code
+          title: Dosage
+        taken_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Taken At
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        effectiveness_rating:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Effectiveness Rating
+        logged_at:
+          type: string
+          format: date-time
+          title: Logged At
       type: object
       required:
-      - detail
-      title: ErrorResponse
-      description: Standard error response schema.
-    ValidationErrorResponse:
+      - id
+      - user_id
+      - medication_name
+      - logged_at
+      title: MedicationLogResponseMinimal
+    MedicationPublic:
       properties:
-        detail:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-          title: Detail
-          description: List of validation errors
+        id:
+          type: integer
+          title: Id
+          description: Unique medication identifier
+          example: 1
+        name:
+          type: string
+          title: Name
+          description: Medication name
+          example: Aspirin
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Medication description
+          example: Pain reliever and anti-inflammatory medication
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether medication is active
+          example: true
       type: object
       required:
-      - detail
-      title: ValidationErrorResponse
-      description: Validation error response schema.
-      example:
-        detail:
-        - ctx:
-            limit_value: 2
-          loc:
-          - body
-          - name
-          msg: ensure this value has at least 2 characters
-          type: value_error.any_str.min_length
+      - id
+      - name
+      - description
+      - is_active
+      title: MedicationPublic
+      description: Public medication schema (excludes audit fields).
+    MedicationResponse:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 2
+          title: Name
+          description: Medication name (must be unique)
+          example: Aspirin
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+          description: Optional medication description
+          example: Pain reliever and anti-inflammatory medication
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the medication is active and available for logging
+          default: true
+          example: true
+        id:
+          type: integer
+          title: Id
+          description: Unique medication identifier
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: When the medication was created
+          example: '2023-01-01T10:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: When the medication was last updated
+          example: '2023-01-01T10:00:00Z'
+      type: object
+      required:
+      - name
+      - id
+      - created_at
+      - updated_at
+      title: MedicationResponse
+      description: Schema for medication response with all fields.
+    MedicationUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 2
+          - type: 'null'
+          title: Name
+          description: Updated medication name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 500
+          - type: 'null'
+          title: Description
+          description: Updated medication description
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+          description: Updated active status
+      type: object
+      title: MedicationUpdate
+      description: Schema for updating an existing medication.
+    PassportConditionItem:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Condition identifier
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          title: Name
+          description: Condition name
+          examples:
+          - Hypertension
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Condition description
+          examples:
+          - High blood pressure requiring regular monitoring
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the condition is active
+          examples:
+          - true
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: When the condition was created
+          examples:
+          - '2024-01-15T10:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: When the condition was last updated
+          examples:
+          - '2024-01-15T10:30:00Z'
+      type: object
+      required:
+      - id
+      - name
+      - is_active
+      - created_at
+      - updated_at
+      title: PassportConditionItem
+      description: Schema for a condition item in the passport response.
+    PassportDoctorItem:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Doctor identifier
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440001
+        name:
+          type: string
+          title: Name
+          description: Doctor name
+          examples:
+          - Dr. Sarah Johnson
+        specialty:
+          type: string
+          title: Specialty
+          description: Doctor specialty
+          examples:
+          - Cardiology
+        contact_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contact Info
+          description: Doctor contact information
+          examples:
+          - sarah.johnson@heartcenter.com
+        is_active:
+          type: boolean
+          title: Is Active
+          description: Whether the doctor is active
+          examples:
+          - true
+      type: object
+      required:
+      - id
+      - name
+      - specialty
+      - is_active
+      title: PassportDoctorItem
+      description: Schema for a doctor item in the passport response.
+    PassportItem:
+      properties:
+        condition:
+          $ref: '#/components/schemas/PassportConditionItem'
+          description: The medical condition
+        doctors:
+          items:
+            $ref: '#/components/schemas/PassportDoctorItem'
+          type: array
+          title: Doctors
+          description: List of doctors linked to this condition
+          examples:
+          - []
+      type: object
+      required:
+      - condition
+      - doctors
+      title: PassportItem
+      description: Schema for a passport item containing condition and linked doctors.
+    RegisterRequest:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        password:
+          type: string
+          title: Password
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+      type: object
+      required:
+      - email
+      - password
+      title: RegisterRequest
+    SessionStatusResponse:
+      properties:
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        error:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Error
+      type: object
+      title: SessionStatusResponse
+    SymptomLogCreateMinimal:
+      properties:
+        symptom_name:
+          type: string
+          minLength: 1
+          title: Symptom Name
+        severity:
+          type: string
+          minLength: 1
+          title: Severity
+          description: 'Severity level: one of none|mild|moderate|severe|critical
+            (case-insensitive)'
+        started_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Started At
+        duration_minutes:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Duration Minutes
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        impact_rating:
+          anyOf:
+          - type: integer
+            maximum: 5.0
+            minimum: 1.0
+          - type: 'null'
+          title: Impact Rating
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - symptom_name
+      - severity
+      title: SymptomLogCreateMinimal
+    SymptomLogResponseMinimal:
+      properties:
+        id:
+          type: integer
+          title: Id
+        user_id:
+          type: string
+          title: User Id
+        symptom_name:
+          type: string
+          title: Symptom Name
+        severity:
+          type: string
+          title: Severity
+        started_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Started At
+        duration_minutes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Duration Minutes
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        impact_rating:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Impact Rating
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        logged_at:
+          type: string
+          format: date-time
+          title: Logged At
+      type: object
+      required:
+      - id
+      - user_id
+      - symptom_name
+      - severity
+      - logged_at
+      title: SymptomLogResponseMinimal
     ValidationError:
       properties:
         loc:
@@ -3245,461 +3574,92 @@ components:
       - msg
       - type
       title: ValidationError
-    ConditionCreate:
+    ValidationErrorResponse:
       properties:
-        name:
-          type: string
-          maxLength: 200
-          minLength: 1
-          title: Name
-          description: Name of the medical condition
-          example: Diabetes Type 2
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          maxLength: 2000
-          title: Description
-          description: Detailed description of the condition
-          example: Adult-onset diabetes mellitus
-        severity:
-          anyOf:
-          - type: string
-            enum: ['mild', 'moderate', 'severe']
-          - type: 'null'
-          title: Severity
-          description: Severity level of the condition
-          example: moderate
-        diagnosed_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Diagnosed Date
-          description: Date when condition was diagnosed
-          example: '2023-01-15'
-        is_active:
-          type: boolean
-          title: Is Active
-          description: Whether the condition is currently active
-          default: true
-          example: true
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          description: List of validation errors
       type: object
       required:
-      - name
-      title: ConditionCreate
-      description: Schema for creating a new condition.
-    ConditionUpdate:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 200
-            minLength: 1
-          - type: 'null'
-          title: Name
-          description: Name of the medical condition
-          example: Diabetes Type 2
-        description:
-          anyOf:
-          - type: string
-            maxLength: 2000
-          - type: 'null'
-          title: Description
-          description: Detailed description of the condition
-          example: Adult-onset diabetes mellitus
-        severity:
-          anyOf:
-          - type: string
-            enum: ['mild', 'moderate', 'severe']
-          - type: 'null'
-          title: Severity
-          description: Severity level of the condition
-          example: moderate
-        diagnosed_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Diagnosed Date
-          description: Date when condition was diagnosed
-          example: '2023-01-15'
-        is_active:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Active
-          description: Whether the condition is currently active
-          example: true
-      type: object
-      title: ConditionUpdate
-      description: Schema for updating an existing condition.
-    ConditionResponse:
+      - detail
+      title: ValidationErrorResponse
+      description: Validation error response schema.
+    app__api__auth__login__UserPublic:
       properties:
         id:
           type: string
           title: Id
-          description: Unique identifier for the condition
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
+        email:
           type: string
-          title: Name
-          description: Name of the medical condition
-          example: Diabetes Type 2
-        description:
+          format: email
+          title: Email
+        display_name:
           anyOf:
           - type: string
           - type: 'null'
-          title: Description
-          description: Detailed description of the condition
-          example: Adult-onset diabetes mellitus
-        severity:
-          anyOf:
-          - type: string
-            enum: ['mild', 'moderate', 'severe']
-          - type: 'null'
-          title: Severity
-          description: Severity level of the condition
-          example: moderate
-        diagnosed_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Diagnosed Date
-          description: Date when condition was diagnosed
-          example: '2023-01-15'
-        is_active:
-          type: boolean
-          title: Is Active
-          description: Whether the condition is currently active
-          example: true
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-          description: When the condition was created
-          example: '2023-01-15T10:00:00Z'
-        updated_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Updated At
-          description: When the condition was last updated
-          example: '2023-01-16T15:30:00Z'
+          title: Display Name
       type: object
       required:
       - id
-      - name
-      - is_active
-      - created_at
-      title: ConditionResponse
-      description: Schema for condition response.
-    DoctorCreate:
+      - email
+      title: UserPublic
+    app__api__auth__login__UserResponse:
       properties:
-        name:
-          type: string
-          maxLength: 200
-          minLength: 1
-          title: Name
-          description: Full name of the doctor
-          example: Dr. Jane Smith
-        specialty:
+        data:
           anyOf:
-          - type: string
+          - $ref: '#/components/schemas/app__api__auth__login__UserPublic'
           - type: 'null'
-          maxLength: 100
-          title: Specialty
-          description: Medical specialty or area of expertise
-          example: Endocrinology
-        phone:
+        error:
           anyOf:
-          - type: string
+          - additionalProperties: true
+            type: object
           - type: 'null'
-          maxLength: 20
-          title: Phone
-          description: Contact phone number
-          example: '+1-555-123-4567'
-        email:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email
-          description: Contact email address
-          example: dr.smith@clinic.com
-        address:
-          anyOf:
-          - type: string
-          - type: 'null'
-          maxLength: 500
-          title: Address
-          description: Office address
-          example: 123 Medical Center Drive, Suite 456
-        notes:
-          anyOf:
-          - type: string
-          - type: 'null'
-          maxLength: 2000
-          title: Notes
-          description: Additional notes about the doctor
-          example: Highly recommended for diabetes management
-        is_active:
-          type: boolean
-          title: Is Active
-          description: Whether the doctor is currently active
-          default: true
-          example: true
+          title: Error
       type: object
-      required:
-      - name
-      title: DoctorCreate
-      description: Schema for creating a new doctor record.
-    DoctorUpdate:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 200
-            minLength: 1
-          - type: 'null'
-          title: Name
-          description: Full name of the doctor
-          example: Dr. Jane Smith
-        specialty:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Specialty
-          description: Medical specialty or area of expertise
-          example: Endocrinology
-        phone:
-          anyOf:
-          - type: string
-            maxLength: 20
-          - type: 'null'
-          title: Phone
-          description: Contact phone number
-          example: '+1-555-123-4567'
-        email:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email
-          description: Contact email address
-          example: dr.smith@clinic.com
-        address:
-          anyOf:
-          - type: string
-            maxLength: 500
-          - type: 'null'
-          title: Address
-          description: Office address
-          example: 123 Medical Center Drive, Suite 456
-        notes:
-          anyOf:
-          - type: string
-            maxLength: 2000
-          - type: 'null'
-          title: Notes
-          description: Additional notes about the doctor
-          example: Highly recommended for diabetes management
-        is_active:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Is Active
-          description: Whether the doctor is currently active
-          example: true
-      type: object
-      title: DoctorUpdate
-      description: Schema for updating an existing doctor record.
-    DoctorResponse:
+      title: UserResponse
+    app__api__auth__register__UserPublic:
       properties:
         id:
           type: string
           title: Id
-          description: Unique identifier for the doctor
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          type: string
-          title: Name
-          description: Full name of the doctor
-          example: Dr. Jane Smith
-        specialty:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Specialty
-          description: Medical specialty or area of expertise
-          example: Endocrinology
-        phone:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Phone
-          description: Contact phone number
-          example: '+1-555-123-4567'
         email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Email
-          description: Contact email address
-          example: dr.smith@clinic.com
-        address:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Address
-          description: Office address
-          example: 123 Medical Center Drive, Suite 456
-        notes:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Notes
-          description: Additional notes about the doctor
-          example: Highly recommended for diabetes management
-        is_active:
-          type: boolean
-          title: Is Active
-          description: Whether the doctor is currently active
-          example: true
-        created_at:
           type: string
-          format: date-time
-          title: Created At
-          description: When the doctor record was created
-          example: '2023-01-15T10:00:00Z'
-        updated_at:
+          format: email
+          title: Email
+        first_name:
           anyOf:
           - type: string
-            format: date-time
           - type: 'null'
-          title: Updated At
-          description: When the doctor record was last updated
-          example: '2023-01-16T15:30:00Z'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
       type: object
       required:
       - id
-      - name
-      - is_active
-      - created_at
-      title: DoctorResponse
-      description: Schema for doctor response.
-    DoctorConditionLinkCreate:
+      - email
+      title: UserPublic
+    app__api__auth__register__UserResponse:
       properties:
-        doctor_id:
-          type: string
-          title: Doctor Id
-          description: ID of the doctor to link
-          example: 123e4567-e89b-12d3-a456-426614174000
-        condition_id:
-          type: string
-          title: Condition Id
-          description: ID of the condition to link
-          example: 123e4567-e89b-12d3-a456-426614174001
-        notes:
+        data:
           anyOf:
-          - type: string
+          - $ref: '#/components/schemas/app__api__auth__register__UserPublic'
           - type: 'null'
-          maxLength: 2000
-          title: Notes
-          description: Notes about this doctor-condition relationship
-          example: Primary care physician for diabetes management
-      type: object
-      required:
-      - doctor_id
-      - condition_id
-      title: DoctorConditionLinkCreate
-      description: Schema for creating a doctor-condition link.
-    DoctorConditionLinkResponse:
-      properties:
-        doctor_id:
-          type: string
-          title: Doctor Id
-          description: ID of the linked doctor
-          example: 123e4567-e89b-12d3-a456-426614174000
-        condition_id:
-          type: string
-          title: Condition Id
-          description: ID of the linked condition
-          example: 123e4567-e89b-12d3-a456-426614174001
-        notes:
+        error:
           anyOf:
-          - type: string
+          - additionalProperties: true
+            type: object
           - type: 'null'
-          title: Notes
-          description: Notes about this doctor-condition relationship
-          example: Primary care physician for diabetes management
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-          description: When the link was created
-          example: '2023-01-15T10:00:00Z'
-        doctor:
-          $ref: '#/components/schemas/DoctorResponse'
-        condition:
-          $ref: '#/components/schemas/ConditionResponse'
+          title: Error
       type: object
-      required:
-      - doctor_id
-      - condition_id
-      - created_at
-      - doctor
-      - condition
-      title: DoctorConditionLinkResponse
-      description: Schema for doctor-condition link response.
-    PassportItem:
-      properties:
-        condition:
-          $ref: '#/components/schemas/ConditionResponse'
-        doctors:
-          items:
-            $ref: '#/components/schemas/DoctorResponse'
-          type: array
-          title: Doctors
-          description: List of doctors associated with this condition
-      type: object
-      required:
-      - condition
-      - doctors
-      title: PassportItem
-      description: Schema for individual passport item (condition with doctors).
-    PassportResponse:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PassportItem'
-          type: array
-          title: Items
-          description: List of conditions with their associated doctors
-        total_conditions:
-          type: integer
-          title: Total Conditions
-          description: Total number of conditions
-          example: 3
-        total_doctors:
-          type: integer
-          title: Total Doctors
-          description: Total number of unique doctors
-          example: 2
-        generated_at:
-          type: string
-          format: date-time
-          title: Generated At
-          description: When this passport was generated
-          example: '2023-01-15T10:00:00Z'
-      type: object
-      required:
-      - items
-      - total_conditions
-      - total_doctors
-      - generated_at
-      title: PassportResponse
-      description: Schema for medical passport response.
+      title: UserResponse
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

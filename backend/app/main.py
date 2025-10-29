@@ -47,29 +47,30 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     - Logging of application lifecycle events
     """
     # Startup
-    logger.info("🚀 Starting SaaS Medical Tracker API", version=settings.VERSION)
+    # Startup log (avoid emojis for Windows console compatibility)
+    logger.info("Starting SaaS Medical Tracker API", version=settings.VERSION)
 
     try:
         # Initialize database
         init_database()
-        logger.info("✅ Database initialized successfully")
+        logger.info("Database initialized successfully")
 
         # Metrics system is already initialized during app creation
         # (no need to call setup_metrics here again)
 
         # TODO: Initialize other services (Redis, etc.)
-        logger.info("✅ Application startup completed")
+        logger.info("Application startup completed")
 
     except Exception as e:
-        logger.error("❌ Failed to initialize application", error=str(e))
+        logger.error("Failed to initialize application", error=str(e))
         raise
 
     yield  # Application runs here
 
     # Shutdown
-    logger.info("🛑 Shutting down SaaS Medical Tracker API")
+    logger.info("Shutting down SaaS Medical Tracker API")
     # TODO: Cleanup resources (close DB connections, etc.)
-    logger.info("✅ Application shutdown completed")
+    logger.info("Application shutdown completed")
 
 
 def create_app() -> FastAPI:
@@ -113,7 +114,7 @@ def create_app() -> FastAPI:
 
     # Exception handlers are now managed by the middleware module
 
-    logger.info("✅ FastAPI application created successfully")
+    logger.info("FastAPI application created successfully")
     return app
 
 

@@ -19,10 +19,7 @@ from typing import List, Optional
 from pydantic import Field, field_validator
 from pydantic.networks import AnyHttpUrl
 
-try:
-    from pydantic_settings import BaseSettings
-except ImportError:
-    from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -34,71 +31,51 @@ class Settings(BaseSettings):
 
     APP_NAME: str = "SaaS Medical Tracker"
     APP_VERSION: str = "0.1.0"
-    ENVIRONMENT: str = Field(default="development", env="ENVIRONMENT")
-    DEBUG: bool = Field(default=True, env="DEBUG")
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = True
 
     # =============================================================================
     # Server Settings
     # =============================================================================
 
-    HOST: str = Field(default="0.0.0.0", env="HOST")
-    PORT: int = Field(default=8000, env="PORT")
-    RELOAD: bool = Field(default=True, env="RELOAD")
+    HOST: str = "0.0.0.0"
+    PORT: int = 8000
+    RELOAD: bool = True
 
     # =============================================================================
     # Database Settings
     # =============================================================================
 
-    DATABASE_URL: str = Field(
-        default="sqlite:///./app.db",
-        env="DATABASE_URL",
-        description="Database connection URL"
-    )
-    DATABASE_ECHO: bool = Field(default=False, env="DATABASE_ECHO")
-    DATABASE_POOL_SIZE: int = Field(default=10, env="DATABASE_POOL_SIZE")
-    DATABASE_MAX_OVERFLOW: int = Field(default=20, env="DATABASE_MAX_OVERFLOW")
+    DATABASE_URL: str = "sqlite:///./app.db"
+    DATABASE_ECHO: bool = False
+    DATABASE_POOL_SIZE: int = 10
+    DATABASE_MAX_OVERFLOW: int = 20
 
     # =============================================================================
     # Security Settings
     # =============================================================================
 
-    SECRET_KEY: str = Field(
-        default="your-secret-key-change-in-production",
-        env="SECRET_KEY",
-        description="Secret key for cryptographic operations"
-    )
+    SECRET_KEY: str = "your-secret-key-change-in-production"
 
-    JWT_SECRET_KEY: str = Field(
-        default="your-jwt-secret-change-in-production",
-        env="JWT_SECRET_KEY",
-        description="JWT signing secret"
-    )
-    JWT_ALGORITHM: str = Field(default="HS256", env="JWT_ALGORITHM")
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
-        default=30,
-        env="JWT_ACCESS_TOKEN_EXPIRE_MINUTES"
-    )
-    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = Field(
-        default=7,
-        env="JWT_REFRESH_TOKEN_EXPIRE_DAYS"
-    )
+    # NOTE: Legacy JWT configuration retained for potential future token-based flows.
+    # Current auth design uses opaque, server-stored session identifiers (FR-013, FR-015, FR-017).
+    JWT_SECRET_KEY: str = "your-jwt-secret-change-in-production"  # JWT signing secret used for access tokens
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # Rolling renewal window (activity refresh)
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7     # Longer-lived refresh token window (if refresh implemented)
 
     # Password hashing
-    PASSWORD_MIN_LENGTH: int = Field(default=8, env="PASSWORD_MIN_LENGTH")
-    BCRYPT_ROUNDS: int = Field(default=12, env="BCRYPT_ROUNDS")
+    PASSWORD_MIN_LENGTH: int = 8
+    BCRYPT_ROUNDS: int = 12
 
     # =============================================================================
     # CORS Settings
     # =============================================================================
 
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = Field(
-        default=["http://localhost:3000", "http://localhost:8000"],
-        env="BACKEND_CORS_ORIGINS",
-        description="Allowed CORS origins"
-    )
-    CORS_ALLOW_CREDENTIALS: bool = Field(default=True, env="CORS_ALLOW_CREDENTIALS")
-    CORS_ALLOW_METHODS: List[str] = Field(default=["*"], env="CORS_ALLOW_METHODS")
-    CORS_ALLOW_HEADERS: List[str] = Field(default=["*"], env="CORS_ALLOW_HEADERS")
+    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    CORS_ALLOW_CREDENTIALS: bool = True
+    CORS_ALLOW_METHODS: List[str] = ["*"]
+    CORS_ALLOW_HEADERS: List[str] = ["*"]
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
@@ -114,16 +91,8 @@ class Settings(BaseSettings):
     # Security Headers and Middleware
     # =============================================================================
 
-    TRUSTED_HOSTS: Optional[List[str]] = Field(
-        default=None,
-        env="TRUSTED_HOSTS",
-        description="Trusted host names for production"
-    )
-    ALLOWED_HOSTS: List[str] = Field(
-        default=["*"],
-        env="ALLOWED_HOSTS",
-        description="Allowed host names"
-    )
+    TRUSTED_HOSTS: Optional[List[str]] = None
+    ALLOWED_HOSTS: List[str] = ["*"]
 
     @field_validator("TRUSTED_HOSTS", "ALLOWED_HOSTS", mode="before")
     @classmethod
@@ -136,85 +105,85 @@ class Settings(BaseSettings):
         return v
 
     # Security headers
-    ENABLE_HSTS: bool = Field(default=False, env="ENABLE_HSTS")
-    CSP_POLICY: str = Field(
-        default="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
-        env="CSP_POLICY"
-    )
+    ENABLE_HSTS: bool = False
+    CSP_POLICY: str = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
 
     # Session settings
-    SESSION_SECRET_KEY: Optional[str] = Field(default=None, env="SESSION_SECRET_KEY")
-    SESSION_MAX_AGE: int = Field(default=86400, env="SESSION_MAX_AGE")  # 24 hours
+    SESSION_SECRET_KEY: Optional[str] = None
+    SESSION_MAX_AGE: int = 86400  # 24 hours
+    # Authentication/session control constants (feature: login functionality)
+    IDLE_SESSION_TIMEOUT_MINUTES: int = 30  # FR-013: Idle timeout (inactivity)
+    MAX_FAILED_LOGINS: int = 5              # FR-015: Lockout threshold
+    LOCKOUT_DURATION_MINUTES: int = 15      # FR-015: Lockout duration
 
     # =============================================================================
     # Logging and Monitoring
     # =============================================================================
 
-    LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
-    LOG_FORMAT: str = Field(default="json", env="LOG_FORMAT")  # json or text
-    LOG_REQUEST_BODY: bool = Field(default=False, env="LOG_REQUEST_BODY")
-    LOG_RESPONSE_BODY: bool = Field(default=False, env="LOG_RESPONSE_BODY")
-    LOG_MAX_BODY_SIZE: int = Field(default=1024, env="LOG_MAX_BODY_SIZE")
+    LOG_LEVEL: str = "INFO"
+    LOG_FORMAT: str = "json"  # json or text
+    LOG_REQUEST_BODY: bool = False
+    LOG_RESPONSE_BODY: bool = False
+    LOG_MAX_BODY_SIZE: int = 1024
 
     # Performance monitoring
-    SLOW_REQUEST_THRESHOLD: float = Field(default=1.0, env="SLOW_REQUEST_THRESHOLD")
-    LOG_SLOW_REQUESTS: bool = Field(default=True, env="LOG_SLOW_REQUESTS")
+    SLOW_REQUEST_THRESHOLD: float = 1.0
+    LOG_SLOW_REQUESTS: bool = True
 
     # Structured logging
-    SERVICE_NAME: str = Field(default="saas-medical-tracker", env="SERVICE_NAME")
-    COMPONENT_NAME: str = Field(default="backend", env="COMPONENT_NAME")
+    SERVICE_NAME: str = "saas-medical-tracker"
+    COMPONENT_NAME: str = "backend"
 
     # =============================================================================
     # Rate Limiting
     # =============================================================================
 
-    RATE_LIMIT_ENABLED: bool = Field(default=False, env="RATE_LIMIT_ENABLED")
-    RATE_LIMIT_REQUESTS: int = Field(default=100, env="RATE_LIMIT_REQUESTS")
-    RATE_LIMIT_WINDOW: int = Field(default=60, env="RATE_LIMIT_WINDOW")  # seconds
+    RATE_LIMIT_ENABLED: bool = False
+    RATE_LIMIT_REQUESTS: int = 100
+    RATE_LIMIT_WINDOW: int = 60  # seconds
 
     # =============================================================================
     # Email Settings (for notifications)
     # =============================================================================
 
-    SMTP_TLS: bool = Field(default=True, env="SMTP_TLS")
-    SMTP_PORT: Optional[int] = Field(default=587, env="SMTP_PORT")
-    SMTP_HOST: Optional[str] = Field(default=None, env="SMTP_HOST")
-    SMTP_USER: Optional[str] = Field(default=None, env="SMTP_USER")
-    SMTP_PASSWORD: Optional[str] = Field(default=None, env="SMTP_PASSWORD")
-
-    EMAILS_FROM_EMAIL: Optional[str] = Field(default=None, env="EMAILS_FROM_EMAIL")
-    EMAILS_FROM_NAME: Optional[str] = Field(default=None, env="EMAILS_FROM_NAME")
+    SMTP_TLS: bool = True
+    SMTP_PORT: Optional[int] = 587
+    SMTP_HOST: Optional[str] = None
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    EMAILS_FROM_EMAIL: Optional[str] = None
+    EMAILS_FROM_NAME: Optional[str] = None
 
     # =============================================================================
     # External Services
     # =============================================================================
 
     # Redis (for caching and sessions)
-    REDIS_URL: Optional[str] = Field(default=None, env="REDIS_URL")
-    REDIS_ENABLED: bool = Field(default=False, env="REDIS_ENABLED")
+    REDIS_URL: Optional[str] = None
+    REDIS_ENABLED: bool = False
 
     # Sentry (error monitoring)
-    SENTRY_DSN: Optional[str] = Field(default=None, env="SENTRY_DSN")
-    SENTRY_ENABLED: bool = Field(default=False, env="SENTRY_ENABLED")
+    SENTRY_DSN: Optional[str] = None
+    SENTRY_ENABLED: bool = False
 
     # =============================================================================
     # API Settings
     # =============================================================================
 
-    API_V1_STR: str = Field(default="/api/v1", env="API_V1_STR")
-    PROJECT_NAME: str = Field(default="SaaS Medical Tracker API", env="PROJECT_NAME")
+    API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "SaaS Medical Tracker API"
 
     # OpenAPI configuration
-    OPENAPI_URL: str = Field(default="/openapi.json", env="OPENAPI_URL")
-    DOCS_URL: str = Field(default="/docs", env="DOCS_URL")
-    REDOC_URL: str = Field(default="/redoc", env="REDOC_URL")
+    OPENAPI_URL: str = "/openapi.json"
+    DOCS_URL: str = "/docs"
+    REDOC_URL: str = "/redoc"
 
     # =============================================================================
     # Testing Settings
     # =============================================================================
 
-    TESTING: bool = Field(default=False, env="TESTING")
-    TEST_DATABASE_URL: Optional[str] = Field(default=None, env="TEST_DATABASE_URL")
+    TESTING: bool = False
+    TEST_DATABASE_URL: Optional[str] = None
 
     # =============================================================================
     # Validators and Configuration

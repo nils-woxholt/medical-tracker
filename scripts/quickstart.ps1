@@ -140,7 +140,7 @@ Write-Verbose "Changed to backend directory: $backendDir"
 Write-Host "📦 Syncing Python dependencies with uv..." -ForegroundColor Yellow
 # Clear any existing VIRTUAL_ENV to avoid conflicts
 $env:VIRTUAL_ENV = $null
-uv sync
+uv sync --extra dev --extra test
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ Failed to sync dependencies" -ForegroundColor Red
     exit 1

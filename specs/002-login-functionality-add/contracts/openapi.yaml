@@ -1,0 +1,184 @@
+openapi: 3.1.0
+info:
+  title: Auth API - User Authentication Feature
+  version: 0.1.0
+  description: Endpoints enabling registration, login, logout, session status, and demo access.
+servers:
+  - url: https://api.example.test
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user and create session
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered
+          headers:
+            Set-Cookie:
+              description: HttpOnly session cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /auth/login:
+    post:
+      summary: Login existing user
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login success
+          headers:
+            Set-Cookie:
+              description: HttpOnly session cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '423':
+          description: Account locked (remaining lock duration)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockoutResponse'
+  /auth/logout:
+    post:
+      summary: Logout current session
+      operationId: logoutUser
+      responses:
+        '204':
+          description: Logged out
+          headers:
+            Set-Cookie:
+              description: Session cookie cleared
+              schema:
+                type: string
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/session:
+    get:
+      summary: Get current authenticated user session
+      operationId: getSession
+      responses:
+        '200':
+          description: Active session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStatus'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/demo:
+    post:
+      summary: Start demo session
+      operationId: startDemoSession
+      responses:
+        '200':
+          description: Demo session started
+          headers:
+            Set-Cookie:
+              description: Demo session cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoSessionResponse'
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: session
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        display_name: { type: string, maxLength: 80 }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string }
+        password: { type: string }
+    UserPublic:
+      type: object
+      required: [id, email]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string }
+        display_name: { type: string, nullable: true }
+    UserResponse:
+      type: object
+      properties:
+        data: { $ref: '#/components/schemas/UserPublic' }
+        error: { $ref: '#/components/schemas/Error' }
+    SessionStatus:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            authenticated: { type: boolean }
+            user: { $ref: '#/components/schemas/UserPublic' }
+            demo: { type: boolean }
+        error: { $ref: '#/components/schemas/Error' }
+    DemoSessionResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            demo: { type: boolean }
+            expires_in_seconds: { type: integer }
+        error: { $ref: '#/components/schemas/Error' }
+    LockoutResponse:
+      type: object
+      properties:
+        error: { $ref: '#/components/schemas/Error' }
+        lock_expires_at: { type: string, format: date-time }
+  responses:
+    BadRequest:
+      description: Validation or malformed request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Conflict:
+      description: Uniqueness conflict
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Not authenticated
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+security:
+  - sessionCookie: []

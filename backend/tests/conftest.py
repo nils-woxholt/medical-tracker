@@ -183,6 +183,18 @@ async def client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     ) as ac:
         yield ac
 
+# Provide alias fixture name 'async_client' used by some integration tests
+@pytest.fixture(name="async_client")
+async def async_client_fixture(client: AsyncClient) -> AsyncGenerator[AsyncClient, None]:
+    yield client
+
+# Synchronous TestClient fixture for contract tests expecting blocking interface
+from fastapi.testclient import TestClient as _SyncTestClient
+
+@pytest.fixture(name="sync_client")
+def sync_client_fixture(app: FastAPI):
+    return _SyncTestClient(app)
+
 
 @pytest.fixture
 def sample_user_data():

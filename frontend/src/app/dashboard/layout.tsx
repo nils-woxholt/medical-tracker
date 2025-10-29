@@ -1,23 +1,20 @@
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Header } from '@/components/dashboard/header'
+import ProtectedLayout from '../(protected)/layout'
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar className="w-64 bg-white shadow-sm" />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
+    <ProtectedLayout>
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <Sidebar className="w-64 bg-white shadow-sm" />
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header />
+          {/* Demo banner removed */}
+          <main className="p-4 flex-1 bg-muted/20">{children}</main>
+        </div>
       </div>
-    </div>
-  )
+    </ProtectedLayout>
+  );
 }

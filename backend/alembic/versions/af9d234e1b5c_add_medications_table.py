@@ -1,9 +1,10 @@
 """Add medications table with indexes
 
 Revision ID: af9d234e1b5c
-Revises: 6934fbabba4f
+Revises: 7b1c2d9f2e01
 Create Date: 2025-01-27 10:00:00.000000
 
+Adjusted down_revision to include newly added users table migration.
 """
 from alembic import op
 import sqlalchemy as sa
@@ -12,7 +13,7 @@ from sqlalchemy import func
 
 # revision identifiers, used by Alembic.
 revision = 'af9d234e1b5c'
-down_revision = '6934fbabba4f'
+down_revision = '7b1c2d9f2e01'
 branch_labels = None
 depends_on = None
 

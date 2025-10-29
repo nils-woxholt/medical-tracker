@@ -1,9 +1,10 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
+// NOTE: We deliberately omit @vitejs/plugin-react here and instead rely on automatic React JSX transform.
+// If tests need the React identifier (older patterns), we inject it below via esbuild.jsxInject.
 
 export default defineConfig({
-  plugins: [react()],
+  // React plugin omitted; using esbuild.jsxInject ensures legacy tests that expect global React still pass.
   test: {
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
@@ -27,6 +28,9 @@ export default defineConfig({
       exclude: [
         'coverage/**',
         'dist/**',
+        '.next/**',
+        '.next/static/**',
+        '.next/cache/**',
         'packages/*/test{,s}/**',
         '**/*.d.ts',
         'cypress/**',
@@ -47,7 +51,11 @@ export default defineConfig({
         '**/loading.tsx',
         '**/not-found.tsx',
         '**/error.tsx',
-        '**/global-error.tsx'
+        '**/global-error.tsx',
+        // Generated vendor / runtime chunks (avoid skewing coverage %)
+        '**/vendor-chunks/**',
+        '**/webpack-runtime.js',
+        '**/polyfills.js'
       ]
     },
     // Test file patterns
@@ -73,5 +81,12 @@ export default defineConfig({
       '@/app': 'C:/dev/lseg/spec-kit/todo/frontend/src/app',
       '@/types': 'C:/dev/lseg/spec-kit/todo/frontend/src/types'
     }
+  },
+  esbuild: {
+    jsx: 'automatic',
+    jsxImportSource: 'react',
+    // Some existing test files rely on React being in scope (ReferenceError: React is not defined).
+    // Inject `import React from "react"` automatically to satisfy those without adding manual imports everywhere.
+    jsxInject: 'import React from "react"'
   }
 })

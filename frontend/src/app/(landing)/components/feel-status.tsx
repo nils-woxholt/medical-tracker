@@ -18,7 +18,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { components } from "@contracts/types/api";
-import { feelApi } from "@/lib/api/logging";
+import { ApiClient } from "@/lib/api/client";
 
 // Type definitions from generated API schema - feel endpoint types will be added
 interface FeelComparisonResponse {
@@ -75,8 +75,8 @@ export function FeelStatus({ className }: FeelStatusProps) {
       setLoading(true);
       setError(null);
 
-      // Use the API client for type-safe request
-      const data = await feelApi.getVsYesterday();
+  const client = new ApiClient();
+  const data = await client.getFeelVsYesterday();
       setFeelData(data);
       setLastUpdated(new Date());
     } catch (err) {

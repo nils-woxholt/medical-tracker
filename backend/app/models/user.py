@@ -9,6 +9,7 @@ from typing import Optional
 from uuid import UUID, uuid4
 
 from sqlmodel import SQLModel, Field, Column
+from typing import ClassVar
 from sqlalchemy import String, Boolean, DateTime, func
 
 
@@ -56,7 +57,7 @@ class User(UserBase, table=True):
     This model stores user account information for authentication and personalization.
     """
     
-    __tablename__ = "users"
+    __tablename__: ClassVar[str] = "users"
     
     id: str = Field(
         default_factory=lambda: str(uuid4()),
@@ -79,6 +80,16 @@ class User(UserBase, table=True):
         default_factory=datetime.utcnow,
         sa_column=Column(DateTime(timezone=True), nullable=False, default=func.now()),
         description="Timestamp when user was last updated"
+    )
+
+    # Authentication lockout tracking fields
+    failed_attempts: int = Field(
+        default=0,
+        description="Consecutive failed login attempts"
+    )
+    lock_until: Optional[datetime] = Field(
+        default=None,
+        description="If set and in the future, user is locked out from authentication"
     )
 
 

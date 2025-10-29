@@ -1,0 +1,184 @@
+openapi: 3.1.0
+info:
+  title: Login UI Feature Auth Delta
+  version: 0.2.0
+  description: |
+    Delta contract additions/overrides for the Login UI feature (Phase 2).
+    Aligns documented responses with implemented backend endpoints.
+    Notes:
+      - Login returns a UserResponse envelope: { data: UserPublic | null, error: Error | null }.
+      - A generic INVALID_CREDENTIALS error (401) is returned for all credential failures (enumeration resistance).
+      - Account lock returns 423 with body {"error":"ACCOUNT_LOCKED","lock_expires_at":ISO8601 }.
+      - Masked identity is used in logs only; frontend can derive masking client-side if desired.
+paths:
+  /auth/login:
+    post:
+      summary: Login existing user (establishes session cookie)
+      operationId: featureLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              valid:
+                summary: Valid login request
+                value: { email: "user@example.com", password: "CorrectHorseBatteryStaple1" }
+      responses:
+        '200':
+          description: Login successful; session cookie set.
+          headers:
+            Set-Cookie:
+              description: HTTP-only SameSite session cookie.
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              examples:
+                success:
+                  summary: Success envelope
+                  value:
+                    data:
+                      id: "4b0d6c9b-6c2c-4f79-9d2d-6a6a1b3f4f2c"
+                      email: "user@example.com"
+                      display_name: "Alex"
+                    error: null
+        '401':
+          description: Invalid credentials (generic)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GenericError' }
+              examples:
+                invalid:
+                  value: { error: "INVALID_CREDENTIALS" }
+        '409':
+          description: Duplicate submission (concurrent identical in-flight request)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GenericError' }
+              examples:
+                duplicate:
+                  value: { error: "DUPLICATE_SUBMISSION" }
+        '423':
+          description: Account locked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LockoutError' }
+              examples:
+                locked:
+                  value: { error: "ACCOUNT_LOCKED", lock_expires_at: "2024-06-20T12:34:56Z" }
+  /auth/me:
+  /auth/register:
+    post:
+      summary: Register new user and auto-login
+      operationId: featureRegister
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+            examples:
+              valid:
+                value: { email: "new_user@example.com", password: "StrongPass123!", display_name: "Alex" }
+      responses:
+        '201':
+          description: Registration successful; session cookie established.
+          headers:
+            Set-Cookie:
+              description: HTTP-only SameSite session cookie.
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserResponse' }
+              examples:
+                success:
+                  value:
+                    data:
+                      id: "7f3bf3f6-1b61-4c9f-9d0b-0f8c2b1a2c33"
+                      email: "new_user@example.com"
+                      display_name: "Alex"
+                    error: null
+        '400':
+          description: Invalid input (weak password / invalid email)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GenericError' }
+              examples:
+                weak:
+                  value: { error: "WEAK_PASSWORD" }
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GenericError' }
+              examples:
+                conflict:
+                  value: { error: "EMAIL_EXISTS" }
+    get:
+      summary: Get current user identity (minimal)
+      operationId: featureIdentity
+      responses:
+        '200':
+          description: Authenticated identity.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IdentityResponse' }
+              examples:
+                identity:
+                  value: { user_id: "4b0d6c9b-6c2c-4f79-9d2d-6a6a1b3f4f2c", display_name: null, masked_identity: "use...@example.com" }
+        '401':
+          description: Not authenticated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GenericError' }
+              examples:
+                unauth:
+                  value: { error: "Not authenticated" }
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password: { type: string, minLength: 8 }
+    UserPublic:
+      type: object
+      required: [id, email]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        display_name: { type: string, nullable: true }
+    UserResponse:
+      type: object
+      description: Envelope returned by /auth/login.
+      properties:
+        data: { $ref: '#/components/schemas/UserPublic' }
+        error: { $ref: '#/components/schemas/GenericError' }
+    GenericError:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    LockoutError:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string, enum: [ACCOUNT_LOCKED] }
+        lock_expires_at: { type: string, format: date-time, nullable: true }
+    IdentityResponse:
+      type: object
+      required: [user_id, masked_identity]
+      properties:
+        user_id: { type: string, format: uuid }
+        display_name: { type: string, nullable: true }
+        masked_identity: { type: string, description: Masked email (first 3 chars + ellipsis + domain) }
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password: { type: string, minLength: 8 }
+        display_name: { type: string, nullable: true, maxLength: 80 }

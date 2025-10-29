@@ -131,11 +131,11 @@ coverage/
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# Playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
+# Playwright (ignore in root, frontend, or any subpackage)
+**/test-results/**
+**/playwright-report/**
+**/blob-report/
+**/playwright/.cache/
 
 # Storybook build outputs
 .out
