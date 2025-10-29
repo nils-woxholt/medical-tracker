@@ -7,16 +7,16 @@ Source Docs: `plan.md`, `spec.md`, `data-model.md`, `research.md`, `contracts/fe
 
 Purpose: Establish environment & baseline artifacts required before foundational and story tasks.
 
-- [ ] T001 Ensure backend virtual environment active (`backend/.venv`) and dependencies synced (no new deps in Lean Mode)
-- [ ] T002 Verify presence of OpenAPI contract `specs/004-lean-mode-use/contracts/feature-004.openapi.yaml` (must exist before implementation)
-- [ ] T003 Create placeholder migration file `backend/alembic/versions/<timestamp>_symptom_type_initial.py`
-- [ ] T004 Add `tasks.md` (this file) to version control
-- [ ] T005 Create backend model module file `backend/app/models/symptom_type.py`
-- [ ] T006 Create backend model module file `backend/app/models/symptom_log.py`
-- [ ] T007 Confirm `Medication` master model has `active` flag; if missing add field in `backend/app/models/medication.py`
-- [ ] T008 Add severity/impact mapping utility `backend/app/services/severity_mapping.py`
-- [ ] T009 [P] Add duration validation utility `backend/app/services/duration_validator.py`
-- [ ] T010 Create audit model extension (if not present) `backend/app/models/audit_entry.py`
+- [X] T001 Ensure backend virtual environment active (`backend/.venv`) and dependencies synced (no new deps in Lean Mode)
+- [X] T002 Verify presence of OpenAPI contract `specs/004-lean-mode-use/contracts/feature-004.openapi.yaml` (must exist before implementation)
+- [X] T003 Create placeholder migration file `backend/alembic/versions/<timestamp>_symptom_type_initial.py`
+- [X] T004 Add `tasks.md` (this file) to version control
+- [X] T005 Create backend model module file `backend/app/models/symptom_type.py`
+- [X] T006 Create backend model module file `backend/app/models/symptom_log.py`
+- [X] T007 Confirm `Medication` master model has `active` flag; if missing add field in `backend/app/models/medication.py`
+- [X] T008 Add severity/impact mapping utility `backend/app/services/severity_mapping.py`
+- [X] T009 [P] Add duration validation utility `backend/app/services/duration_validator.py`
+- [X] T010 Create audit model extension (if not present) `backend/app/models/audit_entry.py`
 
 ## Phase 2: Foundational
 
