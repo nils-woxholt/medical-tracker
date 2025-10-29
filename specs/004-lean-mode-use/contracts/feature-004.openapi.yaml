@@ -1,0 +1,275 @@
+openapi: 3.1.0
+info:
+  title: Medical Tracker Referential Integrity Feature
+  version: 0.0.1
+  description: CRUD for Symptom Types and logging endpoints with referential integrity.
+servers:
+  - url: https://api.example.com
+    description: Production
+  - url: http://localhost:8000
+    description: Local Dev
+paths:
+  /symptom-types:
+    get:
+      summary: List symptom types
+      tags: [SymptomTypes]
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: Optional name search substring.
+        - in: query
+          name: active
+          schema:
+            type: boolean
+          description: Filter by active state.
+      responses:
+        '200':
+          description: List of symptom types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SymptomTypeRead'
+    post:
+      summary: Create symptom type
+      tags: [SymptomTypes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SymptomTypeCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SymptomTypeRead'
+        '409':
+          description: Name conflict
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+  /symptom-types/{id}:
+    get:
+      summary: Get symptom type by id
+      tags: [SymptomTypes]
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Symptom type
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SymptomTypeRead' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    patch:
+      summary: Update symptom type
+      tags: [SymptomTypes]
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SymptomTypeUpdate' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SymptomTypeRead' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '409':
+          description: Name conflict
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+    delete:
+      summary: Deactivate symptom type
+      tags: [SymptomTypes]
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Deactivated
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /symptom-logs:
+    post:
+      summary: Create symptom log
+      tags: [SymptomLogs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SymptomLogCreate' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SymptomLogRead' }
+        '404':
+          description: Symptom type not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+  /symptom-logs/{id}:
+    get:
+      summary: Get symptom log
+      tags: [SymptomLogs]
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Symptom log
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SymptomLogRead' }
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /medication-logs:
+    post:
+      summary: Create medication log
+      tags: [MedicationLogs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MedicationLogCreate' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MedicationLogRead' }
+        '404':
+          description: Medication not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+components:
+  parameters:
+    Id:
+      in: path
+      name: id
+      required: true
+      schema: { type: integer, minimum: 1 }
+  schemas:
+    SymptomTypeBase:
+      type: object
+      properties:
+        name: { type: string, minLength: 2, maxLength: 100 }
+        description: { type: string, nullable: true, maxLength: 500 }
+        category: { type: string, nullable: true, maxLength: 100 }
+      required: [name]
+    SymptomTypeCreate:
+      allOf:
+        - $ref: '#/components/schemas/SymptomTypeBase'
+    SymptomTypeUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 2, maxLength: 100 }
+        description: { type: string, nullable: true, maxLength: 500 }
+        category: { type: string, nullable: true, maxLength: 100 }
+        active: { type: boolean }
+    SymptomTypeRead:
+      allOf:
+        - $ref: '#/components/schemas/SymptomTypeBase'
+        - type: object
+          properties:
+            id: { type: integer }
+            active: { type: boolean }
+            created_at: { type: string, format: date-time }
+            updated_at: { type: string, format: date-time }
+    SymptomLogCreate:
+      type: object
+      properties:
+        symptom_type_id: { type: integer, minimum: 1 }
+        started_at: { type: string, format: date-time }
+        ended_at: { type: string, format: date-time, nullable: true }
+        severity_numeric: { type: integer, minimum: 1, maximum: 10 }
+        impact_numeric: { type: integer, minimum: 1, maximum: 10 }
+        notes: { type: string, nullable: true, maxLength: 1000 }
+        confirmation_long_duration: { type: boolean, nullable: true }
+      required: [symptom_type_id, started_at, severity_numeric, impact_numeric]
+    SymptomLogRead:
+      allOf:
+        - $ref: '#/components/schemas/SymptomLogCreate'
+        - type: object
+          properties:
+            id: { type: integer }
+            duration_minutes: { type: integer, minimum: 1, maximum: 1440, nullable: true }
+            severity_label: { type: string, enum: [Mild, Moderate, Severe, Critical] }
+            impact_label: { type: string, enum: [Mild, Moderate, Severe, Critical] }
+            created_at: { type: string, format: date-time }
+    MedicationLogCreate:
+      type: object
+      properties:
+        medication_id: { type: integer, minimum: 1 }
+        taken_at: { type: string, format: date-time }
+        dose_amount: { type: number, nullable: true }
+        dose_unit: { type: string, nullable: true, maxLength: 50 }
+        notes: { type: string, nullable: true, maxLength: 1000 }
+      required: [medication_id, taken_at]
+    MedicationLogRead:
+      allOf:
+        - $ref: '#/components/schemas/MedicationLogCreate'
+        - type: object
+          properties:
+            id: { type: integer }
+            created_at: { type: string, format: date-time }
+    Error:
+      type: object
+      properties:
+        detail: { type: string }
+    ValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              loc: { type: array, items: { type: string } }
+              msg: { type: string }
+              type: { type: string }

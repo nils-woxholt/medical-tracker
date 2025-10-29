@@ -1,15 +1,15 @@
-# allow for shortcut actions
+# use referential integrity
 
-any symptom type
-or any medication log
-should be able to be logged via a simple button on the homepage
+## Symptoms
 
-## allow for the creation of the shortcut
+- Add a symptom type setup page, similar to the medications page
+- a user can set up a name, default severity and default impact
+- Symptom logs should do a lookup to te symptom type and show a searchable dropdown
+- the symptom logs table should change to reflect the use of the symptom type id
+- also move the end date time entry to a back-end only field, it doesn;t have to be captured rather infer it from the duration minutes field.
+- improve the ui for duration minutes to allow for minutes(default) and hours
 
-- lets a user choose the text and color of the button
+## medication
 
-## homepage
-
-- show all the shortcuts
-- clicking the button loggs the mdecation taken or symptom
-- uses current date and time and no extra notes (all defaults)
+- medication logs should do a lookup to the medications table and show a searchable dropdown
+- the medication logs table should change to reflect the use of the medication id
