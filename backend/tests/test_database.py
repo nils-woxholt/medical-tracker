@@ -29,7 +29,7 @@ from app.models.base import (
 settings = get_settings()
 
 
-class TestModel(BaseModel, TimestampMixin, SoftDeleteMixin):
+class TestModel(BaseModel, TimestampMixin, SoftDeleteMixin, table=True):  # Added table=True for SQLModel mapping
     """Test model for database operations."""
     __tablename__ = "test_models"
 

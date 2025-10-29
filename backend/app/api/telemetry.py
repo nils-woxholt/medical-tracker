@@ -27,7 +27,7 @@ Usage:
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, List
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from sqlmodel import SQLModel, Field as SQLField, select
 import structlog
 
@@ -102,8 +102,8 @@ class WebVitalsCreate(BaseModel):
     # Session tracking
     session_id: Optional[str] = Field(None, max_length=128)
     
-    @validator('url')
-    def validate_url(cls, v):
+    @field_validator('url')
+    def validate_url(cls, v: str) -> str:
         """Validate URL format and security"""
         if not v or len(v.strip()) == 0:
             raise ValueError("URL cannot be empty")
@@ -114,8 +114,8 @@ class WebVitalsCreate(BaseModel):
         
         return v.strip()
     
-    @validator('connection_type')
-    def validate_connection_type(cls, v):
+    @field_validator('connection_type')
+    def validate_connection_type(cls, v: Optional[str]) -> Optional[str]:
         """Validate connection type"""
         if v is None:
             return v
@@ -126,8 +126,8 @@ class WebVitalsCreate(BaseModel):
         
         return v.lower()
     
-    @validator('navigation_type')
-    def validate_navigation_type(cls, v):
+    @field_validator('navigation_type')
+    def validate_navigation_type(cls, v: Optional[str]) -> Optional[str]:
         """Validate navigation type"""
         if v is None:
             return v

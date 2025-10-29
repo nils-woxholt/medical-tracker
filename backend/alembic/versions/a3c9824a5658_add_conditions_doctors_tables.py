@@ -100,25 +100,48 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    # Helper to conditionally drop indexes (SQLite may differ or partial failures)
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_link_indexes = {idx['name'] for idx in inspector.get_indexes('doctor_condition_links')} if 'doctor_condition_links' in inspector.get_table_names() else set()
+
+    def safe_drop_index(name: str, table: str):  # pragma: no cover (migration logic)
+        if name in existing_link_indexes:
+            op.drop_index(name, table_name=table)
+
     # ### Drop doctor_condition_links table ###
-    op.drop_index('ix_doctor_condition_created_at', table_name='doctor_condition_links')
-    op.drop_index('ix_doctor_condition_doctor_id', table_name='doctor_condition_links')
-    op.drop_index('ix_doctor_condition_condition_id', table_name='doctor_condition_links')
-    op.drop_table('doctor_condition_links')
+    safe_drop_index('ix_doctor_condition_created_at', 'doctor_condition_links')
+    safe_drop_index('ix_doctor_condition_doctor_id', 'doctor_condition_links')
+    safe_drop_index('ix_doctor_condition_condition_id', 'doctor_condition_links')
+    if 'doctor_condition_links' in inspector.get_table_names():
+        op.drop_table('doctor_condition_links')
     
     # ### Drop doctors table ###
-    op.drop_index('ix_doctors_created_at', table_name='doctors')
-    op.drop_index('ix_doctors_user_specialty', table_name='doctors')
-    op.drop_index('ix_doctors_specialty', table_name='doctors')
-    op.drop_index('ix_doctors_user_active', table_name='doctors')
-    op.drop_index('ix_doctors_active', table_name='doctors')
-    op.drop_index('ix_doctors_user_id', table_name='doctors')
-    op.drop_table('doctors')
+    existing_doctor_indexes = {idx['name'] for idx in inspector.get_indexes('doctors')} if 'doctors' in inspector.get_table_names() else set()
+
+    def safe_drop_doctor_index(name: str):  # pragma: no cover
+        if name in existing_doctor_indexes:
+            op.drop_index(name, table_name='doctors')
+
+    for idx_name in [
+        'ix_doctors_created_at', 'ix_doctors_user_specialty', 'ix_doctors_specialty',
+        'ix_doctors_user_active', 'ix_doctors_active', 'ix_doctors_user_id'
+    ]:
+        safe_drop_doctor_index(idx_name)
+    if 'doctors' in inspector.get_table_names():
+        op.drop_table('doctors')
     
     # ### Drop conditions table ###
-    op.drop_index('ix_conditions_created_at', table_name='conditions')
-    op.drop_index('ix_conditions_user_name_unique', table_name='conditions')
-    op.drop_index('ix_conditions_user_active', table_name='conditions')
-    op.drop_index('ix_conditions_active', table_name='conditions')
-    op.drop_index('ix_conditions_user_id', table_name='conditions')
-    op.drop_table('conditions')
+    existing_condition_indexes = {idx['name'] for idx in inspector.get_indexes('conditions')} if 'conditions' in inspector.get_table_names() else set()
+
+    def safe_drop_condition_index(name: str):  # pragma: no cover
+        if name in existing_condition_indexes:
+            op.drop_index(name, table_name='conditions')
+
+    for idx_name in [
+        'ix_conditions_created_at', 'ix_conditions_user_name_unique', 'ix_conditions_user_active',
+        'ix_conditions_active', 'ix_conditions_user_id'
+    ]:
+        safe_drop_condition_index(idx_name)
+    if 'conditions' in inspector.get_table_names():
+        op.drop_table('conditions')

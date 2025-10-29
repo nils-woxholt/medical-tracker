@@ -24,7 +24,8 @@ from app.schemas.medical_context import (
     DoctorUpdate,
     DoctorConditionLinkCreate,
     DoctorConditionLinkResponse,
-    PassportResponse
+    PassportResponse,
+    PassportItem,
 )
 from app.telemetry.metrics import (
     record_user_action,
@@ -835,9 +836,9 @@ async def unlink_doctor_from_condition(
 # Passport endpoint
 @router.get(
     "/passport",
-    response_model=PassportResponse,
+    response_model=List[PassportItem],
     summary="Get medical passport",
-    description="Get aggregated view of conditions with linked doctors",
+    description="Get aggregated view of conditions with linked doctors (list of items)",
     tags=["passport"]
 )
 @track_user_action("passport_get")
@@ -845,8 +846,14 @@ async def get_passport(
     request: Request,
     service: MedicalContextService = Depends(get_medical_context_service),
     current_user: dict = Depends(get_current_user)
-) -> PassportResponse:
-    """Get aggregated view of conditions with linked doctors."""
+) -> List[PassportItem]:
+    """Get aggregated view of conditions with linked doctors.
+
+    Contract expects a raw list of passport items rather than an object
+    wrapper. Previously returned ``PassportResponse`` with counts; we now
+    return ``List[PassportItem]`` directly for contract compliance while
+    still logging aggregate metrics.
+    """
     
     start_time = time.time()
     user_id = current_user["user_id"]
@@ -858,7 +865,8 @@ async def get_passport(
     )
     
     try:
-        passport = service.get_user_passport(user_id)
+        passport_response = service.get_user_passport(user_id)
+        passport_items = passport_response.passport
         
         # Record metrics
         record_user_action("passport_retrieved", user_id)
@@ -867,12 +875,12 @@ async def get_passport(
         logger.info(
             "Passport retrieved successfully",
             user_id=user_id,
-            total_conditions=passport.total_conditions,
-            total_doctors=passport.total_doctors,
+            total_conditions=passport_response.total_conditions,
+            total_doctors=passport_response.total_doctors,
             duration_ms=round((time.time() - start_time) * 1000, 2)
         )
         
-        return passport
+        return passport_items
         
     except Exception as e:
         # Record error and return 500

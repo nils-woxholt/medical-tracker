@@ -122,6 +122,16 @@ async def create_medication(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+    except HTTPException as e:
+        # Propagate service-layer HTTPExceptions (e.g., duplicate name 400) without converting to 500
+        logger.warning(
+            "Medication creation failed - business rule",
+            medication_name=medication.name,
+            error=str(e.detail),
+            status_code=e.status_code
+        )
+        record_error("medication_create_business_rule_error")
+        raise
     except Exception as e:
         logger.error(
             "Medication creation failed - unexpected error",

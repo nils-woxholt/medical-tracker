@@ -122,8 +122,6 @@ class TestPlaceholderEndpoints:
         ("/api/v1/auth/refresh", "POST"),
         ("/api/v1/users/me", "GET"),
         ("/api/v1/users/me", "PUT"),
-        ("/api/v1/medications/", "GET"),
-        ("/api/v1/medications/", "POST"),
         ("/api/v1/symptoms/", "GET"),
         ("/api/v1/symptoms/", "POST"),
     ])

@@ -44,6 +44,7 @@ class MedicationService:
         # Check for duplicate name (case-insensitive)
         existing = self._get_by_name(medication_data.name)
         if existing:
+            # Raise plain HTTPException with only 'detail' to match contract tests expectations
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Medication with name '{medication_data.name}' already exists"
@@ -246,7 +247,8 @@ class MedicationService:
             return MedicationDeactivateResponse(
                 id=medication.id,
                 message=f"Medication '{medication.name}' has been deactivated",
-                deactivated_at=medication.updated_at
+                deactivated_at=medication.updated_at,
+                is_active=medication.is_active
             )
             
         except Exception as e:

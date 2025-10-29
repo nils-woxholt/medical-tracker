@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import and_, desc
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, get_db
+from app.core.dependencies import get_authenticated_user, get_db
 from app.models.logs import MedicationLog, SymptomLog
 from app.schemas.logs import (
     LogListParams,
@@ -52,7 +52,7 @@ async def create_medication_log(
     medication_data: MedicationLogCreate,
     request: Request,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> MedicationLogResponse:
     """Create a new medication log entry."""
     
@@ -146,7 +146,7 @@ async def create_medication_log(
 async def list_medication_logs(
     request: Request,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_authenticated_user),
     limit: int = Query(default=50, ge=1, le=100, description="Maximum number of records"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
     start_date: Optional[datetime] = Query(None, description="Start date for filtering"),
@@ -235,7 +235,7 @@ async def list_medication_logs(
 async def get_medication_log(
     log_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> MedicationLogResponse:
     """Get a specific medication log by ID."""
     
@@ -265,7 +265,7 @@ async def update_medication_log(
     log_id: int,
     update_data: MedicationLogUpdate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> MedicationLogResponse:
     """Update a specific medication log."""
     
@@ -308,7 +308,7 @@ async def update_medication_log(
 async def delete_medication_log(
     log_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ):
     """Delete a specific medication log."""
     
@@ -348,7 +348,7 @@ async def create_symptom_log(
     symptom_data: SymptomLogCreate,
     request: Request,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> SymptomLogResponse:
     """Create a new symptom log entry."""
     
@@ -444,7 +444,7 @@ async def create_symptom_log(
 )
 async def list_symptom_logs(
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_authenticated_user),
     limit: int = Query(default=50, ge=1, le=100, description="Maximum number of records"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
     start_date: Optional[datetime] = Query(None, description="Start date for filtering"),
@@ -483,7 +483,7 @@ async def list_symptom_logs(
 async def get_symptom_log(
     log_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> SymptomLogResponse:
     """Get a specific symptom log by ID."""
     
@@ -513,7 +513,7 @@ async def update_symptom_log(
     log_id: int,
     update_data: SymptomLogUpdate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> SymptomLogResponse:
     """Update a specific symptom log."""
     
@@ -556,7 +556,7 @@ async def update_symptom_log(
 async def delete_symptom_log(
     log_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ):
     """Delete a specific symptom log."""
     
@@ -592,7 +592,7 @@ async def delete_symptom_log(
 )
 async def get_logs_summary(
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_authenticated_user)
 ) -> LogSummaryResponse:
     """Get a summary of recent logs for the landing page."""
     

@@ -10,7 +10,7 @@ import os
 from functools import lru_cache
 from typing import List, Optional, Union
 
-from pydantic import AnyHttpUrl, validator
+from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -76,7 +76,7 @@ class Settings(BaseSettings):
     # External Services (for future use)
     REDIS_URL: Optional[str] = None
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         """
         Parse CORS origins from environment variable.
@@ -104,7 +104,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    @validator("ALLOWED_HOSTS", pre=True)
+    @field_validator("ALLOWED_HOSTS", mode="before")
     def assemble_allowed_hosts(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         """
         Parse allowed hosts from environment variable.
@@ -132,28 +132,28 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    @validator("DEBUG", pre=True)
+    @field_validator("DEBUG", mode="before")
     def parse_debug(cls, v: Union[bool, str]) -> bool:
         """Parse DEBUG setting from string or boolean."""
         if isinstance(v, str):
             return v.lower() in ("true", "1", "yes", "on")
         return bool(v)
 
-    @validator("ENABLE_MEDICATION_MASTER", pre=True)
+    @field_validator("ENABLE_MEDICATION_MASTER", mode="before")
     def parse_medication_master_flag(cls, v: Union[bool, str]) -> bool:
         """Parse ENABLE_MEDICATION_MASTER feature flag."""
         if isinstance(v, str):
             return v.lower() in ("true", "1", "yes", "on")
         return bool(v)
 
-    @validator("ENABLE_HEALTH_PASSPORT", pre=True)
+    @field_validator("ENABLE_HEALTH_PASSPORT", mode="before")
     def parse_health_passport_flag(cls, v: Union[bool, str]) -> bool:
         """Parse ENABLE_HEALTH_PASSPORT feature flag."""
         if isinstance(v, str):
             return v.lower() in ("true", "1", "yes", "on")
         return bool(v)
 
-    @validator("DATABASE_URL", pre=True)
+    @field_validator("DATABASE_URL", mode="before")
     def validate_database_url(cls, v: str) -> str:
         """Validate database URL format."""
         if not v:
@@ -170,14 +170,14 @@ class Settings(BaseSettings):
 
         return v
 
-    @validator("SECRET_KEY")
+    @field_validator("SECRET_KEY")
     def validate_secret_key(cls, v: str) -> str:
         """Validate secret key length for security."""
         if len(v) < 32:
             raise ValueError("SECRET_KEY must be at least 32 characters long")
         return v
 
-    @validator("JWT_SECRET")
+    @field_validator("JWT_SECRET")
     def validate_jwt_secret(cls, v: str) -> str:
         """Validate JWT secret key length for security."""
         if len(v) < 32:

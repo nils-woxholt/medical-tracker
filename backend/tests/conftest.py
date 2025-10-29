@@ -5,6 +5,29 @@ This module provides shared test configuration, fixtures, and utilities
 for the SaaS Medical Tracker test suite using pytest and httpx.
 """
 
+# ---------------------------------------------------------------------------
+# Import Path Normalization
+# ---------------------------------------------------------------------------
+# We occasionally observed ModuleNotFoundError for `app.core.auth` during early
+# import in pytest collection. To stabilise, ensure the project root (the
+# directory containing `app/` and `tests/`) is at the front of sys.path.
+# This defensive insertion is test-only and can be removed with proper
+# packaging / editable install.
+import sys, os
+_here = os.path.dirname(__file__)
+_project_root = os.path.abspath(os.path.join(_here, os.pardir))
+_workspace_root = os.path.abspath(os.path.join(_project_root))  # same as project_root currently
+_grandparent = os.path.abspath(os.path.join(_project_root, os.pardir))
+
+for _candidate in (_project_root, _grandparent):
+    if _candidate not in sys.path:
+        sys.path.insert(0, _candidate)
+
+# Debug (printed once) to help diagnose path issues if import keeps failing
+if os.getenv('PYTEST_DEBUG_IMPORTS', '0') == '1':  # opt-in via env var
+    print('[conftest] sys.path candidates inserted:', _project_root, _grandparent)
+    print('[conftest] Final sys.path snippet:', [p for p in sys.path[:8]])
+
 import asyncio
 import os
 import tempfile
@@ -15,10 +38,59 @@ from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.orm import sessionmaker
 
-from app.core.auth import create_access_token, create_password_hash
-from app.core.config import get_settings
-from app.main import create_app
-from app.models.base import DatabaseManager, get_db_session
+import importlib
+try:
+    _auth_mod = importlib.import_module('app.core.auth')
+    create_access_token = getattr(_auth_mod, 'create_access_token')
+    create_password_hash = getattr(_auth_mod, 'create_password_hash')
+    _config_mod = importlib.import_module('app.core.config')
+    get_settings = getattr(_config_mod, 'get_settings')
+    _main_mod = importlib.import_module('app.main')
+    create_app = getattr(_main_mod, 'create_app')
+    _base_mod = importlib.import_module('app.models.base')
+    DatabaseManager = getattr(_base_mod, 'DatabaseManager')
+    get_db_session = getattr(_base_mod, 'get_db_session')
+    init_database = getattr(_base_mod, 'init_database')
+except ModuleNotFoundError as e:  # pragma: no cover
+    import sys
+    print('[conftest] Import failure:', e)
+    print('[conftest] sys.path head:', sys.path[:10])
+    raise
+
+
+# ----------------------------------------------------------------------------
+# Autouse isolated database fixture (function scope)
+# ----------------------------------------------------------------------------
+# Many contract tests import the FastAPI app directly (app.main.app) and do not
+# request the test_db fixture. This caused 'Database not initialized' errors
+# because lifespan events are not triggered when using httpx ASGITransport
+# without lifespan handling. Additionally, tests expect a clean database state
+# for each test (e.g. list empty, then create, then duplicate checks) so state
+# leakage would make assertions flaky.
+#
+# This autouse fixture creates a fresh temporary SQLite database for every
+# single test function, initializes the global db_manager via init_database,
+# and creates the tables. After the test it disposes and deletes the database
+# file. This guarantees isolation and ensures FastAPI dependencies that rely
+# on get_database() work even when lifespan isn't executed.
+# ----------------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def _isolated_db():
+    db_fd, db_path = tempfile.mkstemp(suffix=".db")
+    db_url = f"sqlite:///{db_path}"
+
+    try:
+        db_manager = init_database(database_url=db_url, echo=False)
+        db_manager.create_tables()
+        yield db_manager
+    finally:
+        os.close(db_fd)
+        try:
+            db_manager.engine.dispose()
+        except Exception:
+            pass
+        if os.path.exists(db_path):
+            os.unlink(db_path)
 
 # Test settings
 os.environ["TESTING"] = "true"
@@ -40,23 +112,26 @@ def settings():
 
 @pytest.fixture(scope="session")
 def test_db():
-    """Create a test database for the session."""
-    # Create temporary database file
+    """Create a test database for the session and register it globally.
+
+    We must use init_database() so FastAPI dependencies that call get_database()
+    will see the global db_manager instead of raising 'Database not initialized'.
+    """
     db_fd, db_path = tempfile.mkstemp(suffix=".db")
     db_url = f"sqlite:///{db_path}"
 
     try:
-        # Initialize database manager with test database
-        db_manager = DatabaseManager(database_url=db_url, echo=False)
-
-        # Create all tables
+        # Initialize global database manager (sets module-level db_manager)
+        db_manager = init_database(database_url=db_url, echo=False)
+        # Create tables for tests (bypassing migrations)
         db_manager.create_tables()
-
         yield db_manager
-
     finally:
-        # Cleanup
         os.close(db_fd)
+        try:
+            db_manager.engine.dispose()
+        except Exception:
+            pass
         os.unlink(db_path)
 
 

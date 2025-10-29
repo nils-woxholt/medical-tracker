@@ -7,7 +7,7 @@ with proper validation rules and documentation.
 
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class MedicationBase(BaseModel):
@@ -31,8 +31,8 @@ class MedicationBase(BaseModel):
         example=True
     )
 
-    @validator('name')
-    def validate_name(cls, v):
+    @field_validator('name')
+    def validate_name(cls, v: str) -> str:
         """Validate medication name is properly formatted."""
         if not v or not v.strip():
             raise ValueError('Medication name cannot be empty')
@@ -46,8 +46,8 @@ class MedicationBase(BaseModel):
             
         return v
 
-    @validator('description')
-    def validate_description(cls, v):
+    @field_validator('description')
+    def validate_description(cls, v: Optional[str]) -> Optional[str]:
         """Validate medication description if provided."""
         if v is not None:
             v = v.strip()
@@ -85,8 +85,8 @@ class MedicationUpdate(BaseModel):
         description="Updated active status"
     )
 
-    @validator('name')
-    def validate_name(cls, v):
+    @field_validator('name')
+    def validate_name(cls, v: Optional[str]) -> Optional[str]:
         """Validate medication name if provided."""
         if v is not None:
             if not v or not v.strip():
@@ -96,8 +96,8 @@ class MedicationUpdate(BaseModel):
                 raise ValueError('Medication name contains invalid characters')
         return v
 
-    @validator('description')
-    def validate_description(cls, v):
+    @field_validator('description')
+    def validate_description(cls, v: Optional[str]) -> Optional[str]:
         """Validate medication description if provided."""
         if v is not None:
             v = v.strip()
@@ -191,8 +191,8 @@ class MedicationSearchParams(BaseModel):
         example=10
     )
 
-    @validator('search')
-    def validate_search(cls, v):
+    @field_validator('search')
+    def validate_search(cls, v: Optional[str]) -> Optional[str]:
         """Validate search term."""
         if v is not None:
             v = v.strip()
@@ -207,6 +207,11 @@ class MedicationDeactivateResponse(BaseModel):
     id: int = Field(description="Medication ID that was deactivated")
     message: str = Field(description="Confirmation message")
     deactivated_at: datetime = Field(description="When the medication was deactivated")
+    # Include current active status (expected by contract tests)
+    is_active: bool = Field(
+        description="Active status after deactivation (will be False)",
+        example=False
+    )
 
     class Config:
         from_attributes = True

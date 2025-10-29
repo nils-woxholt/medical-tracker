@@ -162,10 +162,11 @@ def get_sync_db_session() -> Generator[Session, None, None]:
             return db.query(User).all()
     """
     db_manager = get_database()
-    session = db_manager.get_session()
-
+    # Use SQLModel Session directly for typing consistency
+    wrapper = db_manager.get_session()
+    session = next(iter(wrapper))  # underlying Session instance
     try:
-        yield session
+        yield session  # type: ignore[misc]
     except Exception as e:
         logger.error("Database session error", error=str(e))
         session.rollback()
@@ -298,17 +299,6 @@ def get_current_user_id(
     """
     try:
         payload = decode_access_token(token)
-        user_id = payload.get("user_id")
-
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token does not contain user ID",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        return user_id
-
     except Exception as e:
         logger.warning("Invalid authentication token", error=str(e))
         raise HTTPException(
@@ -316,6 +306,15 @@ def get_current_user_id(
             detail="Invalid authentication token",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    user_id = payload.get("user_id")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token does not contain user ID",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user_id
 
 
 def get_optional_user_id(
@@ -356,7 +355,8 @@ def get_optional_user_id(
 def get_pagination_params(
     page: int = 1,
     per_page: int = 20,
-    max_per_page: int = 100
+    max_per_page: int = 100,
+    search: Optional[str] = None
 ) -> schemas.PaginationParams:
     """
     Get pagination parameters with validation.
@@ -397,11 +397,13 @@ def get_pagination_params(
             detail=f"Items per page cannot exceed {max_per_page}"
         )
 
-    return schemas.PaginationParams(
+    params = schemas.PaginationParams(
         page=page,
-        per_page=per_page,
-        offset=(page - 1) * per_page
+        page_size=per_page,  # alias wired via Field(alias="page_size")
+        offset=(page - 1) * per_page,
+        search=search,
     )
+    return params
 
 
 # =============================================================================
@@ -579,20 +581,26 @@ def require_permissions(*permissions: str):
         you would check user permissions against a database or external service.
     """
     def permission_dependency(
-        current_user_id: Annotated[str, Depends(get_current_user_id)]
+        token: Annotated[str, Depends(get_required_auth_token)]
     ) -> str:
-        # TODO: Implement actual permission checking
-        # For now, just return the user ID
-        # In a real implementation, you would:
-        # 1. Load user from database
-        # 2. Check user's roles/permissions
-        # 3. Raise HTTPException if insufficient permissions
-
-        logger.info("Permission check",
-                   user_id=current_user_id,
-                   required_permissions=permissions)
-
-        return current_user_id
+        try:
+            payload = decode_access_token(token)
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        user_id = payload.get("user_id")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token does not contain user ID",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        # Placeholder permission check (always passes)
+        logger.info("Permission check", user_id=user_id, required_permissions=permissions)
+        return user_id
 
     return permission_dependency
 
@@ -676,6 +684,48 @@ def get_current_user(
         )
 
 
+def get_authenticated_user(
+    token: Annotated[Optional[str], Depends(get_optional_auth_token)]
+) -> dict:
+    """Strict variant of get_current_user that requires authentication.
+
+    Returns user context if a valid Bearer token is provided; otherwise raises 401.
+    Used for endpoints whose contract requires 401 Unauthorized when no token is supplied.
+    """
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        payload = decode_access_token(token)
+        user_id = payload.get("user_id")
+        user_email = payload.get("sub")
+
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token does not contain user ID",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        return {
+            "user_id": user_id,
+            "email": user_email,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.warning("Invalid authentication token", error=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
 # Database session alias for convenience  
 get_db = get_sync_db_session
 
@@ -695,7 +745,8 @@ def get_medication_service(db: Session = Depends(get_sync_db_session)):
         MedicationService: Configured medication service instance
     """
     from app.services.medication import MedicationService
-    return MedicationService(db)
+    # Cast to sqlmodel Session type for constructor expectations
+    return MedicationService(db)  # type: ignore[arg-type]
 
 
 if __name__ == "__main__":

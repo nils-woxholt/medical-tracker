@@ -148,6 +148,14 @@ class MetricsRegistry:
             registry=self.registry
         )
 
+        # Generic operations counter (used as fallback for custom/business metrics)
+        self.operations_total = Counter(
+            'operations_total',
+            'Total number of generic operations',
+            ['operation', 'type', 'status'],
+            registry=self.registry
+        )
+
         # =============================================================================
         # Business Metrics
         # =============================================================================
@@ -267,6 +275,7 @@ class MetricsRegistry:
             'database_connections_active': self.database_connections_active,
             'database_query_duration_seconds': self.database_query_duration_seconds,
             'database_queries_total': self.database_queries_total,
+            'operations_total': self.operations_total,
             'user_actions_total': self.user_actions_total,
             'patients_total': self.patients_total,
             'appointments_total': self.appointments_total,
@@ -450,30 +459,22 @@ def record_security_event(event_type: str, severity: str = 'warning') -> None:
 
 
 def record_business_metric(metric_name: str, value: float = 1.0, labels: Dict[str, str] = None) -> None:
+    """Record a business metric using the generic operations_total counter.
+
+    Prometheus requires static label sets; to avoid dynamic / arbitrary label
+    explosions we map business metrics into the operations_total counter with
+    a fixed label schema (operation, type, status).
+    Additional labels are ignored for now to keep cardinality low.
     """
-    Record business metrics for tracking key business KPIs.
-    
-    Args:
-        metric_name: Name of the business metric to record
-        value: Value to record (defaults to 1.0 for counters)
-        labels: Optional labels to attach to the metric
-    """
-    registry = get_metrics_registry()
-    
-    # Use a generic business metrics counter
-    if not hasattr(registry, 'business_metrics_total'):
-        # If the specific counter doesn't exist, use the general counter
+    try:
+        registry = get_metrics_registry()
         registry.operations_total.labels(
             operation='business_metric',
-            type=metric_name,
+            type=str(metric_name),
             status='recorded'
         ).inc(value)
-    else:
-        # Use specific business metrics if available
-        registry.business_metrics_total.labels(
-            metric_name=metric_name,
-            **(labels or {})
-        ).inc(value)
+    except Exception as e:
+        logger.error(f"Error recording business metric {metric_name}: {e}")
 
 
 # =============================================================================

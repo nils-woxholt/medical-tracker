@@ -1,39 +1,35 @@
-"""
-Pydantic schemas for medical context endpoints (conditions and doctors).
+"""Pydantic schemas for medical context endpoints (conditions and doctors).
 
 Defines request/response validation schemas for condition and doctor API endpoints
 with proper validation rules, documentation, and passport aggregation schemas.
 """
 
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel, Field, validator
+from typing import Optional, List, Annotated
+from pydantic import BaseModel, Field, field_validator, StringConstraints
 from uuid import UUID
 
 
 class ConditionBase(BaseModel):
     """Base condition schema with common fields."""
-    
-    name: str = Field(
-        min_length=2,
-        max_length=100,
+
+    name: Annotated[str, StringConstraints(min_length=2, max_length=100)] = Field(
         description="Condition name",
-        example="Hypertension"
+        examples=["Hypertension"],
     )
-    description: Optional[str] = Field(
-        None,
-        max_length=500,
+    description: Annotated[Optional[str], StringConstraints(max_length=500)] = Field(
+        default=None,
         description="Optional condition description",
-        example="High blood pressure requiring regular monitoring"
+        examples=["High blood pressure requiring regular monitoring"],
     )
     is_active: bool = Field(
-        True,
+        default=True,
         description="Whether the condition is active and being tracked",
-        example=True
+        examples=[True],
     )
 
-    @validator('name')
-    def validate_name(cls, v):
+    @field_validator('name')
+    def validate_name(cls, v: str) -> str:
         """Validate condition name is properly formatted."""
         if not v or not v.strip():
             raise ValueError('Condition name cannot be empty')
@@ -47,8 +43,8 @@ class ConditionBase(BaseModel):
             
         return v
 
-    @validator('description')
-    def validate_description(cls, v):
+    @field_validator('description')
+    def validate_description(cls, v: Optional[str]) -> Optional[str]:
         """Validate description if provided."""
         if v is not None:
             v = v.strip()
@@ -64,28 +60,25 @@ class ConditionCreate(ConditionBase):
 
 class ConditionUpdate(BaseModel):
     """Schema for updating an existing condition."""
-    
-    name: Optional[str] = Field(
-        None,
-        min_length=2,
-        max_length=100,
+
+    name: Annotated[Optional[str], StringConstraints(min_length=2, max_length=100)] = Field(
+        default=None,
         description="Updated condition name",
-        example="Hypertension"
+        examples=["Hypertension"],
     )
-    description: Optional[str] = Field(
-        None,
-        max_length=500,
+    description: Annotated[Optional[str], StringConstraints(max_length=500)] = Field(
+        default=None,
         description="Updated condition description",
-        example="High blood pressure requiring regular monitoring"
+        examples=["High blood pressure requiring regular monitoring"],
     )
     is_active: Optional[bool] = Field(
-        None,
+        default=None,
         description="Whether the condition is active and being tracked",
-        example=True
+        examples=[True],
     )
 
-    @validator('name')
-    def validate_name(cls, v):
+    @field_validator('name')
+    def validate_name(cls, v: Optional[str]) -> Optional[str]:
         """Validate condition name if provided."""
         if v is not None:
             if not v or not v.strip():
@@ -97,8 +90,8 @@ class ConditionUpdate(BaseModel):
                 
         return v
 
-    @validator('description')
-    def validate_description(cls, v):
+    @field_validator('description')
+    def validate_description(cls, v: Optional[str]) -> Optional[str]:
         """Validate description if provided."""
         if v is not None:
             v = v.strip()
@@ -109,22 +102,22 @@ class ConditionUpdate(BaseModel):
 
 class ConditionResponse(ConditionBase):
     """Schema for condition API responses."""
-    
+
     id: str = Field(
         description="Unique condition identifier",
-        example="550e8400-e29b-41d4-a716-446655440000"
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
     )
     user_id: str = Field(
         description="ID of the user who owns this condition",
-        example="user-uuid-123"
+        examples=["user-uuid-123"],
     )
     created_at: datetime = Field(
         description="Timestamp when condition was created",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
     updated_at: datetime = Field(
         description="Timestamp when condition was last updated",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
 
     class Config:
@@ -133,33 +126,28 @@ class ConditionResponse(ConditionBase):
 
 class DoctorBase(BaseModel):
     """Base doctor schema with common fields."""
-    
-    name: str = Field(
-        min_length=2,
-        max_length=100,
+
+    name: Annotated[str, StringConstraints(min_length=2, max_length=100)] = Field(
         description="Doctor's full name",
-        example="Dr. Sarah Johnson"
+        examples=["Dr. Sarah Johnson"],
     )
-    specialty: str = Field(
-        min_length=2,
-        max_length=100,
+    specialty: Annotated[str, StringConstraints(min_length=2, max_length=100)] = Field(
         description="Doctor's medical specialty",
-        example="Cardiology"
+        examples=["Cardiology"],
     )
-    contact_info: Optional[str] = Field(
-        None,
-        max_length=200,
+    contact_info: Annotated[Optional[str], StringConstraints(max_length=200)] = Field(
+        default=None,
         description="Doctor's contact information (email, phone, etc.)",
-        example="sarah.johnson@heartcenter.com"
+        examples=["sarah.johnson@heartcenter.com"],
     )
     is_active: bool = Field(
-        True,
+        default=True,
         description="Whether the doctor is active in practice",
-        example=True
+        examples=[True],
     )
 
-    @validator('name')
-    def validate_name(cls, v):
+    @field_validator('name')
+    def validate_name(cls, v: str) -> str:
         """Validate doctor name is properly formatted."""
         if not v or not v.strip():
             raise ValueError('Doctor name cannot be empty')
@@ -173,8 +161,8 @@ class DoctorBase(BaseModel):
             
         return v
 
-    @validator('specialty')
-    def validate_specialty(cls, v):
+    @field_validator('specialty')
+    def validate_specialty(cls, v: str) -> str:
         """Validate specialty is properly formatted."""
         if not v or not v.strip():
             raise ValueError('Specialty cannot be empty')
@@ -188,8 +176,8 @@ class DoctorBase(BaseModel):
             
         return v
 
-    @validator('contact_info')
-    def validate_contact_info(cls, v):
+    @field_validator('contact_info')
+    def validate_contact_info(cls, v: Optional[str]) -> Optional[str]:
         """Validate contact info if provided."""
         if v is not None:
             v = v.strip()
@@ -205,35 +193,30 @@ class DoctorCreate(DoctorBase):
 
 class DoctorUpdate(BaseModel):
     """Schema for updating an existing doctor."""
-    
-    name: Optional[str] = Field(
-        None,
-        min_length=2,
-        max_length=100,
+
+    name: Annotated[Optional[str], StringConstraints(min_length=2, max_length=100)] = Field(
+        default=None,
         description="Updated doctor name",
-        example="Dr. Sarah Johnson"
+        examples=["Dr. Sarah Johnson"],
     )
-    specialty: Optional[str] = Field(
-        None,
-        min_length=2,
-        max_length=100,
+    specialty: Annotated[Optional[str], StringConstraints(min_length=2, max_length=100)] = Field(
+        default=None,
         description="Updated specialty",
-        example="Cardiology"
+        examples=["Cardiology"],
     )
-    contact_info: Optional[str] = Field(
-        None,
-        max_length=200,
+    contact_info: Annotated[Optional[str], StringConstraints(max_length=200)] = Field(
+        default=None,
         description="Updated contact information",
-        example="sarah.johnson@heartcenter.com"
+        examples=["sarah.johnson@heartcenter.com"],
     )
     is_active: Optional[bool] = Field(
-        None,
+        default=None,
         description="Whether the doctor is active in practice",
-        example=True
+        examples=[True],
     )
 
-    @validator('name')
-    def validate_name(cls, v):
+    @field_validator('name')
+    def validate_name(cls, v: Optional[str]) -> Optional[str]:
         """Validate doctor name if provided."""
         if v is not None:
             if not v or not v.strip():
@@ -245,8 +228,8 @@ class DoctorUpdate(BaseModel):
                 
         return v
 
-    @validator('specialty')
-    def validate_specialty(cls, v):
+    @field_validator('specialty')
+    def validate_specialty(cls, v: Optional[str]) -> Optional[str]:
         """Validate specialty if provided."""
         if v is not None:
             if not v or not v.strip():
@@ -258,8 +241,8 @@ class DoctorUpdate(BaseModel):
                 
         return v
 
-    @validator('contact_info')
-    def validate_contact_info(cls, v):
+    @field_validator('contact_info')
+    def validate_contact_info(cls, v: Optional[str]) -> Optional[str]:
         """Validate contact info if provided."""
         if v is not None:
             v = v.strip()
@@ -270,22 +253,22 @@ class DoctorUpdate(BaseModel):
 
 class DoctorResponse(DoctorBase):
     """Schema for doctor API responses."""
-    
+
     id: str = Field(
         description="Unique doctor identifier",
-        example="550e8400-e29b-41d4-a716-446655440001"
+        examples=["550e8400-e29b-41d4-a716-446655440001"],
     )
     user_id: str = Field(
         description="ID of the user who owns this doctor record",
-        example="user-uuid-123"
+        examples=["user-uuid-123"],
     )
     created_at: datetime = Field(
         description="Timestamp when doctor was created",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
     updated_at: datetime = Field(
         description="Timestamp when doctor was last updated",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
 
     class Config:
@@ -294,18 +277,18 @@ class DoctorResponse(DoctorBase):
 
 class DoctorConditionLinkCreate(BaseModel):
     """Schema for linking a doctor to a condition."""
-    
+
     doctor_id: str = Field(
         description="Doctor identifier to link",
-        example="550e8400-e29b-41d4-a716-446655440001"
+        examples=["550e8400-e29b-41d4-a716-446655440001"],
     )
     condition_id: str = Field(
         description="Condition identifier to link",
-        example="550e8400-e29b-41d4-a716-446655440000"
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
     )
 
-    @validator('doctor_id', 'condition_id')
-    def validate_ids(cls, v):
+    @field_validator('doctor_id', 'condition_id')
+    def validate_ids(cls, v: str) -> str:
         """Validate that IDs are properly formatted."""
         if not v or not v.strip():
             raise ValueError('ID cannot be empty')
@@ -321,18 +304,18 @@ class DoctorConditionLinkCreate(BaseModel):
 
 class DoctorConditionLinkResponse(BaseModel):
     """Schema for doctor-condition link responses."""
-    
+
     doctor_id: str = Field(
         description="Doctor identifier",
-        example="550e8400-e29b-41d4-a716-446655440001"
+        examples=["550e8400-e29b-41d4-a716-446655440001"],
     )
     condition_id: str = Field(
         description="Condition identifier",
-        example="550e8400-e29b-41d4-a716-446655440000"
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
     )
     created_at: datetime = Field(
         description="Timestamp when link was created",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
 
     class Config:
@@ -341,31 +324,31 @@ class DoctorConditionLinkResponse(BaseModel):
 
 class PassportConditionItem(BaseModel):
     """Schema for a condition item in the passport response."""
-    
+
     id: str = Field(
         description="Condition identifier",
-        example="550e8400-e29b-41d4-a716-446655440000"
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
     )
     name: str = Field(
         description="Condition name",
-        example="Hypertension"
+        examples=["Hypertension"],
     )
     description: Optional[str] = Field(
-        None,
+        default=None,
         description="Condition description",
-        example="High blood pressure requiring regular monitoring"
+        examples=["High blood pressure requiring regular monitoring"],
     )
     is_active: bool = Field(
         description="Whether the condition is active",
-        example=True
+        examples=[True],
     )
     created_at: datetime = Field(
         description="When the condition was created",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
     updated_at: datetime = Field(
         description="When the condition was last updated",
-        example="2024-01-15T10:30:00Z"
+        examples=["2024-01-15T10:30:00Z"],
     )
 
     class Config:
@@ -374,27 +357,27 @@ class PassportConditionItem(BaseModel):
 
 class PassportDoctorItem(BaseModel):
     """Schema for a doctor item in the passport response."""
-    
+
     id: str = Field(
         description="Doctor identifier",
-        example="550e8400-e29b-41d4-a716-446655440001"
+        examples=["550e8400-e29b-41d4-a716-446655440001"],
     )
     name: str = Field(
         description="Doctor name",
-        example="Dr. Sarah Johnson"
+        examples=["Dr. Sarah Johnson"],
     )
     specialty: str = Field(
         description="Doctor specialty",
-        example="Cardiology"
+        examples=["Cardiology"],
     )
     contact_info: Optional[str] = Field(
-        None,
+        default=None,
         description="Doctor contact information",
-        example="sarah.johnson@heartcenter.com"
+        examples=["sarah.johnson@heartcenter.com"],
     )
     is_active: bool = Field(
         description="Whether the doctor is active",
-        example=True
+        examples=[True],
     )
 
     class Config:
@@ -403,13 +386,13 @@ class PassportDoctorItem(BaseModel):
 
 class PassportItem(BaseModel):
     """Schema for a passport item containing condition and linked doctors."""
-    
+
     condition: PassportConditionItem = Field(
-        description="The medical condition"
+        description="The medical condition",
     )
     doctors: List[PassportDoctorItem] = Field(
         description="List of doctors linked to this condition",
-        example=[]
+        examples=[[]],
     )
 
     class Config:
@@ -418,18 +401,18 @@ class PassportItem(BaseModel):
 
 class PassportResponse(BaseModel):
     """Schema for the complete passport response."""
-    
+
     passport: List[PassportItem] = Field(
         description="List of conditions with their linked doctors",
-        example=[]
+        examples=[[]],
     )
     total_conditions: int = Field(
         description="Total number of active conditions",
-        example=2
+        examples=[2],
     )
     total_doctors: int = Field(
         description="Total number of unique active doctors",
-        example=3
+        examples=[3],
     )
 
     class Config:

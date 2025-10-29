@@ -17,7 +17,7 @@ from urllib.parse import urljoin
 
 import httpx
 import structlog
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from app.core.config import get_settings
 
@@ -60,9 +60,10 @@ class RetryConfig(BaseModel):
     exponential_backoff: bool = Field(default=True)
     retry_on_status: List[int] = Field(default_factory=lambda: [429, 500, 502, 503, 504])
 
-    @validator('max_delay')
-    def max_delay_must_be_greater_than_base(cls, v, values):
-        if 'base_delay' in values and v <= values['base_delay']:
+    @field_validator('max_delay')
+    def max_delay_must_be_greater_than_base(cls, v: float, info) -> float:
+        base = info.data.get('base_delay') if info is not None else None
+        if base is not None and v <= base:
             raise ValueError('max_delay must be greater than base_delay')
         return v
 
@@ -72,9 +73,10 @@ class RateLimitConfig(BaseModel):
     requests_per_second: float = Field(default=10.0, gt=0)
     burst_size: int = Field(default=20, gt=0)
 
-    @validator('burst_size')
-    def burst_size_reasonable(cls, v, values):
-        if 'requests_per_second' in values and v < values['requests_per_second']:
+    @field_validator('burst_size')
+    def burst_size_reasonable(cls, v: int, info) -> int:
+        rps = info.data.get('requests_per_second') if info is not None else None
+        if rps is not None and v < rps:
             raise ValueError('burst_size should be at least requests_per_second')
         return v
 
