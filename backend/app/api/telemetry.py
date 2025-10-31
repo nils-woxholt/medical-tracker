@@ -31,7 +31,8 @@ from pydantic import BaseModel, Field, field_validator
 from sqlmodel import SQLModel, Field as SQLField, select
 import structlog
 
-from app.core.dependencies import get_current_user_id, get_db_session
+from app.core.dependencies import get_current_user_id_or_session
+from app.models.base import get_db_session
 from app.core.telemetry.metrics import web_vitals_counter, web_vitals_histogram
 from app.models.base import BaseEntity
 
@@ -271,7 +272,7 @@ async def collect_web_vitals(
     background_tasks: BackgroundTasks,
     request: Request,
     db_session=Depends(get_db_session),
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id_or_session)
 ):
     """
     Collect Core Web Vitals and performance metrics from frontend
@@ -337,7 +338,7 @@ async def get_web_vitals_summary(
     days: int = 7,
     page: Optional[str] = None,
     db_session=Depends(get_db_session),
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id_or_session)
 ):
     """
     Get Web Vitals summary statistics for the current user
@@ -445,7 +446,7 @@ async def get_web_vitals_summary(
 async def clear_web_vitals(
     older_than_days: int = 30,
     db_session=Depends(get_db_session),
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id_or_session)
 ):
     """
     Clear old web vitals data for the current user

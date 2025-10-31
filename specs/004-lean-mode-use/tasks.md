@@ -42,32 +42,32 @@ Purpose: Blocking prerequisites: database migration, core validation utilities, 
 Goal: CRUD + deactivate symptom types with audit logging.
 Independent Test Criteria: Create, edit, deactivate a symptom type; dropdown list updates; historical logs retain name.
 
-- [ ] T025 [US1] Implement create endpoint route `backend/app/api/symptom_types.py` (POST /symptom-types)
-- [ ] T026 [P] [US1] Implement read/list endpoint route (GET /symptom-types & /symptom-types/{id}) in `backend/app/api/symptom_types.py`
-- [ ] T027 [US1] Implement update endpoint (PUT /symptom-types/{id}) in `backend/app/api/symptom_types.py`
-- [ ] T028 [US1] Implement deactivate endpoint (PATCH /symptom-types/{id}/deactivate) in `backend/app/api/symptom_types.py`
-- [ ] T029 [US1] Add audit logging calls in `backend/app/services/symptom_type_service.py`
-- [ ] T030 [US1] Add unique name conflict handling (409) in `backend/app/api/symptom_types.py`
-- [ ] T031 [US1] Add integration tests CRUD flow `backend/tests/integration/test_symptom_type_crud.py`
-- [ ] T032 [P] [US1] Add unit tests for audit logging diff creation `backend/tests/unit/test_audit_logging.py`
-- [ ] T033 [US1] Add dropdown data provider endpoint (if separate) or reuse list with query param filter in `backend/app/api/symptom_types.py`
-- [ ] T034 [US1] Frontend component: Symptom Type list page `frontend/src/components/symptom-types/SymptomTypeTable.tsx`
-- [ ] T035 [US1] Frontend form component `frontend/src/components/symptom-types/SymptomTypeForm.tsx`
-- [ ] T036 [US1] Frontend API client functions `frontend/src/services/symptomTypes.ts`
-- [ ] T037 [US1] Frontend integration tests (component) `frontend/__tests__/SymptomTypeForm.test.tsx`
-- [ ] T038 [US1] E2E test create/edit/deactivate `frontend/tests/e2e/symptom-type-crud.spec.ts`
+- [X] T025 [US1] Implement create endpoint route `backend/app/api/symptom_types.py` (POST /symptom-types)
+- [X] T026 [P] [US1] Implement read/list endpoint route (GET /symptom-types & /symptom-types/{id}) in `backend/app/api/symptom_types.py`
+- [X] T027 [US1] Implement update endpoint (PUT /symptom-types/{id}) in `backend/app/api/symptom_types.py`
+- [X] T028 [US1] Implement deactivate endpoint (PATCH /symptom-types/{id}/deactivate) in `backend/app/api/symptom_types.py`
+- [X] T029 [US1] Add audit logging calls in `backend/app/services/symptom_type_service.py`
+- [X] T030 [US1] Add unique name conflict handling (409) in `backend/app/api/symptom_types.py`
+- [X] T031 [US1] Add integration tests CRUD flow `backend/tests/integration/test_symptom_type_crud.py`
+- [X] T032 [P] [US1] Add unit tests for audit logging diff creation `backend/tests/unit/test_audit_logging.py`
+- [X] T033 [US1] Add dropdown data provider endpoint (if separate) or reuse list with query param filter in `backend/app/api/symptom_types.py`
+- [X] T034 [US1] Frontend component: Symptom Type list page `frontend/src/components/symptom-types/SymptomTypeTable.tsx`
+- [X] T035 [US1] Frontend form component `frontend/src/components/symptom-types/SymptomTypeForm.tsx`
+- [X] T036 [US1] Frontend API client functions `frontend/src/services/symptomTypes.ts`
+- [X] T037 [US1] Frontend integration tests (component) `frontend/__tests__/SymptomTypeForm.test.tsx`
+- [X] T038 [US1] E2E test create/edit/deactivate `frontend/tests/e2e/symptom-type-crud.spec.ts`
 
 ## Phase 4: User Story 2 (P2) Log Symptoms via Dropdown
 
 Goal: Logging symptoms referencing SymptomType with defaults and duration logic.
 Independent Test Criteria: Select type, defaults apply, duration/hours conversion works, confirmation required for long durations, end time inferred.
 
-- [ ] T039 [US2] Implement create symptom log endpoint (POST /symptom-logs) `backend/app/api/symptom_logs.py`
-- [ ] T040 [P] [US2] Implement list endpoint (GET /symptom-logs?filters) `backend/app/api/symptom_logs.py`
-- [ ] T041 [US2] Implement severity/impact default fill logic in `backend/app/services/symptom_log_service.py`
-- [ ] T042 [US2] Implement duration inference & confirmation validation in `backend/app/services/duration_validator.py`
-- [ ] T043 [US2] Implement active SymptomType guard in `backend/app/services/active_fk_guard.py`
-- [ ] T044 [US2] Integration test symptom log creation & long duration confirmation `backend/tests/integration/test_symptom_log_creation.py`
+- [X] T039 [US2] Implement create symptom log endpoint (POST /symptom-logs) `backend/app/api/symptom_logs.py`
+- [X] T040 [P] [US2] Implement list endpoint (GET /symptom-logs?filters) `backend/app/api/symptom_logs.py`
+- [X] T041 [US2] Implement severity/impact default fill logic in `backend/app/services/symptom_log_service.py`
+- [X] T042 [US2] Implement duration inference & confirmation validation in `backend/app/services/duration_validator.py`
+- [X] T043 [US2] Implement active SymptomType guard in `backend/app/services/active_fk_guard.py`
+- [X] T044 [US2] Integration test symptom log creation & long duration confirmation `backend/tests/integration/test_symptom_log_creation.py`
 - [ ] T045 [US2] Frontend logging form update `frontend/src/components/logging/SymptomLogForm.tsx`
 - [ ] T046 [P] [US2] Frontend severity/impact auto-fill logic `frontend/src/components/logging/useSymptomDefaults.ts`
 - [ ] T047 [US2] Frontend duration unit switch component `frontend/src/components/logging/DurationInput.tsx`
@@ -104,7 +104,7 @@ Independent Test Criteria: Start + duration yields correct end time; edits recal
 
 Goal: Logging enrichment, documentation, accessibility, readiness review.
 
-- [ ] T064 Add structured logging fields (entity_type, action, duration_bucket) `backend/app/services/symptom_log_service.py`
+- [X] T064 Add structured logging fields (entity_type, action, duration_bucket) `backend/app/services/symptom_log_service.py` (partial – initial logging implemented; further enrichment pending)
 - [ ] T065 [P] Add structured logging for symptom type actions `backend/app/services/symptom_type_service.py`
 - [ ] T066 Add accessibility attributes to dropdown `frontend/src/components/common/SearchableDropdown.tsx`
 - [ ] T067 Add quickstart documentation update `specs/004-lean-mode-use/quickstart.md`

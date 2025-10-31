@@ -114,10 +114,13 @@ class TestMetricsEndpoint:
 
 
 class TestPlaceholderEndpoints:
-    """Test placeholder endpoints that should return 501."""
+    """Test placeholder endpoints that should return 501.
+
+    NOTE: /api/v1/auth/token is now implemented and returns 200 (success) or
+    401 (invalid credentials), so it has been removed from this list.
+    """
 
     @pytest.mark.parametrize("endpoint,method", [
-        ("/api/v1/auth/token", "POST"),
         ("/api/v1/auth/register", "POST"),
         ("/api/v1/auth/refresh", "POST"),
         ("/api/v1/users/me", "GET"),
@@ -126,7 +129,7 @@ class TestPlaceholderEndpoints:
         ("/api/v1/symptoms/", "POST"),
     ])
     async def test_placeholder_endpoints(self, client: AsyncClient, endpoint: str, method: str):
-        """Test that placeholder endpoints return 501 Not Implemented."""
+        """Test that remaining placeholder endpoints return 501 Not Implemented."""
         if method == "GET":
             response = await client.get(endpoint)
         elif method == "POST":
@@ -135,7 +138,6 @@ class TestPlaceholderEndpoints:
             response = await client.put(endpoint, json={})
 
         assert response.status_code == status.HTTP_501_NOT_IMPLEMENTED
-
         data = response.json()
         assert "detail" in data
         assert "not yet implemented" in data["detail"].lower()
@@ -292,10 +294,9 @@ class TestFullAPIIntegration:
         # 3. Check metrics
         metrics_response = await client.get("/api/v1/metrics")
         assert metrics_response.status_code == status.HTTP_200_OK
-
-        # 4. Try authentication (should be 501 for now)
+        # 4. Try authentication: expect 422 (validation error missing fields) or 401 with invalid credentials
         auth_response = await client.post("/api/v1/auth/token", json={})
-        assert auth_response.status_code == status.HTTP_501_NOT_IMPLEMENTED
+        assert auth_response.status_code in [status.HTTP_422_UNPROCESSABLE_ENTITY, status.HTTP_401_UNAUTHORIZED]
 
         # All responses should have proper headers
         for response in [health_response, info_response, metrics_response, auth_response]:

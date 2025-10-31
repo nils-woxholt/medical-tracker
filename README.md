@@ -81,6 +81,25 @@ This script will:
 - Start both backend and frontend servers
 - Open the application in your browser
 
+### Auth Endpoint Decision (Option A)
+
+The frontend previously pointed login requests at an unversioned path `/auth/login` intended for a future cookie-based session design. The backend currently exposes only a token issuance endpoint at `/api/v1/auth/token`. We have reverted all frontend login logic to use this versioned endpoint to avoid 404s and ensure consistent authentication during Phase 2/3 development.
+
+Current behavior:
+
+- UI login form submits credentials to `/api/v1/auth/token`.
+- Post-auth navigation sends users to dashboard; token stored client-side (localStorage) until cookie session endpoints are added.
+- Logout still calls placeholder `/auth/logout` (planned) but navigation routes have been adjusted to `/login` for clarity.
+
+Planned future enhancements:
+
+- Implement session endpoints: `/auth/login`, `/auth/logout`, `/auth/session` returning/set http-only session cookie.
+- Refresh & revoke token endpoints; migrate storage from localStorage to http-only cookies.
+- Update OpenAPI spec to include auth/session paths and regenerate types.
+- Add CSRF protection for state-changing requests under cookie auth.
+
+Until these are implemented, treat `/api/v1/auth/token` as the canonical authentication endpoint.
+
 #### Manual Setup (Alternative)
 
 If you prefer manual control or the script doesn't work:

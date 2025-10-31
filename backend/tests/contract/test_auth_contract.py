@@ -59,9 +59,10 @@ async def test_identity_endpoint_unauthenticated_returns_401(client: AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_legacy_placeholder_token_endpoint_present(client: AsyncClient):
-    resp = await client.post(LEGACY_TOKEN_PATH)
-    assert resp.status_code == status.HTTP_501_NOT_IMPLEMENTED
+async def test_legacy_token_endpoint_implemented(client: AsyncClient):
+    """Token endpoint now implemented: returns 401 on missing/invalid creds or 422 on validation error."""
+    resp = await client.post(LEGACY_TOKEN_PATH, json={})
+    assert resp.status_code in [status.HTTP_422_UNPROCESSABLE_ENTITY, status.HTTP_401_UNAUTHORIZED]
 
 
 @pytest.mark.asyncio

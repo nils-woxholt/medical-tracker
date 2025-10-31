@@ -41,7 +41,7 @@ class MedicationMaster(MedicationMasterBase, table=True):
     Includes soft deletion via is_active field and audit timestamps.
     """
     
-    __tablename__ = "medications"
+    __tablename__ = "medications" # type: ignore[assignment]
     
     id: Optional[int] = Field(
         default=None, 

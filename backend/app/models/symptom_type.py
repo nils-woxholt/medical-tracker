@@ -18,6 +18,7 @@ class SymptomTypeBase(SQLModel):
 
 
 class SymptomType(SymptomTypeBase, table=True):  # type: ignore[call-arg]
+    __tablename__ = "symptom_type"  # type: ignore[assignment]
 
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: str = Field(index=True, description="Owner user id (string UUID)")
@@ -33,9 +34,7 @@ class SymptomType(SymptomTypeBase, table=True):  # type: ignore[call-arg]
         sa_column=Column(DateTime(timezone=True), nullable=False),
     )
 
-    __table_args__ = (
-        Index("ix_symptom_type_user_name_unique", "user_id", "name", unique=True),
-    )
+    # Unique constraint enforced via Alembic migration; omitted here to avoid duplicate index creation in tests
 
     def touch(self) -> None:
         self.updated_at = datetime.utcnow()
@@ -48,6 +47,7 @@ class SymptomTypeCreate(SymptomTypeBase):
 
 class SymptomTypeRead(SymptomTypeBase):
     id: int
+    user_id: str
     default_severity_numeric: int
     default_impact_numeric: int
     active: bool

@@ -16,14 +16,19 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class UserRegister(BaseModel):
-    """Payload for user registration.
+        """Payload for user registration (lean mode).
 
-    Feature update: enforce stronger password minimum (length >=10) aligning with spec FR-004.
-    """
-    email: EmailStr = Field(examples=["user@example.com"])
-    first_name: str = Field(min_length=1, max_length=100, examples=["Jane"])
-    last_name: str = Field(min_length=1, max_length=100, examples=["Doe"])
-    password: str = Field(min_length=10, max_length=255, examples=["StrongPass123!#"])  # upgraded min length
+        Lean Mode Adjustment (Option A):
+        - `first_name` and `last_name` now optional to allow a single display name field in UI.
+        - Added optional `display_name` field; when names are absent they are derived from
+            `display_name` (split on first space) or from email local part.
+        - Password minimum length retained (>=10) per FR-004.
+        """
+        email: EmailStr = Field(examples=["user@example.com"])
+        first_name: str | None = Field(default=None, min_length=1, max_length=100, examples=["Jane"])
+        last_name: str | None = Field(default=None, min_length=1, max_length=100, examples=["Doe"])
+        display_name: str | None = Field(default=None, min_length=1, max_length=150, examples=["Jane Doe"])
+        password: str = Field(min_length=10, max_length=255, examples=["StrongPass123!#"])  # upgraded min length
 
 
 class UserLogin(BaseModel):

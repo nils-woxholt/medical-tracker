@@ -32,7 +32,8 @@ export default function LoginForm({ onSuccess }: Props) {
       const base = process.env.NEXT_PUBLIC_E2E ? 'http://localhost:8000' : '';
       // If in E2E mode, bypass rewrite by calling absolute URL
       if (base) {
-        const res = await fetch(base + '/auth/login', {
+        // Use versioned token endpoint when bypassing frontend rewrite in E2E
+        const res = await fetch(base + '/api/v1/auth/token', {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -41,6 +42,7 @@ export default function LoginForm({ onSuccess }: Props) {
         console.warn('login.fetch.status', res.status);
         if (!res.ok) throw new Error('INVALID_CREDENTIALS');
       } else {
+        // Helper now also points to versioned token endpoint
         await login({ email, password });
       }
       onSuccess?.();

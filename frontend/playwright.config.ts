@@ -48,7 +48,8 @@ export default defineConfig({
         : 'bash -lc "cd ../backend && uv run alembic upgrade head && uv run uvicorn app.main:app --host localhost --port 8000"',
       port: 8000,
       reuseExistingServer: true,
-      timeout: 30000,
+      // Increased timeout to allow for migrations + startup on slower CI
+      timeout: 60000,
       env: {
         DATABASE_URL: 'sqlite:///test_e2e.db',
         ENVIRONMENT: 'testing',

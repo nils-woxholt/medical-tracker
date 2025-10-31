@@ -13,8 +13,12 @@ export default function AccessScreen() {
     const params = new URLSearchParams(window.location.search);
     const created = params.get('registered');
     const name = params.get('name');
+    const initialMode = params.get('mode');
     if (created) {
       setBannerName(name);
+    }
+    if (initialMode === 'register') {
+      setMode('register');
     }
   }, []);
 

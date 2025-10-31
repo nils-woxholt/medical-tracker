@@ -13,8 +13,8 @@ from sqlalchemy import CheckConstraint
 
 
 class SymptomLogBase(SQLModel):
-    # SQLModel default table naming removes underscore: SymptomType -> symptomtype
-    symptom_type_id: int = Field(foreign_key="symptomtype.id", index=True)
+    # Match explicit SymptomType __tablename__ = 'symptom_type'
+    symptom_type_id: int = Field(foreign_key="symptom_type.id", index=True)
     started_at: datetime = Field(sa_column=Column(DateTime(timezone=False), nullable=False))
     ended_at: Optional[datetime] = Field(default=None, sa_column=Column(DateTime(timezone=False), nullable=True))
     severity_numeric: int = Field(ge=1, le=10)
@@ -27,6 +27,8 @@ class SymptomLogBase(SQLModel):
 
 
 class SymptomLog(SymptomLogBase, table=True):  # type: ignore[call-arg]
+    # Explicit snake_case table name to align with Alembic migration and naming convention test
+    __tablename__ = "symptom_log"  # type: ignore[assignment]
 
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: str = Field(index=True, description="User id (string UUID)")
@@ -51,12 +53,16 @@ class SymptomLog(SymptomLogBase, table=True):  # type: ignore[call-arg]
 
 
 class SymptomLogCreate(SymptomLogBase):
-    user_id: int
+    """Payload for creating a SymptomLog.
+
+    user_id is derived from auth context; not supplied by client.
+    """
+    pass
 
 
 class SymptomLogRead(SymptomLogBase):
     id: int
-    user_id: int
+    user_id: str
     duration_minutes: Optional[int]
     severity_label: Optional[str]
     impact_label: Optional[str]

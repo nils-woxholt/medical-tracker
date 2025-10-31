@@ -19,6 +19,10 @@ from sqlmodel import SQLModel, Session, Field
 
 from app.core.config import get_settings
 
+# Ensure models with explicit __tablename__ are registered in metadata before create_all
+# Import modules (not symbols) to trigger class definition side effects.
+from app.models import audit_entry  # noqa: F401
+
 logger = structlog.get_logger(__name__)
 settings = get_settings()
 

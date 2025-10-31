@@ -98,6 +98,14 @@ coverage/
 *.lcov
 .nyc_output
 
+# Frontend artifacts (redundant safety)
+frontend/.next/
+frontend/out/
+
+# Node debug logs anywhere
+**/npm-debug.log*
+**/yarn-error.log*
+
 # ESLint cache
 .eslintcache
 
@@ -159,3 +167,23 @@ temp/
 
 # Generated files
 contracts/generated/
+# Prettier lockfiles and formatting artifacts
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+
+# Helm charts
+*.tgz
+charts/**/values.override.yaml
+.helmignore
+
+# Misc tmp patterns
+*.tmp
+*.bak

@@ -316,6 +316,48 @@ def get_current_user_id(
         )
     return user_id
 
+# ------------------------------------------------------------------
+# Lean Mode Fallback: allow session cookie-based auth when bearer token
+# not supplied. This preserves legacy bearer token paths while enabling
+# cookie-only flows for UI interactions.
+# ------------------------------------------------------------------
+from fastapi import Request
+
+def get_current_user_id_or_session(
+    request: Request,
+    credentials: Annotated[Optional[HTTPAuthorizationCredentials], Depends(security)]
+) -> str:
+    """Return current user id from either bearer token or session middleware.
+
+    Order of resolution:
+      1. Bearer token (strict) if provided.
+      2. request.state.user_id set by SessionMiddleware or AuthenticationMiddleware.
+
+    Raises 401 if neither present.
+    """
+    if credentials and credentials.scheme.lower() == "bearer":
+        token = credentials.credentials
+        try:
+            payload = decode_access_token(token)
+            user_id = payload.get("user_id")
+            if user_id:
+                return user_id
+        except Exception:
+            # Fall through to session lookup
+            pass
+    # Session cookie path
+    sid_user = getattr(request.state, "user_id", None)
+    if sid_user:
+        return sid_user
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Authentication required",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+# Convenience Annotated alias
+CurrentUserIdOrSession = Annotated[str, Depends(get_current_user_id_or_session)]
+
 
 def get_optional_user_id(
     token: Annotated[Optional[str], Depends(get_optional_auth_token)]

@@ -31,8 +31,7 @@ class SymptomLogService:
 
     # --- creation ---
     def create(self, data: SymptomLogCreate) -> SymptomLog:
-        if data.user_id != self.user_id:
-            raise ValueError("user mismatch for symptom log creation")
+        # user_id comes from service context; SymptomLogCreate has no user_id field.
 
         # Ensure referenced SymptomType active
         try:
@@ -45,7 +44,7 @@ class SymptomLogService:
         imp_label = impact_label(data.impact_numeric)
 
         duration, long_required = normalize_duration(
-            provided_duration=data.duration_minutes if hasattr(data, "duration_minutes") else None,
+            provided_duration=None,  # duration_minutes computed when ended_at provided
             started_at=data.started_at,
             ended_at=data.ended_at,
             confirmation_flag=data.confirmation_long_duration,
@@ -70,6 +69,7 @@ class SymptomLogService:
         )
         self.session.add(log)
         self.session.flush()
+        assert log.id is not None, "SymptomLog ID should be assigned after flush"
         self._audit("create", log.id, {}, self._snapshot(log))
         return log
 
@@ -90,6 +90,7 @@ class SymptomLogService:
         )
         log.duration_minutes = duration
         # If long_required but no confirmation flag yet, we do not auto-set; caller must re-confirm via update (simpler logic in Lean Mode)
+        assert log.id is not None
         self._audit("close", log.id, before, self._snapshot(log))
         return log
 
@@ -98,21 +99,24 @@ class SymptomLogService:
         stmt = (
             select(SymptomLog)
             .where(SymptomLog.user_id == self.user_id)
-            .order_by(SymptomLog.started_at.desc())
+            .order_by(SymptomLog.started_at.desc())  # type: ignore[attr-defined]
             .limit(limit)
         )
         return list(self.session.exec(stmt))
 
     # --- audit helpers ---
     def _audit(self, action: str, entity_id: int, before: dict, after: dict) -> None:
+        # Compute diff (changed keys only) for update-like actions; create stores full snapshot
+        if action == "create":
+            diff = after
+        else:
+            diff = {k: after[k] for k in after.keys() if before.get(k) != after[k]}
         entry = AuditEntry(
             entity_type="SymptomLog",
             entity_id=entity_id,
             action=action,
-            user_id=self.user_id,
-            before_json=str(before),
-            after_json=str(after),
-            created_at=datetime.utcnow(),
+            user_id=None,
+            diff=diff,
         )
         self.session.add(entry)
 

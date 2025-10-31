@@ -5,7 +5,9 @@ This package contains all SQLModel database entities and related utilities.
 """
 
 from app.models.base import Base, TimestampMixin
-from app.models.logs import MedicationLog, SeverityLevel, SymptomLog
+from app.models.logs import SeverityLevel  # legacy enum only
+from app.models.medication import MedicationMaster as MedicationMaster
+from app.models.symptom_log import SymptomLog as SymptomLog
 from app.models.medical_context import (
     Condition, 
     ConditionBase,
@@ -18,7 +20,7 @@ from app.models.user import User, UserBase, UserCreate, UserRead, UserUpdate
 __all__ = [
     "Base",
     "TimestampMixin", 
-    "MedicationLog",
+    "MedicationMaster",
     "SymptomLog",
     "SeverityLevel",
     "Condition",

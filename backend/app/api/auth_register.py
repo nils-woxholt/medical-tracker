@@ -127,19 +127,9 @@ def session_status(request: Request, session_service: SessionService = Depends(g
     return SessionStatus(authenticated=True, user_id=sess.user_id)
 
 
-# Identity endpoint for client getIdentity() calls
-@auth_router.get("/me", response_model=UserResponse)
-def me(request: Request, session_service: SessionService = Depends(get_session_service), user_service: UserService = Depends(get_user_service)):
-    sess_id = request.cookies.get("session")
-    if not sess_id:
-        return UserResponse(data=None)
-    sess = session_service.get(sess_id)
-    if not sess:
-        return UserResponse(data=None)
-    user = user_service.get_by_id(sess.user_id)
-    if not user:
-        return UserResponse(data=None)
-    return UserResponse(data=UserPublic(id=user.id, email=user.email, display_name=getattr(user, "display_name", None)))
+# NOTE: Identity endpoint (/auth/me) now implemented in auth_identity.py and returns 401 when
+# unauthenticated. The prior permissive implementation here has been removed to avoid
+# conflicting route registration and ensure contract tests see correct 401 behavior.
 
 
 class LoginRequest(BaseModel):

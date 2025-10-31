@@ -114,7 +114,7 @@ test('logout flow redirects to access screen and clears identity', async ({ page
     // Perform direct backend login via page.evaluate
     const loginDirect = await page.evaluate(async ({ email, password }) => {
       try {
-        const r = await fetch('http://localhost:8000/auth/login', {
+        const r = await fetch('http://localhost:8000/api/v1/auth/token', {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },

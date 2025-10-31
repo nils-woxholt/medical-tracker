@@ -16,7 +16,7 @@ from sqlmodel import Session, select
 
 from app.models.symptom_type import SymptomType, SymptomTypeCreate, SymptomTypeUpdate
 from app.models.audit_entry import AuditEntry  # type: ignore[attr-defined]
-from app.services.severity_mapping import severity_label, impact_label
+from app.services.severity_mapping import severity_label, impact_label  # imported for future label derivations (placeholder)
 
 
 class SymptomTypeService:
@@ -26,16 +26,31 @@ class SymptomTypeService:
 
     # --- CRUD operations ---
     def list_active(self) -> List[SymptomType]:
-        return list(
-            self.session.exec(
-                select(SymptomType).where(SymptomType.user_id == self.user_id, SymptomType.active == True)  # noqa: E712
-            )
+        stmt = select(SymptomType).where(
+            SymptomType.user_id == self.user_id,
+            SymptomType.active == True,  # noqa: E712
         )
+        try:  # SQLModel Session convenience
+            return list(self.session.exec(stmt))
+        except AttributeError:  # plain SQLAlchemy Session
+            return list(self.session.execute(stmt).scalars())
 
     def get(self, symptom_type_id: int) -> Optional[SymptomType]:
         return self.session.get(SymptomType, symptom_type_id)
 
     def create(self, data: SymptomTypeCreate) -> SymptomType:
+        # Explicit uniqueness guard for test environments that create tables without Alembic migration indexes.
+        # In production the DB unique index (user_id,name) enforces this constraint.
+        stmt = select(SymptomType).where(
+            SymptomType.user_id == self.user_id,
+            SymptomType.name == data.name,
+        )
+        try:
+            existing = self.session.exec(stmt).first()
+        except AttributeError:
+            existing = self.session.execute(stmt).scalars().first()
+        if existing:
+            raise ValueError("duplicate name")
         entity = SymptomType(
             user_id=self.user_id,
             name=data.name,
@@ -49,7 +64,8 @@ class SymptomTypeService:
         )
         self.session.add(entity)
         self.session.flush()  # obtain id
-        self._audit("create", entity.id, {}, self._snapshot(entity))
+        assert entity.id is not None, "SymptomType ID not set after flush"
+        self._audit("create", int(entity.id), {}, self._snapshot(entity))
         return entity
 
     def update(self, symptom_type_id: int, data: SymptomTypeUpdate) -> SymptomType:
@@ -65,7 +81,8 @@ class SymptomTypeService:
                 changed[field] = new_val
         entity.updated_at = datetime.utcnow()
         if changed:
-            self._audit("update", entity.id, before, self._snapshot(entity))
+            assert entity.id is not None, "SymptomType ID unexpectedly None during update"
+            self._audit("update", int(entity.id), before, self._snapshot(entity))
         return entity
 
     def deactivate(self, symptom_type_id: int) -> SymptomType:
@@ -77,19 +94,24 @@ class SymptomTypeService:
         before = self._snapshot(entity)
         entity.active = False
         entity.updated_at = datetime.utcnow()
-        self._audit("deactivate", entity.id, before, self._snapshot(entity))
+        assert entity.id is not None, "SymptomType ID unexpectedly None during deactivate"
+        self._audit("deactivate", int(entity.id), before, self._snapshot(entity))
         return entity
 
     # --- Audit ---
     def _audit(self, action: str, entity_id: int, before: dict, after: dict) -> None:
+        # Compute diff of changed keys for compact audit trail
+        if action == "create":
+            # Include all fields for initial creation diff, even if None
+            diff = {k: {"before": before.get(k), "after": after.get(k)} for k in after.keys()}
+        else:
+            diff = {k: {"before": before.get(k), "after": after.get(k)} for k in after.keys() if before.get(k) != after.get(k)}
         entry = AuditEntry(
-            entity_type="SymptomType",
+            entity_type="symptom_type",
             entity_id=entity_id,
             action=action,
-            user_id=self.user_id,
-            before_json=str(before),
-            after_json=str(after),
-            created_at=datetime.utcnow(),
+            user_id=None,  # user linkage optional; could map to numeric later
+            diff=diff or None,
         )
         self.session.add(entry)
 

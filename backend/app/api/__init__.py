@@ -20,6 +20,8 @@ from app.api.logs_minimal import router as logs_minimal_router  # minimal test-o
 # from app.api.logs import router as logs_full_router  # disabled pending create_medication_log field analysis issue
 from app.api.medical_context import router as medical_context_router
 from app.api.v1.endpoints.medications import router as medications_actual_router
+from app.api.symptom_types import router as symptom_types_router
+from app.api.symptom_logs import router as symptom_logs_router
 # Use new session-based auth router (Phase 3) instead of legacy token endpoints for login/logout
 from app.api.auth import auth_router as auth_session_router
 from app.api.auth import versioned_auth_router
@@ -243,16 +245,57 @@ async def create_symptom_log():
 
 # Register all routers with the main API v1 router (exclude functional auth router to preserve 501 placeholders under /api/v1/auth/*)
 # Expose minimal logs under versioned path but require authentication to satisfy /api/v1 unauthorized contract tests.
-from app.core.dependencies import get_authenticated_user
-api_v1_router.include_router(logs_minimal_router, dependencies=[Depends(get_authenticated_user)])
+from app.core.dependencies import get_current_user_id_or_session
+# Use session-capable fallback so /api/v1/logs/medications works with Lean Mode cookie auth.
+# Previously this used get_authenticated_user (Bearer-only) causing TOKEN_MISSING for session users.
+api_v1_router.include_router(logs_minimal_router, dependencies=[Depends(get_current_user_id_or_session)])
 api_v1_router.include_router(users_router)
 api_v1_router.include_router(medications_actual_router)  # Actual medication endpoints (versioned)
 api_v1_router.include_router(symptoms_router)
+api_v1_router.include_router(symptom_types_router)
+api_v1_router.include_router(symptom_logs_router)
 
-# Backward-compat placeholder endpoints expected by existing tests (return 501)
-@api_v1_router.post("/auth/token", include_in_schema=False)
-async def _placeholder_auth_token():
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Authentication endpoints not yet implemented")
+"""Authentication endpoints (versioned).
+
+Previously this path returned a 501 placeholder while root-level session
+login existed at /auth/login. Frontend (Option A) now targets the versioned
+path /api/v1/auth/token for login. We implement it here reusing the same
+session-based semantics (sets session cookie) rather than returning a raw
+JWT token yet. This keeps cookie auth consistent while enabling future
+token issuance without breaking callers.
+
+Response contract: 200 with user envelope on success; 401 with
+{"error":"INVALID_CREDENTIALS"} on failure. Validation errors (missing
+fields / malformed email) surface as 422 via FastAPI/Pydantic.
+"""
+from fastapi import Response as FastAPIResponse  # local import to avoid top-level churn
+from fastapi import Depends as FastAPIDepends
+from fastapi import HTTPException as FastAPIHTTPException
+from app.api.auth_register import LoginRequest, UserResponse, UserPublic
+from app.core.dependencies_auth import (
+    get_user_service,
+    get_session_service,
+    normalize_email,
+)
+from app.services.user import UserService
+from app.services.session_service import SessionService
+from app.services.cookie_helper import set_session_cookie
+
+
+@api_v1_router.post("/auth/token", response_model=UserResponse, tags=["Auth"], summary="Login (session cookie)")
+def auth_token(
+    payload: LoginRequest,
+    response: FastAPIResponse,
+    user_service: UserService = FastAPIDepends(get_user_service),
+    session_service: SessionService = FastAPIDepends(get_session_service),
+):
+    email = normalize_email(payload.email)
+    user = user_service.authenticate(email=email, password=payload.password)
+    if not user:
+        raise FastAPIHTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail={"error": "INVALID_CREDENTIALS"})
+    sess = session_service.create(user_id=user.id)
+    set_session_cookie(response, sess.id)
+    return UserResponse(data=UserPublic(id=user.id, email=user.email, display_name=getattr(user, "display_name", None)))
 
 
 @api_v1_router.post("/auth/refresh", include_in_schema=False)

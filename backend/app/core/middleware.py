@@ -18,6 +18,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
 from app.core.settings import get_settings
+from app.core.session_middleware import SessionMiddleware  # session cookie extraction
 
 logger = structlog.get_logger(__name__)
 settings = get_settings()
@@ -513,6 +514,11 @@ def setup_middleware(app: FastAPI) -> None:
 
     # Timing (should be early to measure full request time)
     app.add_middleware(TimingMiddleware)
+
+    # Session extraction (must run before AuthenticationMiddleware so request.state.user_id is available
+    # for fallback dependencies when no bearer token is supplied). Placed after timing so duration includes
+    # session lookup cost.
+    app.add_middleware(SessionMiddleware)
 
     # Authentication (should be after request ID for logging)
     app.add_middleware(AuthenticationMiddleware)

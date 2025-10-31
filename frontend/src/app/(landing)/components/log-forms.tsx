@@ -156,13 +156,13 @@ export function LogForms() {
           </Alert>
         )}
 
-        <Tabs defaultValue="medication" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="medication" className="flex items-center gap-2">
+        <Tabs defaultValue="medication" className="w-full" data-testid="log-forms-tabs">
+          <TabsList className="grid w-full grid-cols-2" data-testid="log-forms-tabs-list">
+            <TabsTrigger value="medication" className="flex items-center gap-2" data-testid="medication-tab">
               <Pill className="h-4 w-4" />
               Medication
             </TabsTrigger>
-            <TabsTrigger value="symptom" className="flex items-center gap-2">
+            <TabsTrigger value="symptom" className="flex items-center gap-2" data-testid="symptom-tab">
               <Stethoscope className="h-4 w-4" />
               Symptom
             </TabsTrigger>

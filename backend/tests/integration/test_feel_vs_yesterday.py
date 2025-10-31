@@ -6,7 +6,7 @@ testing the service with real database interactions and complex scenarios.
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import List
+from typing import List, Optional
 
 import pytest
 from sqlalchemy import create_engine
@@ -46,13 +46,13 @@ class TestFeelVsYesterdayIntegration:
         return "test-user-123"
 
     def create_medication_log(
-        self, 
-        session: Session, 
-        user_id: str, 
+        self,
+        session: Session,
+        user_id: str,
         taken_at: datetime,
         medication_name: str = "Test Med",
         effectiveness_rating: int = 3,
-        side_effect_severity: SeverityLevel = None
+        side_effect_severity: Optional[SeverityLevel] = None,
     ) -> MedicationLog:
         """Helper to create medication log."""
         log = MedicationLog(
@@ -70,13 +70,13 @@ class TestFeelVsYesterdayIntegration:
         return log
 
     def create_symptom_log(
-        self, 
-        session: Session, 
-        user_id: str, 
+        self,
+        session: Session,
+        user_id: str,
         started_at: datetime,
         symptom_name: str = "Test Symptom",
-        severity: SeverityLevel = SeverityLevel.MODERATE,
-        impact_rating: int = 3
+        severity: int = 5,
+        impact_rating: int = 3,
     ) -> SymptomLog:
         """Helper to create symptom log."""
         log = SymptomLog(
@@ -86,7 +86,7 @@ class TestFeelVsYesterdayIntegration:
             started_at=started_at,
             logged_at=datetime.now(timezone.utc),
             duration_minutes=120,
-            impact_rating=impact_rating
+            impact_rating=impact_rating,
         )
         session.add(log)
         session.commit()
@@ -142,13 +142,13 @@ class TestFeelVsYesterdayIntegration:
         # Yesterday: mild symptom
         self.create_symptom_log(
             db_session, test_user_id, yesterday,
-            severity=SeverityLevel.MILD, impact_rating=2
+            severity=2, impact_rating=2
         )
         
         # Today: severe symptom
         self.create_symptom_log(
             db_session, test_user_id, today,
-            severity=SeverityLevel.SEVERE, impact_rating=4
+            severity=7, impact_rating=4
         )
         
         result = feel_service.analyze_feel_vs_yesterday(test_user_id, now)
@@ -172,7 +172,7 @@ class TestFeelVsYesterdayIntegration:
         )
         self.create_symptom_log(
             db_session, test_user_id, yesterday, 
-            severity=SeverityLevel.SEVERE, impact_rating=5
+            severity=7, impact_rating=5
         )
         
         # Today: bad medication, good symptom
@@ -181,7 +181,7 @@ class TestFeelVsYesterdayIntegration:
         )
         self.create_symptom_log(
             db_session, test_user_id, today, 
-            severity=SeverityLevel.MILD, impact_rating=2
+            severity=2, impact_rating=2
         )
         
         result = feel_service.analyze_feel_vs_yesterday(test_user_id, now)
@@ -202,17 +202,17 @@ class TestFeelVsYesterdayIntegration:
         # Yesterday: multiple symptoms
         self.create_symptom_log(
             db_session, test_user_id, yesterday - timedelta(hours=2),
-            symptom_name="Headache", severity=SeverityLevel.MODERATE
+            symptom_name="Headache", severity=5
         )
         self.create_symptom_log(
             db_session, test_user_id, yesterday - timedelta(hours=1),
-            symptom_name="Nausea", severity=SeverityLevel.MODERATE
+            symptom_name="Nausea", severity=5
         )
         
         # Today: only one symptom
         self.create_symptom_log(
             db_session, test_user_id, today,
-            symptom_name="Headache", severity=SeverityLevel.MODERATE
+            symptom_name="Headache", severity=5
         )
         
         result = feel_service.analyze_feel_vs_yesterday(test_user_id, now)
@@ -298,7 +298,7 @@ class TestFeelVsYesterdayIntegration:
         )
         self.create_symptom_log(
             db_session, test_user_id, yesterday, 
-            severity=SeverityLevel.SEVERE, impact_rating=5
+            severity=7, impact_rating=5
         )
         
         # Today: excellent medications, mild symptoms
@@ -307,7 +307,7 @@ class TestFeelVsYesterdayIntegration:
         )
         self.create_symptom_log(
             db_session, test_user_id, today, 
-            severity=SeverityLevel.MILD, impact_rating=1
+            severity=2, impact_rating=1
         )
         
         result = feel_service.analyze_feel_vs_yesterday(test_user_id, now)
@@ -360,7 +360,7 @@ class TestFeelVsYesterdayIntegration:
         )
         self.create_symptom_log(
             db_session, test_user_id, yesterday,
-            severity=SeverityLevel.MODERATE, impact_rating=3
+            severity=5, impact_rating=3
         )
         
         self.create_medication_log(
@@ -369,7 +369,7 @@ class TestFeelVsYesterdayIntegration:
         )
         self.create_symptom_log(
             db_session, test_user_id, today,
-            severity=SeverityLevel.MILD, impact_rating=2
+            severity=2, impact_rating=2
         )
         
         result = feel_service.analyze_feel_vs_yesterday(test_user_id, now)
@@ -463,7 +463,7 @@ class TestFeelVsYesterdayEdgeCases:
         symptom_log = SymptomLog(
             user_id=user_id,
             symptom_name="Test Symptom",
-            severity=SeverityLevel.CRITICAL,  # Maximum severity
+            severity=9,  # Maximum severity mapped value
             started_at=today,
             logged_at=now,
             impact_rating=5  # Maximum impact

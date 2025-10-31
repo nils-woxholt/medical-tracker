@@ -31,7 +31,7 @@ export const DemoSessionBanner: React.FC<DemoSessionBannerProps> = ({ className 
           <Link href="/auth/register">Create Account</Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
-          <Link href="/auth/login">Login</Link>
+          <Link href="/login">Login</Link>
         </Button>
       </div>
     </Alert>

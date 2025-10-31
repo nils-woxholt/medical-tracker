@@ -22,12 +22,31 @@ def get_user_service(db: SASession | Session = Depends(get_sync_db_session)) -> 
     400: {"model": AuthErrorResponse},
 })
 def register(payload: UserRegister, service: UserService = Depends(get_user_service)):
-    """Register a new user account."""
+    """Register a new user account.
+
+    Option A (Lean mode): allow omission of first/last names and derive them from
+    display_name or email local part when absent.
+    """
     try:
+        first = payload.first_name
+        last = payload.last_name
+        if not first or not last:
+            # Prefer display_name if provided
+            source = payload.display_name or payload.email.split("@")[0]
+            parts = source.strip().split()
+            if len(parts) >= 2:
+                first = first or parts[0]
+                last = last or " ".join(parts[1:])
+            else:
+                # Fallback: entire source as first, synthetic 'User' as last if missing
+                if not first:
+                    first = source.strip() or "User"
+                if not last:
+                    last = "User"
         user = service.create_user(
             email=payload.email,
-            first_name=payload.first_name,
-            last_name=payload.last_name,
+            first_name=first,
+            last_name=last,
             password=payload.password,
         )
         return UserPublic.model_validate(user)

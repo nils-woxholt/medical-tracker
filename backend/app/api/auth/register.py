@@ -79,17 +79,7 @@ def register(
         inc_login("failure")
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-    # Uniqueness
-    existing = user_service.get_by_email(email)
-    if existing:
-        logger.info("register.email_conflict", email=email)
-        inc_login("failure")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={
-            "error": "EMAIL_EXISTS",  # contract test assertion
-            "message": "EMAIL_IN_USE",  # integration test flexible assertion
-            "detail": "EMAIL_IN_USE",   # fallback field
-        })
+    # Uniqueness handled optimistically; rely on service.create_user raising ValueError("EMAIL_IN_USE")
 
     # Create user
     # Derive name fields; prefer explicit first/last, fall back to display_name for first_name
@@ -104,8 +94,21 @@ def register(
     last_name = (payload.last_name or (payload.display_name if payload.display_name and payload.display_name != first_name else None) or "User").strip()
     if not last_name:
         last_name = "User"
+    from fastapi.responses import JSONResponse
     try:
         user = user_service.create_user(email=email, first_name=first_name, last_name=last_name, password=payload.password)
+    except ValueError as ve:
+        # Expected conflict race or duplicate detection inside service layer
+        if str(ve) == "EMAIL_IN_USE":
+            logger.info("register.email_conflict", email=email)
+            inc_login("failure")
+            return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={
+                "error": "EMAIL_EXISTS",
+                "message": "EMAIL_IN_USE",
+                "detail": "EMAIL_IN_USE",
+            })
+        logger.error("register.user_create_value_error", email=email, error=str(ve))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=GENERIC_ERROR)
     except Exception as e:  # pragma: no cover - unexpected create failure
         logger.error("register.user_create_failed", email=email, error=str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=GENERIC_ERROR)

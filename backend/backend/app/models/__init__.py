@@ -1,1 +1,0 @@
-# Shim models package

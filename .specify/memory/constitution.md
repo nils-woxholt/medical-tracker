@@ -1,13 +1,14 @@
 <!--
 Sync Impact Report
-Version change: 1.0.0 → 1.1.0 (MINOR)
-Modified principles: Accessibility & Performance; Contracts; Testing; Observability; Governance
-Added sections: Operating Modes; Fast Track Exceptions; Lean Mode Checklist; Strict Mode Gates
-Removed sections: none (restructured)
+Version change: 1.1.0 → 1.1.1 (PATCH)
+Modified principles: Security & Privacy (exclusive cookie session auth clarified)
+Added sections: none
+Removed sections: none
 Templates requiring updates:
-  .specify/templates/plan-template.md (validate Lean/Strict tags)
-  .specify/templates/spec-template.md (add mode declaration) ⚠ pending
-Deferred TODOs: none
+  .specify/templates/spec-template.md (ensure no JWT references) ⚠ pending
+Deferred TODOs:
+  - Implement logout endpoint invalidating session
+  - Add idle + absolute session expiry
 -->
 
 # Full Stack Web Application Constitution
@@ -83,19 +84,27 @@ Strict Mode:
 - Distributed trace id propagation.
 - Frontend web vitals emission.
 
-### V. Security & Privacy (Non-Negotiable Baseline)
+### V. Security & Privacy (Cookie-Only Authentication Baseline)
 
 Always (both modes):
 
-- Hashed passwords, validated input (Pydantic).
-- Auth checks on protected endpoints.
-- No secrets in code; use environment variables.
-- Dependency audits weekly (blocking only for critical vulnerabilities in Strict Mode).
+- Exclusive use of HTTP-only session cookie (`session`) for authentication; NO JWT or Bearer token issuance. Any legacy token endpoints are deprecated and MUST NOT be used.
+- Hashed passwords; validated input (Pydantic).
+- Protected endpoints must rely on session cookie resolution (`get_current_user_id_or_session` or equivalent fallback).
+- No secrets committed; environment variables for sensitive configuration.
+- Avoid storing auth state in `localStorage` or exposing session identifiers to client JS.
+- Weekly dependency audits (critical vulns block in Strict Mode).
+
+Strict Mode additions:
+
+- Enforce `Secure` + appropriate `SameSite` cookie attributes in production.
+- Implement idle + absolute session expiry (rolling renewal on activity) and logout endpoint for immediate invalidation.
+- Consider CSRF mitigation (double-submit token or `SameSite=Strict` evaluation) before expanding cross-origin POST capabilities.
 
 Optional Strict Additions:
 
 - License scanning.
-- Expanded permission model.
+- Expanded permission model (still session cookie based; roles resolved server-side).
 
 ### VI. Simplicity & Incremental Abstraction
 
@@ -201,4 +210,4 @@ Sunset & Exceptions:
 - Exceptions tracked via label or a simple table in `docs/cleanup/` (optional).
 - Auto-expire enforcement encourages follow-up.
 
-**Version**: 1.1.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-10-29
+**Version**: 1.1.1 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-10-31

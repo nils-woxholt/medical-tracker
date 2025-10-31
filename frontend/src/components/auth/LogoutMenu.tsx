@@ -21,9 +21,9 @@ export const LogoutMenu: React.FC<LogoutMenuProps> = ({ className }) => {
     setPending(true);
     setError(null);
     try {
-      await logout();
-      // After logout navigate to login page
-      router.push('/auth/login');
+  await logout();
+  // After logout navigate to login page route (frontend page path)
+  router.push('/login');
     } catch (e: any) {
       setError(e.message || 'Logout failed');
     } finally {

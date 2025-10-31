@@ -13,7 +13,7 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, get_db
+from app.core.dependencies import get_current_user, get_db, get_required_auth_token
 from app.schemas.logs import FeelVsYesterdayResponse
 from app.services.feel_service import FeelVsYesterdayService
 from app.telemetry.metrics import (
@@ -42,7 +42,8 @@ async def feel_vs_yesterday(
         description="Date to compare against (defaults to today). Format: YYYY-MM-DDTHH:MM:SS"
     ),
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    _auth: str = Depends(get_required_auth_token)
 ) -> FeelVsYesterdayResponse:
     """
     Analyze how the user feels today compared to yesterday.
@@ -141,7 +142,8 @@ async def feel_vs_yesterday_history(
         description="Number of days to analyze (1-30)"
     ),
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    _auth: str = Depends(get_required_auth_token)
 ) -> list[FeelVsYesterdayResponse]:
     """
     Get feel vs yesterday analysis for multiple days.

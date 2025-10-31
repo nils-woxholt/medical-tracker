@@ -13,7 +13,12 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlmodel import Session
 import structlog
 
-from app.core.dependencies import get_db, get_medication_service, get_current_user
+from app.core.dependencies import (
+    get_db,
+    get_medication_service,
+    get_current_user,
+    get_current_user_id_or_session,  # Fallback dependency supporting session cookie auth
+)
 from app.services.medication import MedicationService
 from app.schemas.medication import (
     MedicationCreate,
@@ -320,9 +325,22 @@ async def list_medications_no_slash(
 
 """Minimal in-memory medication log endpoints used solely by integration tests.
 
-Tests interact with /logs/medications for simple CRUD-like behavior without auth.
-The full logs implementation (app.api.logs) is more comprehensive and auth-protected.
-To keep tests passing while deferring full integration, we provide a lightweight store.
+Auth Model (updated for Lean Mode):
+    * Now protected via the fallback dependency ``get_current_user_id_or_session`` so
+        either a Bearer token OR a valid session cookie (``session``) grants access.
+    * This aligns the medication log test flow with the rest of the app's cookie-first
+        authentication while still permitting legacy token-based contract tests.
+
+Purpose:
+    * Provide a lightweight, in-memory store for simple CRUD-like behavior required by
+        integration & contract tests while the full production-grade medication logging
+        domain is being implemented elsewhere.
+
+Notes:
+    * Data is ephemeral and process-local; do NOT rely on it for real persistence.
+    * Endpoint shapes are intentionally narrow and may diverge from future real endpoints.
+    * If you expand functionality, consider migrating to the unified logs module instead
+        of growing this shim.
 """
 from pydantic import BaseModel, Field
 
@@ -352,7 +370,8 @@ _TEST_LOG_ID_SEQ: int = 1
 async def create_medication_log_test(
     log: _TestMedicationLogCreate,
     medication_service: MedicationService = Depends(get_medication_service),
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    # Use session-capable fallback dependency so cookie auth works in Lean Mode.
+    current_user_id: str = Depends(get_current_user_id_or_session)
 ) -> _TestMedicationLogResponse:
     name_normalized = log.medication_name.strip()
     if not medication_service.validate_medication_exists(name_normalized, active_only=True):
@@ -378,7 +397,7 @@ async def create_medication_log_test(
     include_in_schema=False
 )
 async def list_medication_logs_test(
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    current_user_id: str = Depends(get_current_user_id_or_session)
 ) -> List[_TestMedicationLogResponse]:
     return [_TestMedicationLogResponse(**e) for e in _TEST_LOG_STORE]
 
